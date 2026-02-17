@@ -1,0 +1,80 @@
+######################################
+# Symfony Environment Files
+######################################
+
+# Ignore local environment overrides (never commit secrets)
+.env.local
+.env.*.local
+.env.local.php
+
+# Keep .env committed (contains default safe values)
+# DO NOT ignore .env
+
+
+######################################
+# Symfony Cache & Logs
+######################################
+
+# Cache, logs and temporary files
+/var/
+
+
+######################################
+# Dependencies
+######################################
+
+# Composer dependencies (will be installed with composer install)
+/vendor/
+
+# Node dependencies (if using npm/yarn)
+/node_modules/
+
+
+######################################
+# Public Build & Assets
+######################################
+
+# Compiled assets (AssetMapper or Webpack)
+/public/assets/
+/assets/vendor/
+/public/build/
+
+# Symfony generated bundles
+/public/bundles/
+
+
+######################################
+# Uploaded Files
+######################################
+
+# User uploaded files (images/videos)
+# These should not be versioned
+/public/uploads/
+
+
+######################################
+# PHPUnit & Testing
+######################################
+
+/.phpunit.cache/
+/phpunit.xml.local
+
+
+######################################
+# IDE & OS Files
+######################################
+
+# IDE
+/.idea/
+/.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+
+######################################
+# Symfony Secrets (Production)
+######################################
+
+/config/secrets/prod/prod.decrypt.private.php
