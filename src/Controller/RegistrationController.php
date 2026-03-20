@@ -39,19 +39,21 @@ class RegistrationController extends AbstractController
             // Default values for new users
             $user->setIsVerified(false);
             $user->setCreatedAt(new \DateTimeImmutable());
-
+            
             $entityManager->persist($user);
             $entityManager->flush();
 
             // generate a signed url and email it to the user
-            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+           $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
                 (new TemplatedEmail())
                     ->from(new Address('noreplay@snowtricks.com', 'Dmd Snow trick Project'))
                     ->to((string) $user->getEmail())
-                    ->subject('Please Confirm your Email')
+                    ->subject('Veuiullez confirmer votre adresse e-mail')
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
-
+            
+            // Debug: Affichez l'URL signée pour vérifier qu'elle est générée correctement
+            
             // do anything else you need here, like send an email
             
             $this->addFlash('success', 'Votre compte a été créé avec succès. Veuillez vérifier votre adresse e-mail pour confirmer votre inscription.');
