@@ -23,7 +23,7 @@ class RegistrationController extends AbstractController
     {
     }
 
-    #[Route('/register', name: 'app_register')]
+    #[Route('/inscription', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
         $user = new User();
@@ -36,6 +36,9 @@ class RegistrationController extends AbstractController
 
             // encode the plain password
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            // Default values for new users
+            $user->setIsVerified(false);
+            $user->setCreatedAt(new \DateTimeImmutable());
 
             $entityManager->persist($user);
             $entityManager->flush();
@@ -43,15 +46,17 @@ class RegistrationController extends AbstractController
             // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
                 (new TemplatedEmail())
-                    ->from(new Address('noreply@snowtricks.com', 'Dmd Snow trick Project'))
+                    ->from(new Address('noreplay@snowtricks.com', 'Dmd Snow trick Project'))
                     ->to((string) $user->getEmail())
                     ->subject('Please Confirm your Email')
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
 
             // do anything else you need here, like send an email
-
-            return $this->redirectToRoute('_profiler_home');
+            
+            $this->addFlash('success', 'Votre compte a été créé avec succès. Veuillez vérifier votre adresse e-mail pour confirmer votre inscription.');
+            
+            return $this->redirectToRoute('app_register');
         }
 
         return $this->render('registration/register.html.twig', [
