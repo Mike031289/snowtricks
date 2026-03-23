@@ -15,6 +15,8 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordC
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use App\Repository\UserRepository;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 
 class LoginAuthentificator extends AbstractLoginFormAuthenticator
 {
@@ -22,7 +24,7 @@ class LoginAuthentificator extends AbstractLoginFormAuthenticator
 
     public const LOGIN_ROUTE = 'app_login';
 
-    public function __construct(private UrlGeneratorInterface $urlGenerator)
+    public function __construct(private UrlGeneratorInterface $urlGenerator, private UserRepository $userRepository)
     {
     }
 
@@ -33,7 +35,23 @@ class LoginAuthentificator extends AbstractLoginFormAuthenticator
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $username);
 
         return new Passport(
-            new UserBadge($username),
+            // The UserBadge for loading the user based on the provided username. The second argument is a callback that will be executed if the user is not found.
+            new UserBadge($username, function ($userIdentifier) {
+                $user = $this->userRepository->findOneBy(['username' => $userIdentifier]);
+
+                if (!$user) {
+                    throw new CustomUserMessageAuthenticationException('Nom d’utilisateur introuvable.');
+                }
+
+                // Account verification before authentication is successful 
+                if (!$user->isVerified()) {
+                    throw new CustomUserMessageAuthenticationException(
+                        'Votre compte n’est pas encore activé. Vérifiez votre email. Un email de confirmation vous a été envoyé lors de votre inscription.'
+                    );
+                }
+
+                return $user;
+            }),
             new PasswordCredentials($request->getPayload()->getString('password')),
             [
                 new CsrfTokenBadge('authenticate', $request->getPayload()->getString('_csrf_token')),
@@ -49,7 +67,7 @@ class LoginAuthentificator extends AbstractLoginFormAuthenticator
         }
 
         // For example:
-        return new RedirectResponse($this->urlGenerator->generate('app_login'));
+        return new RedirectResponse($this->urlGenerator->generate('app_home'));
         // throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 
