@@ -56,7 +56,7 @@ class RegistrationController extends AbstractController
             
             // do anything else you need here, like send an email
             
-            $this->addFlash('success', 'Votre compte a été créé avec succès. Veuillez vérifier votre adresse e-mail pour confirmer votre inscription.');
+            $this->addFlash('success', 'Nous vous avons envoyé un e-mail de confirmation afin de finaliser votre inscription. <br> Veuillez vérifier votre boîte de réception et cliquer sur le lien de confirmation pour activer votre compte avant de pouvoir vous connecter.');
             
             return $this->redirectToRoute('app_register');
         }
@@ -91,8 +91,8 @@ class RegistrationController extends AbstractController
         }
 
         // @TODO Change the redirect on success and handle or remove the flash message in your templates
-        $this->addFlash('success', 'Your email address has been verified.');
+        $this->addFlash('success', 'Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.');
 
-        return $this->redirectToRoute('app_register');
+        return $this->redirectToRoute('app_login');
     }
 }
