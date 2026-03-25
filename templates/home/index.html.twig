@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% if app.user %}
+        <div class="mb-3">
+            Bonjour
+            {{ app.user.email }}
+            ,
+            {{ app.user.userIdentifier }}
+            ,
+            <a href="{{ path('app_logout') }}">
+                Déconnexion
+            </a>
+        {% else %}
+            <a href="{{ path('app_login') }}">
+                Connexion
+            </a>
+        {% endif %}
+
+        <div class="example-wrapper">
+            <h1>
+                Bienvenue sur le site communautaire Snowtricks
+            </h1>
+
+            Ce projet a été réalisé dans le cadre de la formation "Développeur d'application - Symfony" proposée par OpenClassrooms.
+            <br>
+                Vous pouvez trouver les fichiers suivants dans ce projet :
+                <ul>
+                    <li>
+                        Your controller at
+                        <code>
+                            D:/FORMATION DEV-APPLI_SYMFONY OPPENCLASSROOMS/Projet-6/snowtricks/src/Controller/HomeController.php
+                        </code>
+                    </li>
+                    <li>
+                        Your template at
+                        <code>
+                            D:/FORMATION DEV-APPLI_SYMFONY OPPENCLASSROOMS/Projet-6/snowtricks/templates/home/index.html.twig
+                        </code>
+                    </li>
+                </ul>
+            </div>
+        {% endblock %}
+        
