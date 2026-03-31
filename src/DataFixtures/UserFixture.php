@@ -1,4 +1,5 @@
 <?php
+// src/DataFixtures/UserFixtures.php
 
 namespace App\DataFixtures;
 
@@ -9,6 +10,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixture extends Fixture
 {
+    public const USER_REFERENCE = 'user-demo';
+    
     public function __construct(private UserPasswordHasherInterface $hasher) {}
     
     public function load(ObjectManager $manager): void
@@ -24,9 +27,8 @@ class UserFixture extends Fixture
 
         $manager->persist($user);
 
-        $this->addReference('user_demo', $user);
-
-        $manager->flush();
+         // other fixtures can get this object using the UserFixtures::USER_REFERENCE constant
+        $this->addReference(self::USER_REFERENCE, $user);
 
         $manager->flush();
     }
