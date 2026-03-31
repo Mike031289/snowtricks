@@ -27,7 +27,7 @@ class UserFixture extends Fixture
 
         $manager->persist($user);
 
-         // other fixtures can get this object using the UserFixtures::USER_REFERENCE constant
+        // other fixtures can get this object using the UserFixtures::USER_REFERENCE constant
         $this->addReference(self::USER_REFERENCE, $user);
 
         $manager->flush();
