@@ -40,6 +40,7 @@ class VideoFixture extends Fixture implements DependentFixtureInterface
         }
 
         $manager->flush();
+        
     }
 
 }
