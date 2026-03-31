@@ -33,6 +33,9 @@ class ImageFixture extends Fixture implements DependentFixtureInterface
                 $image->setTrick($trick);
 
                 $manager->persist($image);
+                
+                // other fixtures can get this object using the ImageFixtures::IMAGE_REFERENCE constant
+                $this->addReference($name, $image);
             }
         }
 
