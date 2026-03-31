@@ -8,19 +8,24 @@ use Doctrine\Persistence\ObjectManager;
 
 class GroupFixture extends Fixture
 {
-    public const GROUP_REFERENCE = 'group-demo';
-    
-    private const GROUPS = [
-        'Grabs',
-        'Rotations',
-        'Flips',
-        'Slides'
-    ];
+    // private const GROUPS = [
+    //     'Grabs',
+    //     'Flips',
+    //     'Rotations',
+    //     'Slides'
+    // ];
     
     public function load(ObjectManager $manager): void
     {
-        $groups = self::GROUPS;
+        // $groups = self::GROUPS;
+        $groups = [
+            'Grabs',
+            'Flips',
+            'Rotations',
+            'Slides'
+        ];
         
+        // slug arrow function
         $slug = fn($string) => strtolower(str_replace(' ', '-', $string));
 
         foreach ($groups as $groupName) {
@@ -29,11 +34,11 @@ class GroupFixture extends Fixture
             $group->setSlug($slug($groupName));
 
             $manager->persist($group);
+            
+            // other fixtures can get this object using the GroupFixtures::GROUP_REFERENCE constant
+            $this->addReference($groupName, $group);
         }
-        
-        // other fixtures can get this object using the GroupFixtures::GROUP_REFERENCE constant
-        $this->addReference(self::GROUP_REFERENCE, $group);
-        
+
         $manager->flush();
     }
 }

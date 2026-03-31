@@ -6,20 +6,25 @@ use App\Entity\Trick;
 use App\Entity\Image;
 use App\Entity\Group;
 use App\Entity\User;
-
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-class TrickFixture extends Fixture
+class TrickFixture extends Fixture implements DependentFixtureInterface
 {
     public function __construct(private SluggerInterface $slugger) {}
-    
+
+    public function getDependencies(): array
+    {
+        return [
+            UserFixture::class,
+            GroupFixture::class,
+        ];
+    }
+
     public function load(ObjectManager $manager): void
     {
-        $user = $manager->getRepository(User::class)->findOneBy([]);
-        $group = $manager->getRepository(Group::class)->findOneBy([]);
-        
         $tricksData = [
             [
                 'name' => 'Indy Grab',
@@ -50,6 +55,7 @@ class TrickFixture extends Fixture
         foreach ($tricksData as $data) {
 
             $trick = new Trick();
+
             $trick->setName($data['name']);
             $trick->setDescription($data['description']);
 
@@ -61,28 +67,42 @@ class TrickFixture extends Fixture
             $trick->setCreatedAt(new \DateTimeImmutable());
             $trick->setUpdatedAt(new \DateTimeImmutable());
 
-            // auteur
+            // author (IMPORTANT)
+            $user = $this->getReference(UserFixture::USER_REFERENCE, User::class);
             $trick->setAuthor($user);
-            
-            // groupe
-            $trick->setGroups($group);   
-            
-            // image principale
+
+            // group (IMPORTANT)
+            $group = $this->getReference($data['group'], Group::class);
+            $trick->setGroups($group);
+
+            // main image (string dans Trick)
             $trick->setMainImage($data['images'][0]);
 
-            // images secondaires
-            foreach ($data['images'] as $imageName) {
+            // image entities (relation)
+            foreach ($data['images'] as $index => $imageName) {
+
                 $image = new Image();
+
                 $image->setUrl($imageName);
+                $image->setAlt($data['name'].' image '.$index);
+
+                // bool
+                $image->setIsMain($index === 0);
+
+                // date
+                $image->setCreatedAt(new \DateTimeImmutable());
+
                 $image->setTrick($trick);
 
                 $manager->persist($image);
             }
+
+            // other fixtures can get this object using the TrickFixtures::TRICKS_REFERENCE constant
+            $this->addReference($data['name'], $trick);
 
             $manager->persist($trick);
         }
 
         $manager->flush();
     }
-    
 }

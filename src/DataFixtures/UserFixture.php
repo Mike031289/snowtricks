@@ -10,7 +10,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixture extends Fixture
 {
-    public const USER_REFERENCE = 'user-demo';
+    public const USER_REFERENCE = 'user_demo';
     
     public function __construct(private UserPasswordHasherInterface $hasher) {}
     
@@ -18,7 +18,7 @@ class UserFixture extends Fixture
     {
         $user = new User();
 
-        $user->setUsername('demo');
+        $user->setUsername('user_demo');
         $user->setEmail('demo@snowtricks.com');
         $user->setPassword($this->hasher->hashPassword($user, 'password'));
         $user->setRoles(['ROLE_USER']);
