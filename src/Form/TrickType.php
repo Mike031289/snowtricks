@@ -44,6 +44,8 @@ class TrickType extends AbstractType
                 'class' => Group::class,
                 'choice_label' => 'name', // name is the property to display in the dropdown. Don't use 'id' as it will show the ID instead of the name.
                 'placeholder' => 'Choisir un groupe',
+                'required' => true,
+                'mapped' => true, // this field is associated with the 'groups' property of the Trick entity
                 'multiple' => false, // only one group can be selected
                 'expanded' => false, // display as a dropdown
             ])
