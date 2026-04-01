@@ -1,44 +1,52 @@
 {% extends 'base.html.twig' %}
-
+{% block title %}
+    Accueil - SnowTricks
+{% endblock %}
 {% block body %}
     {% if app.user %}
-        <div class="mb-3">
-            Bonjour
-            {{ app.user.email }}
-            ,
-            {{ app.user.userIdentifier }}
-            ,
-            <a href="{{ path('app_logout') }}">
-                Déconnexion
+        <btn class="btn btn-sm btn-success mb-4 float-end">
+            <a class="nav-link" href="{{ path('app_trick_new') }}">
+                Ajouter un trick
             </a>
-        {% else %}
-            <a href="{{ path('app_login') }}">
-                Connexion
-            </a>
-        {% endif %}
-
-        <div class="example-wrapper">
-            <h1>
-                Bienvenue sur le site communautaire Snowtricks
-            </h1>
-
-            Ce projet a été réalisé dans le cadre de la formation "Développeur d'application - Symfony" proposée par OpenClassrooms.
-            <br>
-                Vous pouvez trouver les fichiers suivants dans ce projet :
-                <ul>
-                    <li>
-                        Your controller at
-                        <code>
-                            D:/FORMATION DEV-APPLI_SYMFONY OPPENCLASSROOMS/Projet-6/snowtricks/src/Controller/HomeController.php
-                        </code>
-                    </li>
-                    <li>
-                        Your template at
-                        <code>
-                            D:/FORMATION DEV-APPLI_SYMFONY OPPENCLASSROOMS/Projet-6/snowtricks/templates/home/index.html.twig
-                        </code>
-                    </li>
-                </ul>
+        </btn>
+    {% endif %}
+    <h1 class="mb-4">
+        Bienvenue sur SnowTricks !
+    </h1>
+    <div class="container mt-5">
+        <h1 class="text-center mb-5">
+            Liste des Tricks
+        </h1>
+        <div class="row">
+            {% for trick in tricks %}
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm">
+                        {# Image principale #}
+                        <img src="{{ asset('uploads/images/' ~ trick.mainImage) }}" class="card-img-top" alt="{{ trick.name }}">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">
+                                    {{ trick.name }}
+                                </h5>
+                                <a href="{{ path('app_trick_show', {slug: trick.slug}) }}" class="btn btn-primary btn-sm">
+                                    Voir
+                                </a>
+                            {# {% if app.user %}
+                                <a href="{{ path('app_trick_edit', {id: trick.id}) }}" class="btn btn-warning btn-sm">
+                                Edit
+                                </a>
+                                <a href="{{ path('app_trick_delete', {id: trick.id}) }}" class="btn btn-danger btn-sm">
+                                Delete
+                                </a>
+                            {% endif %} #}
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-center">
+                        Aucun trick disponible.
+                    </p>
+                {% endfor %}
             </div>
-        {% endblock %}
-        
+        </div>
+    </div>
+{% endblock %}
