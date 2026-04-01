@@ -28,27 +28,63 @@ class TrickFixture extends Fixture implements DependentFixtureInterface
         $tricksData = [
             [
                 'name' => 'Indy Grab',
-                'description' => 'Saisie de la carre backside avec la main arrière.',
+                'description' => 'Saisie de la carre backside entre les pieds avec la main arrière lors d’un saut.',
                 'group' => 'Grabs',
                 'images' => ['indy1.jpg', 'indy2.jpg']
             ],
             [
+                'name' => 'Melon Grab',
+                'description' => 'Saisie de la carre frontside avec la main avant en maintenant la planche sous le corps.',
+                'group' => 'Grabs',
+                'images' => ['melon1.jpg', 'melon2.jpg']
+            ],
+            [
+                'name' => 'Mute Grab',
+                'description' => 'Saisie de la carre frontside entre les pieds avec la main avant.',
+                'group' => 'Grabs',
+                'images' => ['mute1.jpg', 'mute2.jpg']
+            ],
+            [
                 'name' => 'Backflip',
-                'description' => 'Rotation arrière complète en l’air.',
+                'description' => 'Rotation arrière complète en l’air, souvent réalisée sur un kicker.',
                 'group' => 'Flips',
                 'images' => ['backflip1.jpg', 'backflip2.jpg']
             ],
             [
+                'name' => 'Frontflip',
+                'description' => 'Rotation avant complète nécessitant engagement et contrôle du corps.',
+                'group' => 'Flips',
+                'images' => ['frontflip1.jpg', 'frontflip2.jpg']
+            ],
+            [
                 'name' => '360',
-                'description' => 'Rotation complète de 360 degrés.',
+                'description' => 'Rotation complète de 360 degrés autour de l’axe vertical.',
                 'group' => 'Rotations',
                 'images' => ['360_1.jpg', '360_2.jpg']
             ],
             [
+                'name' => '540',
+                'description' => 'Rotation de 540 degrés, soit un tour et demi en l’air.',
+                'group' => 'Rotations',
+                'images' => ['540_1.jpg', '540_2.jpg']
+            ],
+            [
+                'name' => '720',
+                'description' => 'Double rotation complète (720 degrés) demandant vitesse et précision.',
+                'group' => 'Rotations',
+                'images' => ['720_1.jpg', '720_2.jpg']
+            ],
+            [
                 'name' => 'Boardslide',
-                'description' => 'Glissade sur une barre avec la planche perpendiculaire.',
+                'description' => 'Glissade sur une barre avec la planche perpendiculaire à l’obstacle.',
                 'group' => 'Slides',
-                'images' => ['slide1.jpg', 'slide2.jpg']
+                'images' => ['boardslide1.jpg', 'boardslide2.jpg']
+            ],
+            [
+                'name' => 'Noseslide',
+                'description' => 'Glissade sur une barre en appui sur l’avant de la planche.',
+                'group' => 'Slides',
+                'images' => ['noseslide1.jpg', 'noseslide2.jpg']
             ],
         ];
 

@@ -41,7 +41,8 @@ final class TrickController extends AbstractController
 
             // Author (associate current user as author of the trick)
             $trick->setAuthor($this->getUser());
-            $trick->setGroups($groupRepository->find(1)); // assign to default group (id=1) for now. You can change this logic to allow user to select group in the form.
+            $defaultGroup = $groupRepository->find(1);
+            $trick->setGroups($defaultGroup); // assign to default group (id=1) for now. You can change this logic to allow user to select group in the form.
             
             $trick->setCreatedAt(new \DateTimeImmutable());
             $trick->setUpdatedAt(new \DateTimeImmutable());
@@ -99,8 +100,14 @@ final class TrickController extends AbstractController
     #[Route('/{slug}', name: 'app_trick_show', methods: ['GET'])]
     public function show(Trick $trick): Response
     {
+        if (!$trick) {
+            throw $this->createNotFoundException('Trick not found');
+        }
+        $slug = $trick->getSlug();
+        
         return $this->render('trick/show.html.twig', [
             'trick' => $trick,
+            'slug' => $slug
         ]);
     }
 
