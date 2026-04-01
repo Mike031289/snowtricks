@@ -1,46 +1,95 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Trick{% endblock %}
-
-{% block body %}
-    <h1>Trick</h1>
-
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ trick.id }}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
-                <td>{{ trick.name }}</td>
-            </tr>
-            <tr>
-                <th>Slug</th>
-                <td>{{ trick.slug }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ trick.description }}</td>
-            </tr>
-            <tr>
-                <th>MainImage</th>
-                <td>{{ trick.mainImage }}</td>
-            </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ trick.createdAt ? trick.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>UpdatedAt</th>
-                <td>{{ trick.updatedAt ? trick.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    {# <a href="{{ path('app_trick_index') }}">back to list</a>
-
-    <a href="{{ path('app_trick_edit', {'id': trick.id}) }}">edit</a> #}
-
-    {# {{ include('trick/_delete_form.html.twig') }} #}
+{% block title %}
+    {{ trick.name }}
+    - SnowTricks
 {% endblock %}
+{% block body %}
+    <div class="container mt-4">
+        {# HERO IMAGE #}
+        <div class="position-relative mb-4">
+            <img src="{{ asset('uploads/images/' ~ trick.mainImage) }}" class="img-fluid w-100 rounded shadow" style="max-height: 400px; object-fit: cover;" alt="{{ trick.name }}">
+                <h1 class="position-absolute bottom-0 start-0 text-white p-3" style="background: rgba(0,0,0,0.5); width: 100%;">
+                    {{ trick.name }}
+                </h1>
+            </div>
+            {# INFOS #}
+            <div class="mb-3 text-muted">
+                <span>
+                    <i class=""></i>
+                    {{ trick.author.username }}
+                </span>
+                |
+                <span>
+                    <i class=""></i>
+                    {{ trick.createdAt|date('d/m/Y') }}
+                </span>
+                |
+                <span>
+                    <i class=""></i>
+                    {{ trick.groups.name }}
+                </span>
+            </div>
+            {# DESCRIPTION #}
+            <div class="mb-4">
+                <p>
+                    {{ trick.description }}
+                </p>
+            </div>
+            {# GALERIE IMAGES #}
+            <h3 class="mb-3">
+                <i class=""></i>
+                Images
+            </h3>
+            <div class="row mb-4">
+                {% for image in trick.images %}
+                    <div class="col-md-3 mb-3">
+                        <img src="{{ asset('uploads/images/' ~ image.url) }}" class="img-fluid rounded shadow-sm" alt="{{ image.alt }}" style="height:150px; object-fit:cover;"></div>
+                    {% else %}
+                        <p>
+                            Aucune image disponible.
+                        </p>
+                    {% endfor %}
+                </div>
+                {# VIDEOS #}
+                <h3 class="mb-3">
+                    <i class=""></i>
+                    Vidéos
+                </h3>
+                <div class="row mb-4">
+                    {% for video in trick.videos %}
+                        <div class="col-md-4 mb-3">
+                            <div class="ratio ratio-16x9">
+                                <iframe src="{{ video.embedUrl }}" title="YouTube video" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p>
+                            Aucune vidéo disponible.
+                        </p>
+                    {% endfor %}
+                </div>
+                {# COMMENTAIRES (BASE) #}
+                <h3 class="mb-3">
+                    <i class=""></i>
+                    Commentaires
+                </h3>
+                {% for comment in trick.comments %}
+                    <div class="border rounded p-2 mb-2">
+                        <strong>
+                            {{ comment.author.username }}
+                        </strong>
+                        <small class="text-muted">
+                            {{ comment.createdAt|date('d/m/Y H:i') }}
+                        </small>
+                        <p class="mb-0">
+                            {{ comment.content }}
+                        </p>
+                    </div>
+                {% else %}
+                    <p>
+                        Aucun commentaire.
+                    </p>
+                {% endfor %}
+            </div>
+        {% endblock %}
+        
