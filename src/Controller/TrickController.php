@@ -17,6 +17,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 #[Route('/trick')]
 final class TrickController extends AbstractController
 {
+    // List all tricks
     #[Route('/liste', name: 'app_trick_index', methods: ['GET'])]
     public function index(TrickRepository $trickRepository): Response
     {
@@ -25,6 +26,7 @@ final class TrickController extends AbstractController
         ]);
     }
 
+    // Create a new trick
     #[Route('/ajouter', name: 'app_trick_new', methods: ['GET', 'POST'])]
     public function new(
         Request $request, 
@@ -97,20 +99,16 @@ final class TrickController extends AbstractController
         ]);
     }
 
+    // Show a single trick by slug
     #[Route('/{slug}', name: 'app_trick_show', methods: ['GET'])]
     public function show(Trick $trick): Response
     {
-        if (!$trick) {
-            throw $this->createNotFoundException('Trick not found');
-        }
-        $slug = $trick->getSlug();
-        
         return $this->render('trick/show.html.twig', [
-            'trick' => $trick,
-            'slug' => $slug
+            'trick' => $trick
         ]);
     }
 
+    // Edit an existing trick
     #[Route('/{slug}/modifier', name: 'app_trick_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Trick $trick, EntityManagerInterface $entityManager): Response
     {
@@ -129,6 +127,7 @@ final class TrickController extends AbstractController
         ]);
     }
 
+    // Delete a trick
     #[Route('/{slug}/supprimer', name: 'app_trick_delete', methods: ['POST'])]
     public function delete(Request $request, Trick $trick, EntityManagerInterface $entityManager): Response
     {

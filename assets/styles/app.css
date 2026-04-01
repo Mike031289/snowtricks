@@ -22,4 +22,9 @@ body {
     .navbar-snow .navbar-brand:hover {
         color: #00d4ff;
     }
+
+    img:hover {
+        transform: scale(1.05);
+        transition: 0.3s;
+    }
 }
