@@ -118,12 +118,12 @@ final class TrickController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_trick_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('trick/edit.html.twig', [
             'trick' => $trick,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 

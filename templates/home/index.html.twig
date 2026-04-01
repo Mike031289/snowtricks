@@ -4,11 +4,10 @@
 {% endblock %}
 {% block body %}
     {% if app.user %}
-        <btn class="btn btn-sm btn-success mb-4 float-end">
-            <a class="nav-link" href="{{ path('app_trick_new') }}">
-                Ajouter un trick
-            </a>
-        </btn>
+        <a href="{{ path('app_trick_new') }}" class="btn btn-success mb-4 float-end">
+            <i class="bi bi-plus"></i>
+            Ajouter un trick
+        </a>
     {% endif %}
     <h1 class="mb-4">
         Bienvenue sur SnowTricks !
@@ -28,25 +27,33 @@
                                     {{ trick.name }}
                                 </h5>
                                 <a href="{{ path('app_trick_show', {slug: trick.slug}) }}" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-eye"></i>
                                     Voir
                                 </a>
-                            {# {% if app.user %}
-                                <a href="{{ path('app_trick_edit', {id: trick.id}) }}" class="btn btn-warning btn-sm">
-                                Edit
-                                </a>
-                                <a href="{{ path('app_trick_delete', {id: trick.id}) }}" class="btn btn-danger btn-sm">
-                                Delete
-                                </a>
-                            {% endif %} #}
+                                {% if app.user and app.user == trick.author %}
+                                    <div class="mt-2">
+                                        <a href="{{ path('app_trick_edit', {slug: trick.slug}) }}" class="btn btn-warning btn-sm">
+                                            <i class="bi bi-pencil"></i>
+                                            Edit
+                                        </a>
+                                        {# DELETE sécurisé avec formulaire #}
+                                        <form method="post" action="{{ path('app_trick_delete', {slug: trick.slug}) }}" style="display:inline-block;" onsubmit="return confirm('Tu es sûr de vouloir supprimer ce trick ?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ trick.slug) }}">
+                                                <button class="btn btn-danger btn-sm">
+                                                    <i class="bi bi-trash"></i>
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {% else %}
-                    <p class="text-center">
-                        Aucun trick disponible.
-                    </p>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-{% endblock %}
+                    {% else %}
+                        <p class="text-center">
+                            Aucun trick disponible.
+                        </p>
+                    {% endfor %}
+                </div>
+            {% endblock %}
+            
