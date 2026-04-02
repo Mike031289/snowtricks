@@ -92,6 +92,27 @@ final class TrickController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $trick->setUpdatedAt(new \DateTimeImmutable());
+            $trick->setSlug($trick->getSlug()); // Regenerate slug if name has changed
+            $trick->setGroups($trick->getGroups()); // Update group if changed
+            $trick->setDescription($trick->getDescription()); // Update description if changed
+            $trick->setName($trick->getName()); // Update name if changed
+            $trick->setAuthor($trick->getAuthor()); // Update author if changed
+            
+            // Update main image if changed
+            $mainImageFile = $form->get('mainImage')->getData();
+
+            if ($mainImageFile) {
+                $newFilename = uniqid().'.'.$mainImageFile->guessExtension();
+
+                $mainImageFile->move(
+                    $this->getParameter('images_directory'),
+                    $newFilename
+                );
+                
+                $trick->setMainImage($newFilename);
+            }
+            
             $entityManager->flush();
 
             return $this->redirectToRoute('app_home');
