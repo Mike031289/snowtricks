@@ -43,8 +43,6 @@ final class TrickController extends AbstractController
 
             // Author (associate current user as author of the trick)
             $trick->setAuthor($this->getUser());
-            $defaultGroup = $groupRepository->find(1);
-            $trick->setGroups($defaultGroup); // assign to default group (id=1) for now. You can change this logic to allow user to select group in the form.
             
             $trick->setCreatedAt(new \DateTimeImmutable());
             $trick->setUpdatedAt(new \DateTimeImmutable());
@@ -66,35 +64,13 @@ final class TrickController extends AbstractController
                 $trick->setMainImage($newFilename);
             }
 
-            // additional images (collection of file inputs)
-            $images = $form->get('images')->getData();
-
-            foreach ($images as $imageFile) {
-                if ($imageFile) {
-                    $newFilename = uniqid().'.'.$imageFile->guessExtension();
-
-                    $imageFile->move(
-                        $this->getParameter('images_directory'),
-                        $newFilename
-                    );
-
-                    // create a new Image entity and associate it with the Trick
-                    $image = new Image();
-                    $image->setUrl($newFilename);
-                    $image->setTrick($trick);
-
-                    $entityManager->persist($image);
-                }
-            }
-
             $entityManager->persist($trick);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_trick_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_home');
         }
 
         return $this->render('trick/new.html.twig', [
-            'trick' => $trick,
             'form' => $form->createView(),
         ]);
     }
@@ -118,7 +94,7 @@ final class TrickController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_home');
         }
 
         return $this->render('trick/edit.html.twig', [
@@ -136,6 +112,6 @@ final class TrickController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_trick_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_trick_index');
     }
 }
