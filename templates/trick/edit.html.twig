@@ -1,13 +1,89 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Edit Trick{% endblock %}
-
-{% block body %}
-    <h1>Edit Trick</h1>
-
-    {{ include('trick/_form.html.twig', {'button_label': 'Update'}) }}
-
-    <a href="{{ path('app_trick_index') }}">back to list</a>
-
-    {{ include('trick/_delete_form.html.twig') }}
+{% block title %}
+    Modifier
+    {{ trick.name }}
+    - SnowTricks
 {% endblock %}
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">
+            <i class="bi bi-pencil-square"></i>
+            Modifier le trick
+        </h1>
+        {# ===================== FORM START ===================== #}
+        {{ form_start(form, {'attr': {'enctype': 'multipart/form-data' }}
+        ) }}
+        <h5 class="mb-3">
+            Image principale actuelle
+        </h5>
+        <p class="small text-muted">
+            Nom de l'image :
+            {{ trick.mainImage }}
+        </p>
+        {# ===================== MAIN IMAGE ===================== #}
+        <div class="position-relative d-inline-block w-100 mb-4">
+            <img src="{{ asset('uploads/images/' ~ trick.mainImage) }}" class="img-fluid rounded shadow" style="max-height:500px ; object-fit:cover; width:100%;">
+                {# Optional edit icon (UX) #}
+                <span class="position-absolute top-0 end-0 m-1 badge bg-light text-dark">
+                    <i class="bi bi-pencil"></i>
+                </span>
+            </div>
+            <p class="text-muted me-3">
+                Télécharger une nouvelle image principale écrasera l'actuelle. L'image doit être au format JPG ou PNG et ne pas dépasser 2MB.
+            </p>
+            {{ form_widget(form.mainImage) }}
+        </div>
+        {# ===================== BASIC FIELDS ===================== #}
+        <div class="mb-3 mt-4">
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name, {'attr': {'class': 'form-control' }}
+            ) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.description) }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control' }}
+            ) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.groups) }}
+            {{ form_widget(form.groups, {'attr': {'class': 'form-select' }}
+            ) }}
+        </div>
+        <div class="mb-4">
+            {# ===================== EXISTING IMAGES ===================== #}
+            <h5>
+                Images existantes
+            </h5>
+            <div class="row mb-4">
+                {% for image in trick.images %}
+                    <div class="col-md-3 mb-3 position-relative">
+                        <img src="{{ asset('uploads/images/' ~ image.url) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;"></div>
+                    {% else %}
+                        <p>
+                            Aucune image.
+                        </p>
+                    {% endfor %}
+                </div>
+                {# ===================== ADD NEW IMAGES ===================== #}
+                <h5>
+                    Ajouter de nouvelles images
+                </h5>
+                <button type="button" class="btn btn-success mt-2" id="add-image">
+                    <i class="bi bi-plus"></i>
+                    Ajouter une image
+                </button>
+                {# ===================== ACTIONS ===================== #}
+                <div class="mt-4">
+                    <button class="btn btn-primary">
+                        <i class="bi bi-save"></i>
+                        Enregistrer
+                    </button>
+                    <a href="{{ path('app_trick_show', {slug: trick.slug}) }}" class="btn btn-secondary">
+                        <i class="bi bi-x"></i>
+                        Annuler
+                    </a>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        {% endblock %}
+        
