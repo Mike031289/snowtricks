@@ -7,23 +7,29 @@
 {% block body %}
     <div class="container mt-4">
         <h1 class="mb-4">
-            ✏️ Modifier le trick
+            <i class="bi bi-pencil-square"></i>
+            Modifier le trick
         </h1>
         {# ===================== FORM START ===================== #}
         {{ form_start(form, {'attr': {'enctype': 'multipart/form-data' }}
         ) }}
-        <h5 class="mb-5">
+        <h5 class="mb-3">
             Image principale actuelle
         </h5>
+        <p class="small text-muted">
+            Nom de l'image :
+            {{ trick.mainImage }}
+        </p>
+        {# ===================== MAIN IMAGE ===================== #}
         <div class="position-relative d-inline-block w-100 mb-4">
             <img src="{{ asset('uploads/images/' ~ trick.mainImage) }}" class="img-fluid rounded shadow" style="max-height:500px ; object-fit:cover; width:100%;">
                 {# Optional edit icon (UX) #}
                 <span class="position-absolute top-0 end-0 m-1 badge bg-light text-dark">
-                    ✏️
+                    <i class="bi bi-pencil"></i>
                 </span>
             </div>
             <p class="text-muted me-3">
-                Uploader une nouvelle image principale écrasera l'actuelle. L'image doit être au format JPG ou PNG et ne pas dépasser 2MB.
+                Télécharger une nouvelle image principale écrasera l'actuelle. L'image doit être au format JPG ou PNG et ne pas dépasser 2MB.
             </p>
             {{ form_widget(form.mainImage) }}
         </div>
@@ -43,7 +49,6 @@
             {{ form_widget(form.groups, {'attr': {'class': 'form-select' }}
             ) }}
         </div>
-        {# ===================== MAIN IMAGE ===================== #}
         <div class="mb-4">
             {# ===================== EXISTING IMAGES ===================== #}
             <h5>
@@ -52,14 +57,7 @@
             <div class="row mb-4">
                 {% for image in trick.images %}
                     <div class="col-md-3 mb-3 position-relative">
-                        <img src="{{ asset('uploads/images/' ~ image.url) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;">{# DELETE IMAGE (uses slug) #}
-                        {# <form method="post" action="{{ path('app_trick_delete', {slug: image.slug}) }}" class="position-absolute top-0 end-0 m-1" onsubmit="return confirm('Supprimer cette image ?');">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ image.slug) }}">
-                            <button class="btn btn-danger btn-sm">
-                            🗑️
-                            </button>
-                        </form> #}
-                        </div>
+                        <img src="{{ asset('uploads/images/' ~ image.url) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;"></div>
                     {% else %}
                         <p>
                             Aucune image.
@@ -70,53 +68,22 @@
                 <h5>
                     Ajouter de nouvelles images
                 </h5>
-                {# <div id="images-collection" data-prototype="{{ form_widget(form.images.vars.prototype)|e('html_attr') }}">
-                    {% for imageField in form.images %}
-                    <div class="mb-2">
-                    {{ form_widget(imageField) }}
-                    </div>
-                    {% endfor %}
-                </div> #}
-                <button type="button" class="btn btn-secondary mt-2" id="add-image">
-                    ➕ Ajouter une image
+                <button type="button" class="btn btn-success mt-2" id="add-image">
+                    <i class="bi bi-plus"></i>
+                    Ajouter une image
                 </button>
                 {# ===================== ACTIONS ===================== #}
                 <div class="mt-4">
-                    <button class="btn btn-success">
-                        💾 Enregistrer
+                    <button class="btn btn-primary">
+                        <i class="bi bi-save"></i>
+                        Enregistrer
                     </button>
                     <a href="{{ path('app_trick_show', {slug: trick.slug}) }}" class="btn btn-secondary">
+                        <i class="bi bi-x"></i>
                         Annuler
                     </a>
                 </div>
                 {{ form_end(form) }}
             </div>
-            {# ===================== JS DYNAMIC IMAGES ===================== #}
-            <script>
-            document.addEventListener('DOMContentLoaded', () => {
-
-                const container = document.getElementById('images-collection');
-                const addButton = document.getElementById('add-image');
-
-                let index = container.children.length;
-
-                addButton.addEventListener('click', () => {
-
-                    let prototype = container.dataset.prototype;
-
-                    prototype = prototype.replace(/__name__/g, index);
-
-                    let div = document.createElement('div');
-                    div.classList.add('mb-2');
-
-                    div.innerHTML = prototype;
-
-                    container.appendChild(div);
-
-                    index++;
-                });
-
-            });
-        </script>
         {% endblock %}
         

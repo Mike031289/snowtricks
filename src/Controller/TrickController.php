@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Image;
 use App\Entity\Trick;
 use App\Form\TrickType;
 use App\Repository\GroupRepository;
@@ -36,7 +35,9 @@ final class TrickController extends AbstractController
         ): Response
     {
         $trick = new Trick();
-        $form = $this->createForm(TrickType::class, $trick);
+        $form = $this->createForm(TrickType::class, $trick, [
+            'is_edit' => false, // pass an option to indicate we are in create mode
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -86,33 +87,41 @@ final class TrickController extends AbstractController
 
     // Edit an existing trick
     #[Route('/{slug}/modifier', name: 'app_trick_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Trick $trick, EntityManagerInterface $entityManager): Response
+    public function edit(
+        Request $request,
+        Trick $trick,
+        EntityManagerInterface $entityManager,
+        SluggerInterface $slugger
+        ): Response 
     {
-        $form = $this->createForm(TrickType::class, $trick);
+        $form = $this->createForm(TrickType::class, $trick, [
+            'is_edit' => true, // pass an option to indicate we are in edit mode
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $trick->setUpdatedAt(new \DateTimeImmutable());
-            $trick->setSlug($trick->getSlug()); // Regenerate slug if name has changed
-            $trick->setGroups($trick->getGroups()); // Update group if changed
-            $trick->setDescription($trick->getDescription()); // Update description if changed
-            $trick->setName($trick->getName()); // Update name if changed
-            $trick->setAuthor($trick->getAuthor()); // Update author if changed
-            
-            // Update main image if changed
+
+            // regenerate slug if name changed
+            $slug = $slugger->slug($trick->getName())->lower();
+            $trick->setSlug($slug);
+
+            // handle main image
             $mainImageFile = $form->get('mainImage')->getData();
 
             if ($mainImageFile) {
-                $newFilename = uniqid().'.'.$mainImageFile->guessExtension();
+
+                $newFilename = uniqid($trick->getSlug().'_').'.'.$mainImageFile->guessExtension();
 
                 $mainImageFile->move(
                     $this->getParameter('images_directory'),
                     $newFilename
                 );
-                
+
                 $trick->setMainImage($newFilename);
             }
-            
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_home');

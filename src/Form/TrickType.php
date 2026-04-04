@@ -13,14 +13,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class TrickType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
-    {
+    {   
+        // Determine if we are in edit mode (if the trick already has an ID) to conditionally set the 'mapped' option for the mainImage field
+        $isEdit = $options['is_edit'] ?? false;
+    
         $builder
             ->add('name')
             ->add('description')
             ->add('mainImage', FileType::class, [
                 'label' => 'Image principale',
-                'mapped' => false, // this field is not directly associated with the Trick entity
-                'required' => true,
+                'mapped' =>  false, // this field is not directly associated with the Trick entity
+                'required' => !$isEdit, // dynamically required if creating a new trick, optional if editing 
             ])
 
             // Group selection (dropdown)
@@ -37,6 +40,7 @@ class TrickType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Trick::class,
+            'is_edit' => false, // default value for the is_edit option
         ]);
     }
 }
