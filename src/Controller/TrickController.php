@@ -31,7 +31,6 @@ final class TrickController extends AbstractController
         Request $request, 
         EntityManagerInterface $entityManager, 
         SluggerInterface $slugger,
-        GroupRepository $groupRepository
         ): Response
     {
         $trick = new Trick();
