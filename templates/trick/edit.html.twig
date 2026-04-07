@@ -57,7 +57,12 @@
             <div class="row mb-4">
                 {% for image in trick.images %}
                     <div class="col-md-3 mb-3 position-relative">
-                        <img src="{{ asset('uploads/images/' ~ image.url) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;"></div>
+                        <img src="{{ asset('uploads/images/' ~ image.url) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;" alt="{{ image.alt }}">
+                            <p class="small text-muted">
+                                Nom de l'image :
+                                {{ trick.mainImage }}
+                            </p>
+                        </div>
                     {% else %}
                         <p>
                             Aucune image.
@@ -68,10 +73,13 @@
                 <h5>
                     Ajouter de nouvelles images
                 </h5>
-                <button type="button" class="btn btn-success mt-2" id="add-image">
-                    <i class="bi bi-plus"></i>
-                    Ajouter une image
-                </button>
+                <div id="images-collection">
+                    {{ form_widget(form.images, {'attr': {'multiple': 'multiple', 'class': 'form-control' }}
+                    ) }}
+                    <small class="text-muted">
+                        Vous pouvez sélectionner plusieurs images en maintenant CTRL (Windows) ou CMD (Mac)
+                    </small>
+                </div>
                 {# ===================== ACTIONS ===================== #}
                 <div class="mt-4">
                     <button class="btn btn-primary">
@@ -85,5 +93,6 @@
                 </div>
                 {{ form_end(form) }}
             </div>
+        
         {% endblock %}
         

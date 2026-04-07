@@ -35,7 +35,7 @@
                     {{ trick.description }}
                 </p>
             </div>
-            {# GALERIE IMAGES #}
+            {# GALLERY IMAGES #}
             <h3 class="mb-3">
                 <i class=""></i>
                 Images
@@ -43,7 +43,12 @@
             <div class="row mb-4">
                 {% for image in trick.images %}
                     <div class="col-md-3 mb-3">
-                        <img src="{{ asset('uploads/images/' ~ image.url) }}" class="img-fluid rounded shadow-sm" alt="{{ image.alt }}" style="height:150px; object-fit:cover;"></div>
+                        <img src="{{ asset('uploads/images/' ~ image.url) }}" class="img-fluid rounded shadow-sm" alt="{{ image.alt }}" style="height:150px; object-fit:cover;">
+                            <p class="small text-muted">
+                                Image :
+                                {{ trick.mainImage }}
+                            </p>
+                        </div>
                     {% else %}
                         <p>
                             Aucune image disponible.
@@ -68,7 +73,7 @@
                         </p>
                     {% endfor %}
                 </div>
-                {# COMMENTAIRES (BASE) #}
+                {# COMMENTS #}
                 <h3 class="mb-3">
                     <i class=""></i>
                     Commentaires

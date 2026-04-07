@@ -6,6 +6,7 @@ use App\Entity\Group;
 use App\Entity\Trick;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,6 +25,12 @@ class TrickType extends AbstractType
                 'label' => 'Image principale',
                 'mapped' =>  false, // this field is not directly associated with the Trick entity
                 'required' => !$isEdit, // dynamically required if creating a new trick, optional if editing 
+            ])
+            ->add('images', FileType::class, [
+                'label' => 'Images supplémentaires',
+                'multiple' => true,
+                'mapped' => false, // this field is not directly associated with the Trick entity
+                'required' => false,
             ])
 
             // Group selection (dropdown)

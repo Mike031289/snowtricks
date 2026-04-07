@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Image;
 use App\Entity\Trick;
 use App\Form\TrickType;
-use App\Repository\GroupRepository;
 use App\Repository\TrickRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -96,6 +96,7 @@ final class TrickController extends AbstractController
         $form = $this->createForm(TrickType::class, $trick, [
             'is_edit' => true, // pass an option to indicate we are in edit mode
         ]);
+        
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -119,10 +120,39 @@ final class TrickController extends AbstractController
                 );
 
                 $trick->setMainImage($newFilename);
+                
             }
 
-            $entityManager->flush();
+            // handle additional images (multiple file input)
+            $images = $form->get('images')->getData();
+            // dd($images);
+            
+            foreach ($images as $imageFile) {
 
+                if ($imageFile) {
+                    $newFilename = uniqid().'.'.$imageFile->guessExtension();
+
+                    $imageFile->move(
+                        $this->getParameter('images_directory'),
+                        $newFilename
+                    );
+
+                    $image = new Image();
+                    $image->setUrl($newFilename);
+                    $image->setAlt($trick->getName().' image');
+                    $image->setIsMain(false);
+                    $image->setCreatedAt(new \DateTimeImmutable());
+                    $image->setTrick($trick); // associate the image with the trick
+                    $trick->addImage($image);
+                    
+                    $entityManager->persist($image);
+                }
+            }
+            
+            $entityManager->persist($trick);
+
+            $entityManager->flush();
+            
             return $this->redirectToRoute('app_home');
         }
 
