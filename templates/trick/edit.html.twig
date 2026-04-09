@@ -25,13 +25,16 @@
             <img src="{{ asset('uploads/images/' ~ trick.mainImage) }}" class="img-fluid rounded shadow" style="max-height:500px ; object-fit:cover; width:100%;">
                 {# Optional edit icon (UX) #}
                 <span class="position-absolute top-0 end-0 m-1 badge bg-light text-dark">
-                    <i class="bi bi-pencil"></i>
+                    <i class="bi bi-pencil d-flex">
+                        {{ form_widget(form.mainImage, {'attr': {'class': 'form-control' }}
+                        ) }}
+                        <span class="m-2"></span>
+                    </i>
                 </span>
             </div>
             <p class="text-muted me-3">
                 Télécharger une nouvelle image principale écrasera l'actuelle. L'image doit être au format JPG ou PNG et ne pas dépasser 2MB.
             </p>
-            {{ form_widget(form.mainImage) }}
         </div>
         {# ===================== BASIC FIELDS ===================== #}
         <div class="mb-3 mt-4">
@@ -49,41 +52,71 @@
             {{ form_widget(form.groups, {'attr': {'class': 'form-select' }}
             ) }}
         </div>
+        {# ===================== ADD NEW IMAGES ===================== #}
+        <h5>
+            Ajouter de nouvelles images
+        </h5>
+        <div id="images-collection">
+            {{ form_widget(form.images, {'attr': {'multiple': 'multiple', 'class': 'form-control' }}
+            ) }}
+            <small class="text-muted">
+                Vous pouvez sélectionner plusieurs images en maintenant CTRL (Windows) ou CMD (Mac)
+            </small>
+        </div>
+        {# ===================== ACTIONS ===================== #}
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i>
+                Enregistrer
+            </button>
+            <a href="{{ path('app_home') }}" class="btn btn-secondary">
+                <i class="bi bi-x"></i>
+                Annuler
+            </a>
+        </div>
+        {{ form_end(form) }}
         <div class="mb-4">
             {# ===================== EXISTING IMAGES ===================== #}
-            <h5>
+            <h5 class="mt-5 mb-3">
                 Images existantes
             </h5>
             <div class="row mb-4">
-                {% for image in trick.images %}
-                    <div class="col-md-3 mb-3 position-relative">
-                        <img src="{{ asset('uploads/images/' ~ image.url) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;"></div>
-                    {% else %}
-                        <p>
-                            Aucune image.
+                <div class="col-md-3 mb-3">
+                    {#  Main Image by default #}
+                    <img src="{{ asset('uploads/images/' ~ trick.mainImage) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;" alt="{{ trick.mainImage }}">
+                        <p class="small text-muted">
+                            Image principale par défaut:
+                            {{ trick.mainImage }}
                         </p>
-                    {% endfor %}
-                </div>
-                {# ===================== ADD NEW IMAGES ===================== #}
-                <h5>
-                    Ajouter de nouvelles images
-                </h5>
-                <button type="button" class="btn btn-success mt-2" id="add-image">
-                    <i class="bi bi-plus"></i>
-                    Ajouter une image
-                </button>
-                {# ===================== ACTIONS ===================== #}
-                <div class="mt-4">
-                    <button class="btn btn-primary">
-                        <i class="bi bi-save"></i>
-                        Enregistrer
-                    </button>
-                    <a href="{{ path('app_trick_show', {slug: trick.slug}) }}" class="btn btn-secondary">
-                        <i class="bi bi-x"></i>
-                        Annuler
-                    </a>
-                </div>
-                {{ form_end(form) }}
-            </div>
-        {% endblock %}
-        
+                    </div>
+                    {% for image in trick.images %}
+                        <div class="col-md-3 mb-3">
+                            <div class="position-relative">
+                                {# image #}
+                                <img src="{{ asset('uploads/images/' ~ image.url) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;" alt="{{ image.alt }}">
+                                    <p class="small text-muted">
+                                        Nom de l'image :
+                                        {{ trick.mainImage }}
+                                    </p>
+                                    {# DELETE BUTTON (top right overlay) #}
+                                    <form method="post" action="{{ path('app_image_delete', {id: image.id}) }}" class="position-absolute top-0 end-0 m-1" onsubmit="return confirm('Supprimer cette image ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_image_' ~ image.id) }}">
+                                            {% if image.url != trick.mainImage %}
+                                                <button class="btn btn-danger btn-sm rounded-circle shadow" style="width:30px; height:30px; display:flex; align-items:center; justify-content:center;">
+                                                    <i class="bi bi-trash">
+                                                        X
+                                                    </i>
+                                                </button>
+                                            {% endif %}
+                                        </form>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <p>
+                                    Aucune image.
+                                </p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endblock %}
+                
