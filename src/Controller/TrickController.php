@@ -150,27 +150,30 @@ final class TrickController extends AbstractController
             }
             
             // handle videos (YouTube links)
-            $videos [] = $form->get('videos')->getData();
-            
-            foreach ($videos as $videoUrl) {
-                
-                if ($videoUrl) {
-                    
-                    // transform watch URL -> embed URL
-                    $embedUrl = str_replace('watch?v=', 'embed/', $videoUrl);
+            $videosString = $form->get('videos')->getData();
 
-                    $video = new Video();
-                    $video->setEmbedUrl($embedUrl);
-                    $video->setIsMain(false);
-                    $video->setCreatedAt(new \DateTimeImmutable());
-                    $video->setTrick($trick); // associate the video with the trick
-                    $trick->addVideo($video);
-                    
-                    $entityManager->persist($video);
+            if ($videosString) {
+
+                $videos = array_map('trim', explode(',', $videosString));
+
+                foreach ($videos as $videoUrl) {
+
+                    if ($videoUrl) {
+
+                        $embedUrl = $this->convertToEmbedUrl($videoUrl);
+
+                        if ($embedUrl) {
+                            $video = new Video();
+                            $video->setEmbedUrl($embedUrl); // embed direct
+                            $video->setIsMain(false);
+                            $video->setCreatedAt(new \DateTimeImmutable());
+                            $video->setTrick($trick);
+
+                            $entityManager->persist($video);
+                        }
+                    }
                 }
             }
-            
-            $entityManager->persist($trick);
 
             $entityManager->flush();
             
@@ -195,4 +198,27 @@ final class TrickController extends AbstractController
 
         return $this->redirectToRoute('app_home');
     }
+
+    private function convertToEmbedUrl(string $url): ?string
+    {
+        $url = trim($url);
+
+        // youtube.com/watch?v=XXXX
+        if (preg_match('/youtube\.com\/watch\?v=([^&]+)/', $url, $matches)) {
+            return 'https://www.youtube.com/embed/' . $matches[1];
+        }
+
+        // youtu.be/XXXX
+        if (preg_match('/youtu\.be\/([^?&]+)/', $url, $matches)) {
+            return 'https://www.youtube.com/embed/' . $matches[1];
+        }
+
+        // embed OK
+        if (preg_match('/youtube\.com\/embed\/([^?&]+)/', $url, $matches)) {
+            return $url;
+        }
+
+        return null;
+    }
+
 }

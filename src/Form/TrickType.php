@@ -6,9 +6,8 @@ use App\Entity\Group;
 use App\Entity\Trick;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -36,18 +35,15 @@ class TrickType extends AbstractType
                 'required' => false,
             ])
 
-            ->add('videos', TextType::class, [
-                'label' => 'Vidéos (YouTube) ',
-                'allow_extra_fields' => true,
-                'allow_file_upload' => true,
+            ->add('videos', TextareaType::class, [
+                'label' => 'Vidéos (YouTube)',
                 'attr' => [
-                    'placeholder' => 'https://www.youtube.com/watch?v=xxxx, https://www.youtube.com/watch?v=xxxx, ...'
-                        
-                    ],
-                'mapped' => false, // IMPORTANT (this field is not directly associated with the Trick entity and we will handle it manually in the controller)
+                    'placeholder' => 'https://youtube.com/watch?v=xxx, https://youtu.be/xxx',
+                ],
+                'mapped' => false,
                 'required' => false,
             ])
-            
+                        
             // Group selection (dropdown)
             ->add('groups', EntityType::class, [
                 'class' => Group::class,

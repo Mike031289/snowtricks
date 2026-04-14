@@ -140,9 +140,8 @@
                                     <div class="position-relative">
                                         {# video (embed YouTube) #}
                                         <div class="ratio ratio-16x9">
-                                            <iframe src="{{ video.embedUrl | replace({'watch?v=': 'embed/'}) }}" title="YouTube video" allowfullscreen></iframe>
+                                            <iframe src="{{ video.embedUrl }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                                         </div>
-
                                         {# DELETE BUTTON (top right overlay) #}
                                         <form method="post" action="{{ path('app_video_delete', {id: video.id}) }}" class="position-absolute top-0 end-0 m-1" onsubmit="return confirm('Supprimer cette vidéo ?');">
                                             <input type="hidden" name="_token" value="{{ csrf_token('delete_video_' ~ video.id) }}">
