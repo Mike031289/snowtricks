@@ -142,13 +142,23 @@
                                         <div class="ratio ratio-16x9">
                                             <iframe src="{{ video.embedUrl | replace({'watch?v=': 'embed/'}) }}" title="YouTube video" allowfullscreen></iframe>
                                         </div>
+
+                                        {# DELETE BUTTON (top right overlay) #}
+                                        <form method="post" action="{{ path('app_video_delete', {id: video.id}) }}" class="position-absolute top-0 end-0 m-1" onsubmit="return confirm('Supprimer cette vidéo ?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_video_' ~ video.id) }}">
+                                                <button class="btn btn-danger btn-sm rounded-circle shadow" style="width:30px; height:30px; display:flex; align-items:center; justify-content:center;">
+                                                    <i class="bi bi-trash">
+                                                        X
+                                                    </i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
-                                </div>
-                            {% else %}
-                                <p>
-                                    Aucune vidéo.
-                                </p>
-                            {% endfor %}
-                        </div>
-                    {% endblock %}
-                    
+                                {% else %}
+                                    <p>
+                                        Aucune vidéo.
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        {% endblock %}
+                        
