@@ -86,8 +86,8 @@
             </a>
         </div>
         {{ form_end(form) }}
+        {# ===================== EXISTING IMAGES ===================== #}
         <div class="mb-4">
-            {# ===================== EXISTING IMAGES ===================== #}
             <h5 class="mt-5 mb-3">
                 Images existantes
             </h5>
@@ -129,5 +129,26 @@
                             {% endfor %}
                         </div>
                     </div>
-                {% endblock %}
-                
+                    {# ===================== EXISTING VIDEOS ===================== #}
+                    <div class="mb-4">
+                        <h5 class="mt-5 mb-3">
+                            Vidéos existantes
+                        </h5>
+                        <div class="row mb-4">
+                            {% for video in trick.videos %}
+                                <div class="col-md-4 mb-3">
+                                    <div class="position-relative">
+                                        {# video (embed YouTube) #}
+                                        <div class="ratio ratio-16x9">
+                                            <iframe src="{{ video.embedUrl | replace({'watch?v=': 'embed/'}) }}" title="YouTube video" allowfullscreen></iframe>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <p>
+                                    Aucune vidéo.
+                                </p>
+                            {% endfor %}
+                        </div>
+                    {% endblock %}
+                    

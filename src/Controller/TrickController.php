@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Image;
+use App\Entity\Video;
 use App\Entity\Trick;
 use App\Form\TrickType;
 use App\Repository\TrickRepository;
@@ -125,7 +126,6 @@ final class TrickController extends AbstractController
 
             // handle additional images (multiple file input)
             $images = $form->get('images')->getData();
-            // dd($images);
             
             foreach ($images as $imageFile) {
 
@@ -146,6 +146,24 @@ final class TrickController extends AbstractController
                     $trick->addImage($image);
                     
                     $entityManager->persist($image);
+                }
+            }
+            
+            // handle videos (YouTube links)
+            $videos [] = $form->get('videos')->getData();
+            
+            foreach ($videos as $videoUrl) {
+                
+                if ($videoUrl) {
+                    
+                    $video = new Video();
+                    $video->setEmbedUrl($videoUrl);
+                    $video->setIsMain(false);
+                    $video->setCreatedAt(new \DateTimeImmutable());
+                    $video->setTrick($trick); // associate the video with the trick
+                    $trick->addVideo($video);
+                    
+                    $entityManager->persist($video);
                 }
             }
             

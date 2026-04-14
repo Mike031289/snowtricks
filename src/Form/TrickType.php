@@ -37,9 +37,12 @@ class TrickType extends AbstractType
             ])
 
             ->add('videos', TextType::class, [
-                'label' => 'Vidéos',
+                'label' => 'Vidéos (YouTube) ',
+                'allow_extra_fields' => true,
+                'allow_file_upload' => true,
                 'attr' => [
-                    'placeholder' => 'https://www.youtube.com/watch?v=xxxx'
+                    'placeholder' => 'https://www.youtube.com/watch?v=xxxx, https://www.youtube.com/watch?v=xxxx, ...'
+                        
                     ],
                 'mapped' => false, // IMPORTANT (this field is not directly associated with the Trick entity and we will handle it manually in the controller)
                 'required' => false,
