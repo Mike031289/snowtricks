@@ -53,7 +53,7 @@
             ) }}
         </div>
         {# ===================== ADD NEW IMAGES ===================== #}
-        <h5>
+        <h5 class="mt-4 mb-3">
             Ajouter de nouvelles images
         </h5>
         <div id="images-collection">
@@ -61,6 +61,17 @@
             ) }}
             <small class="text-muted">
                 Vous pouvez sélectionner plusieurs images en maintenant CTRL (Windows) ou CMD (Mac)
+            </small>
+        </div>
+        {# ===================== ADD NEW VIDEOS ===================== #}
+        <h5 class="mt-4 mb-3">
+            Ajouter de nouvelles vidéos
+        </h5>
+        <div id="videos-collection">
+            {{ form_widget(form.videos, {'attr': {'class': 'form-control' }}
+            ) }}
+            <small class="text-muted">
+                Entrez les URL des vidéos YouTube, séparées par des virgules.
             </small>
         </div>
         {# ===================== ACTIONS ===================== #}

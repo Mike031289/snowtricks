@@ -8,6 +8,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,6 +20,7 @@ class TrickType extends AbstractType
         $isEdit = $options['is_edit'] ?? false;
     
         $builder
+        
             ->add('name')
             ->add('description')
             ->add('mainImage', FileType::class, [
@@ -26,6 +28,7 @@ class TrickType extends AbstractType
                 'mapped' =>  false, // this field is not directly associated with the Trick entity
                 'required' => !$isEdit, // dynamically required if creating a new trick, optional if editing 
             ])
+            
             ->add('images', FileType::class, [
                 'label' => 'Images supplémentaires',
                 'multiple' => true,
@@ -33,6 +36,15 @@ class TrickType extends AbstractType
                 'required' => false,
             ])
 
+            ->add('videos', TextType::class, [
+                'label' => 'Vidéos',
+                'attr' => [
+                    'placeholder' => 'https://www.youtube.com/watch?v=xxxx'
+                    ],
+                'mapped' => false, // IMPORTANT (this field is not directly associated with the Trick entity and we will handle it manually in the controller)
+                'required' => false,
+            ])
+            
             // Group selection (dropdown)
             ->add('groups', EntityType::class, [
                 'class' => Group::class,
