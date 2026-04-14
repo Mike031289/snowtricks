@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Image;
+use App\Entity\Video;
 use App\Entity\Trick;
 use App\Form\TrickType;
 use App\Repository\TrickRepository;
@@ -125,7 +126,6 @@ final class TrickController extends AbstractController
 
             // handle additional images (multiple file input)
             $images = $form->get('images')->getData();
-            // dd($images);
             
             foreach ($images as $imageFile) {
 
@@ -149,7 +149,31 @@ final class TrickController extends AbstractController
                 }
             }
             
-            $entityManager->persist($trick);
+            // handle videos (YouTube links)
+            $videosString = $form->get('videos')->getData();
+
+            if ($videosString) {
+
+                $videos = array_map('trim', explode(',', $videosString));
+
+                foreach ($videos as $videoUrl) {
+
+                    if ($videoUrl) {
+
+                        $embedUrl = $this->convertToEmbedUrl($videoUrl);
+
+                        if ($embedUrl) {
+                            $video = new Video();
+                            $video->setEmbedUrl($embedUrl); // embed direct
+                            $video->setIsMain(false);
+                            $video->setCreatedAt(new \DateTimeImmutable());
+                            $video->setTrick($trick);
+
+                            $entityManager->persist($video);
+                        }
+                    }
+                }
+            }
 
             $entityManager->flush();
             
@@ -174,4 +198,27 @@ final class TrickController extends AbstractController
 
         return $this->redirectToRoute('app_home');
     }
+
+    private function convertToEmbedUrl(string $url): ?string
+    {
+        $url = trim($url);
+
+        // youtube.com/watch?v=XXXX
+        if (preg_match('/youtube\.com\/watch\?v=([^&]+)/', $url, $matches)) {
+            return 'https://www.youtube.com/embed/' . $matches[1];
+        }
+
+        // youtu.be/XXXX
+        if (preg_match('/youtu\.be\/([^?&]+)/', $url, $matches)) {
+            return 'https://www.youtube.com/embed/' . $matches[1];
+        }
+
+        // embed OK
+        if (preg_match('/youtube\.com\/embed\/([^?&]+)/', $url, $matches)) {
+            return $url;
+        }
+
+        return null;
+    }
+
 }

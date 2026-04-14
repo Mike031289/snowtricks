@@ -53,7 +53,7 @@
             ) }}
         </div>
         {# ===================== ADD NEW IMAGES ===================== #}
-        <h5>
+        <h5 class="mt-4 mb-3">
             Ajouter de nouvelles images
         </h5>
         <div id="images-collection">
@@ -61,6 +61,17 @@
             ) }}
             <small class="text-muted">
                 Vous pouvez sélectionner plusieurs images en maintenant CTRL (Windows) ou CMD (Mac)
+            </small>
+        </div>
+        {# ===================== ADD NEW VIDEOS ===================== #}
+        <h5 class="mt-4 mb-3">
+            Ajouter de nouvelles vidéos
+        </h5>
+        <div id="videos-collection">
+            {{ form_widget(form.videos, {'attr': {'class': 'form-control' }}
+            ) }}
+            <small class="text-muted">
+                Entrez les URL des vidéos YouTube, séparées par des virgules.
             </small>
         </div>
         {# ===================== ACTIONS ===================== #}
@@ -75,8 +86,8 @@
             </a>
         </div>
         {{ form_end(form) }}
+        {# ===================== EXISTING IMAGES ===================== #}
         <div class="mb-4">
-            {# ===================== EXISTING IMAGES ===================== #}
             <h5 class="mt-5 mb-3">
                 Images existantes
             </h5>
@@ -118,5 +129,35 @@
                             {% endfor %}
                         </div>
                     </div>
-                {% endblock %}
-                
+                    {# ===================== EXISTING VIDEOS ===================== #}
+                    <div class="mb-4">
+                        <h5 class="mt-5 mb-3">
+                            Vidéos existantes
+                        </h5>
+                        <div class="row mb-4">
+                            {% for video in trick.videos %}
+                                <div class="col-md-4 mb-3">
+                                    <div class="position-relative">
+                                        {# video (embed YouTube) #}
+                                        <div class="ratio ratio-16x9">
+                                            <iframe src="{{ video.embedUrl }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                        </div>
+                                        {# DELETE BUTTON (top right overlay) #}
+                                        <form method="post" action="{{ path('app_video_delete', {id: video.id}) }}" class="position-absolute top-0 end-0 m-1" onsubmit="return confirm('Supprimer cette vidéo ?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_video_' ~ video.id) }}">
+                                                <button class="btn btn-danger btn-sm rounded-circle shadow" style="width:30px; height:30px; display:flex; align-items:center; justify-content:center;">
+                                                    <i class="bi bi-trash">
+                                                        X
+                                                    </i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <p>
+                                        Aucune vidéo.
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        {% endblock %}
+                        

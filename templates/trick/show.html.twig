@@ -41,60 +41,64 @@
                 Images
             </h3>
             <div class="row mb-4">
-                {% for image in trick.images %}
-                    <div class="col-md-3 mb-3">
-                        <img src="{{ asset('uploads/images/' ~ image.url) }}" class="img-fluid rounded shadow-sm" alt="{{ image.alt }}" style="height:150px; object-fit:cover;">
-                            <p class="small text-muted">
-                                Image :
-                                {{ trick.mainImage }}
+                <div class="col-md-3 mb-3">
+                    {#  Main Image by default #}
+                    <img src="{{ asset('uploads/images/' ~ trick.mainImage) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;" alt="{{ trick.mainImage }}">
+                        <p class="small text-muted">
+                            Image principale par défaut:
+                            {{ trick.mainImage }}
+                        </p>
+                    </div>
+                    {% for image in trick.images %}
+                        <div class="col-md-3 mb-3">
+                            <img src="{{ asset('uploads/images/' ~ image.url) }}" class="img-fluid rounded shadow-sm" alt="{{ image.alt }}" style="height:150px; object-fit:cover;">
+                                <p class="small text-muted">
+                                    Image :
+                                    {{ trick.mainImage }}
+                                </p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {# VIDEOS #}
+                    <h3 class="mb-3">
+                        <i class=""></i>
+                        Vidéos
+                    </h3>
+                    <div class="row mb-4">
+                        {% for video in trick.videos %}
+                            <div class="col-md-4 mb-3">
+                                <div class="ratio ratio-16x9">
+                                    <iframe src="{{ video.embedUrl | replace({'watch?v=': 'embed/'}) }}" title="YouTube video" allowfullscreen></iframe>
+                                </div>
+                            </div>
+                        {% else %}
+                            <p>
+                                Aucune vidéo disponible.
+                            </p>
+                        {% endfor %}
+                    </div>
+                    {# COMMENTS #}
+                    <h3 class="mb-3">
+                        <i class=""></i>
+                        Commentaires
+                    </h3>
+                    {% for comment in trick.comments %}
+                        <div class="border rounded p-2 mb-2">
+                            <strong>
+                                {{ comment.author.username }}
+                            </strong>
+                            <small class="text-muted">
+                                {{ comment.createdAt|date('d/m/Y H:i') }}
+                            </small>
+                            <p class="mb-0">
+                                {{ comment.content }}
                             </p>
                         </div>
                     {% else %}
                         <p>
-                            Aucune image disponible.
+                            Aucun commentaire.
                         </p>
                     {% endfor %}
                 </div>
-                {# VIDEOS #}
-                <h3 class="mb-3">
-                    <i class=""></i>
-                    Vidéos
-                </h3>
-                <div class="row mb-4">
-                    {% for video in trick.videos %}
-                        <div class="col-md-4 mb-3">
-                            <div class="ratio ratio-16x9">
-                                <iframe src="{{ video.embedUrl }}" title="YouTube video" allowfullscreen></iframe>
-                            </div>
-                        </div>
-                    {% else %}
-                        <p>
-                            Aucune vidéo disponible.
-                        </p>
-                    {% endfor %}
-                </div>
-                {# COMMENTS #}
-                <h3 class="mb-3">
-                    <i class=""></i>
-                    Commentaires
-                </h3>
-                {% for comment in trick.comments %}
-                    <div class="border rounded p-2 mb-2">
-                        <strong>
-                            {{ comment.author.username }}
-                        </strong>
-                        <small class="text-muted">
-                            {{ comment.createdAt|date('d/m/Y H:i') }}
-                        </small>
-                        <p class="mb-0">
-                            {{ comment.content }}
-                        </p>
-                    </div>
-                {% else %}
-                    <p>
-                        Aucun commentaire.
-                    </p>
-                {% endfor %}
-            </div>
-        {% endblock %}
-        
+            {% endblock %}
+            
