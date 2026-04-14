@@ -156,8 +156,11 @@ final class TrickController extends AbstractController
                 
                 if ($videoUrl) {
                     
+                    // transform watch URL -> embed URL
+                    $embedUrl = str_replace('watch?v=', 'embed/', $videoUrl);
+
                     $video = new Video();
-                    $video->setEmbedUrl($videoUrl);
+                    $video->setEmbedUrl($embedUrl);
                     $video->setIsMain(false);
                     $video->setCreatedAt(new \DateTimeImmutable());
                     $video->setTrick($trick); // associate the video with the trick
