@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    Modifier le commentaire
+    - SnowTricks
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Modifier votre commentaire</h1>
+        {{ form_start(form) }}
+            {{ form_row(form.content) }}
+            <button class="btn btn-primary mt-2">Enregistrer les modifications</button>
+            <a href="{{ path('app_trick_show', {slug: comment.trick.slug}) }}" class="btn btn-secondary mt-2">Annuler</a>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
