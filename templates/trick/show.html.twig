@@ -80,7 +80,9 @@
                     {# COMMENTS #}
                     <h3 class="mb-3">
                         <i class=""></i>
-                        Commentaires
+                        (
+                        {{ trick.comments|length }}
+                        ) Commentaires
                     </h3>
                     {% for comment in trick.comments %}
                         <div class="border rounded p-2 mb-2">
