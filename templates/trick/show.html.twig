@@ -78,27 +78,58 @@
                         {% endfor %}
                     </div>
                     {# COMMENTS #}
-                    <h3 class="mb-3">
-                        <i class=""></i>
-                        Commentaires
+                    {# add comment form #}
+                    {% if app.user %}
+                        <h4>
+                            Laisser un commentaire
+                        </h4>
+                        {{ form_start(commentForm) }}
+                        {{ form_widget(commentForm.content) }}
+                        <button class="btn btn-primary mt-2">
+                            Commenter
+                        </button>
+                        {{ form_end(commentForm) }}
+                    {% else %}
+                        <p>
+                            Veuillez vous connecter pour laisser un commentaire.
+                        </p>
+                    {% endif %}
+                    {# list comments with author and date and content  #}
+                    <h3 class="mt-4">
+                        (
+                        {{ trick.comments|length }}
+                        ) Commentaires
                     </h3>
                     {% for comment in trick.comments %}
-                        <div class="border rounded p-2 mb-2">
+                        <div class="border rounded p-3 mb-2">
                             <strong>
                                 {{ comment.author.username }}
                             </strong>
                             <small class="text-muted">
                                 {{ comment.createdAt|date('d/m/Y H:i') }}
                             </small>
-                            <p class="mb-0">
+                            <p class="mb-2">
                                 {{ comment.content }}
                             </p>
-                        </div>
-                    {% else %}
-                        <p>
-                            Aucun commentaire.
-                        </p>
-                    {% endfor %}
-                </div>
-            {% endblock %}
-            
+                            {% if app.user and comment.author == app.user %}
+                                <a href="{{ path('app_comment_edit', {id: comment.id}) }}" class="btn btn-sm btn-warning">
+                                    <i class=""></i>
+                                    Modifier
+                                </a>
+                                <form method="post" action="{{ path('app_comment_delete', {id: comment.id}) }}" style="display:inline;" onsubmit="return confirm('Delete this comment?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_comment_' ~ comment.id) }}">
+                                        <button class="btn btn-sm btn-danger">
+                                            <i class=""></i>
+                                            Delete
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <p>
+                                Aucun commentaire pour le moment. Soyez le premier à commenter !
+                            </p>
+                        {% endfor %}
+                    </div>
+                {% endblock %}
+                

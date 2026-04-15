@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Image;
 use App\Entity\Video;
 use App\Entity\Trick;
+use App\Entity\Comment;
+use App\Form\CommentType;
 use App\Form\TrickType;
 use App\Repository\TrickRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,6 +23,7 @@ final class TrickController extends AbstractController
     #[Route('/liste', name: 'app_trick_index', methods: ['GET'])]
     public function index(TrickRepository $trickRepository): Response
     {
+        
         return $this->render('trick/index.html.twig', [
             'tricks' => $trickRepository->findAll(),
         ]);
@@ -76,12 +79,29 @@ final class TrickController extends AbstractController
         ]);
     }
 
-    // Show a single trick by slug
-    #[Route('/{slug}', name: 'app_trick_show', methods: ['GET'])]
-    public function show(Trick $trick): Response
+    // Show a single trick by slug and handle comment form submission on the same page (POST request) and display the trick details (GET request)
+    #[Route('/{slug}', name: 'app_trick_show', methods: ['GET', 'POST'],)]
+    public function show(Trick $trick, Request $request, EntityManagerInterface $em): Response
     {
+        
+        /** @var Comment $comment The comment entity that will be used to create a new comment */
+        $comment = new Comment();
+        $commentForm = $this->createForm(CommentType::class, $comment); 
+        $commentForm->handleRequest($request);
+        if ($commentForm->isSubmitted() && $commentForm->isValid()) {
+            $comment->setAuthor($this->getUser());
+            $comment->setTrick($trick);
+            $comment->setCreatedAt(new \DateTimeImmutable());
+
+            $em->persist($comment);
+            $em->flush();
+
+            return $this->redirectToRoute('app_trick_show', ['slug' => $trick->getSlug()]);
+        }
+        
         return $this->render('trick/show.html.twig', [
-            'trick' => $trick
+            'trick' => $trick,
+            'commentForm' => $commentForm->createView()
         ]);
     }
 
