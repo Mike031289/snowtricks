@@ -41,4 +41,23 @@ final class CommentController extends AbstractController
             'comment' => $comment
         ]);
     }
+
+    #[Route('/comment/{id}/delete', name: 'app_comment_delete', methods: ['POST'])]
+    public function delete(Comment $comment, Request $request, EntityManagerInterface $em): Response
+    {
+        if ($this->isCsrfTokenValid('delete_comment_'.$comment->getId(), $request->request->get('_token'))) {
+
+            if ($comment->getAuthor() !== $this->getUser()) {
+                throw $this->createAccessDeniedException();
+            }
+
+            $slug = $comment->getTrick()->getSlug();
+
+            $em->remove($comment);
+            $em->flush();
+
+            }
+            
+        return $this->redirectToRoute('app_trick_show', ['slug' => $slug]);
+    }
 }

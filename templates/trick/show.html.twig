@@ -113,14 +113,21 @@
                             </p>
                             {% if app.user and comment.author == app.user %}
                                 <a href="{{ path('app_comment_edit', {id: comment.id}) }}" class="btn btn-sm btn-warning">
-                                <i class=""></i>
-                                Modifier
+                                    <i class=""></i>
+                                    Modifier
                                 </a>
+                                <form method="post" action="{{ path('app_comment_delete', {id: comment.id}) }}" style="display:inline;" onsubmit="return confirm('Delete this comment?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_comment_' ~ comment.id) }}">
+                                        <button class="btn btn-sm btn-danger">
+                                            <i class=""></i>
+                                            Delete
+                                        </button>
+                                    </form>
                                 {% endif %}
                             </div>
                         {% else %}
                             <p>
-                               Aucun commentaire pour le moment. Soyez le premier à commenter !
+                                Aucun commentaire pour le moment. Soyez le premier à commenter !
                             </p>
                         {% endfor %}
                     </div>
