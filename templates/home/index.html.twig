@@ -54,6 +54,33 @@
                             Aucun trick disponible.
                         </p>
                     {% endfor %}
+                    {# ===================== PAGINATION ===================== #}
+                    {% if totalPages > 1 %}
+                        <nav class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                {# Previous #}
+                                <li class="page-item {{ currentPage == 1 ? 'disabled' }}">
+                                    <a class="page-link" href="{{ path('app_home', {page: currentPage - 1}) }}">
+                                        ←
+                                    </a>
+                                </li>
+                                {# Pages #}
+                                {% for i in 1..totalPages %}
+                                    <li class="page-item {{ currentPage == i ? 'active' }}">
+                                        <a class="page-link" href="{{ path('app_home', {page: i}) }}">
+                                            {{ i }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                                {# Next #}
+                                <li class="page-item {{ currentPage == totalPages ? 'disabled' }}">
+                                    <a class="page-link" href="{{ path('app_home', {page: currentPage + 1}) }}">
+                                        →
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    {% endif %}
                 </div>
             {% endblock %}
             
