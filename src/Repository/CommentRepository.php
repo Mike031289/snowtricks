@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Comment;
+use App\Entity\Trick;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,6 +15,35 @@ class CommentRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Comment::class);
+    }
+
+    /**
+     * @return Comment[] Returns an array of Comment objects
+     * 
+     */
+    public function findPaginatedByTrick(Trick $trick, int $page, int $limit): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.trick = :trick')
+            ->setParameter('trick', $trick)
+            ->orderBy('c.createdAt', 'DESC')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return int Returns the count of comments for a trick
+     */
+    public function countByTrick(Trick $trick): int
+    {
+        return (int) $this->createQueryBuilder('c')
+            ->select('COUNT(c.id)')
+            ->andWhere('c.trick = :trick')
+            ->setParameter('trick', $trick)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
 //    /**

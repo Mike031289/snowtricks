@@ -8,6 +8,7 @@ use App\Entity\Trick;
 use App\Entity\Comment;
 use App\Form\CommentType;
 use App\Form\TrickType;
+use App\Repository\CommentRepository;
 use App\Repository\TrickRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,8 +36,9 @@ final class TrickController extends AbstractController
         Request $request, 
         EntityManagerInterface $entityManager, 
         SluggerInterface $slugger,
-        ): Response
-    {
+        ): Response 
+        {
+        
         $trick = new Trick();
         $form = $this->createForm(TrickType::class, $trick, [
             'is_edit' => false, // pass an option to indicate we are in create mode
@@ -79,12 +81,27 @@ final class TrickController extends AbstractController
         ]);
     }
 
-    // Show a single trick by slug and handle comment form submission on the same page (POST request) and display the trick details (GET request)
+    // Show a single trick by slug and handle comment form submission on the same page (POST request) and display the trick details with paginated comment (GET request)
     #[Route('/{slug}', name: 'app_trick_show', methods: ['GET', 'POST'],)]
-    public function show(Trick $trick, Request $request, EntityManagerInterface $em): Response
-    {
+    public function show(
+        Trick $trick, 
+        Request $request, 
+        EntityManagerInterface $em,
+        CommentRepository $commentRepository
+        ): Response 
+        {
         
-        /** @var Comment $comment The comment entity that will be used to create a new comment */
+        // Pagination
+        $page = max(1, $request->query->getInt('page', 1));
+        $limit = 3;
+
+        $comments = $commentRepository->findPaginatedByTrick($trick, $page, $limit);
+        $total = $commentRepository->countByTrick($trick);
+        $totalPages = ceil($total / $limit);
+        
+        /** 
+         * @var Comment $comment The comment entity that will be used to create a new comment 
+        */
         $comment = new Comment();
         $commentForm = $this->createForm(CommentType::class, $comment); 
         $commentForm->handleRequest($request);
@@ -96,12 +113,18 @@ final class TrickController extends AbstractController
             $em->persist($comment);
             $em->flush();
 
-            return $this->redirectToRoute('app_trick_show', ['slug' => $trick->getSlug()]);
+            return $this->redirectToRoute('app_trick_show', [
+                'slug' => $trick->getSlug(),
+                'page' => $page,
+            ]);
         }
         
         return $this->render('trick/show.html.twig', [
             'trick' => $trick,
-            'commentForm' => $commentForm->createView()
+            'commentForm' => $commentForm->createView(),
+            'comments' => $comments,
+            'currentPage' => $page,
+            'totalPages' => $totalPages
         ]);
     }
 

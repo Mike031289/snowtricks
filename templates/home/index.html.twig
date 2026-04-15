@@ -65,7 +65,7 @@
                                     </a>
                                 </li>
                                 {# Pages #}
-                                {% for i in 1..totalPages %}
+                                {% for i in max(1, currentPage - 2)..min(totalPages, currentPage + 2) %}
                                     <li class="page-item {{ currentPage == i ? 'active' }}">
                                         <a class="page-link" href="{{ path('app_home', {page: i}) }}">
                                             {{ i }}
