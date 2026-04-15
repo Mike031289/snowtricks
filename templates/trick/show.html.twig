@@ -78,7 +78,20 @@
                         {% endfor %}
                     </div>
                     {# COMMENTS #}
-                    <h3 class="mb-3">
+
+                    {# add comment form #}
+                    {% if app.user %}
+                        <h4>Laisser un commentaire</h4>
+                        {{ form_start(commentForm) }}
+                        {{ form_widget(commentForm.content) }}
+                        <button class="btn btn-primary mt-2">Commenter</button>
+                        {{ form_end(commentForm) }}
+                    {% else %}
+                        <p>Veuillez vous connecter pour laisser un commentaire.</p>
+                    {% endif %}
+
+                  {# list comments with author and date and content  #}
+                    <h3 class="mt-5">
                         <i class=""></i>
                         (
                         {{ trick.comments|length }}
