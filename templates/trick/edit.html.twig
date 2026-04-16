@@ -158,29 +158,6 @@
                                         Aucune vidéo.
                                     </p>
                                 {% endfor %}
-                                {# COMMENTS #}
-                                <h5 class="mt-5 mb-3">
-                                    Commentaires existants (
-                                    {{ trick.comments|length }}
-                                    )
-                                </h5>
-                                {% for comment in trick.comments %}
-                                    <div class="border rounded p-2 mb-2">
-                                        <strong>
-                                            {{ comment.author.username }}
-                                        </strong>
-                                        <small class="text-muted">
-                                            {{ comment.createdAt|date('d/m/Y H:i') }}
-                                        </small>
-                                        <p class="mb-0">
-                                            {{ comment.content }}
-                                        </p>
-                                    </div>
-                                {% else %}
-                                    <p>
-                                        Aucun commentaire.
-                                    </p>
-                                {% endfor %}
                             </div>
                         {% endblock %}
                         

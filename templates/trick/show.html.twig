@@ -96,11 +96,10 @@
                     {% endif %}
                     {# list comments with author and date and content  #}
                     <h3 class="mt-4">
-                        (
                         {{ trick.comments|length }}
-                        ) Commentaires
+                            Commentaires
                     </h3>
-                    {% for comment in trick.comments %}
+                    {% for comment in comments %}
                         <div class="border rounded p-3 mb-2">
                             <strong>
                                 {{ comment.author.username }}
@@ -130,6 +129,32 @@
                                 Aucun commentaire pour le moment. Soyez le premier à commenter !
                             </p>
                         {% endfor %}
+                        {% if totalPages > 1 %}
+                            <nav class="mt-3">
+                                <ul class="pagination justify-content-center">
+                                    {# Previous #}
+                                    <li class="page-item {{ currentPage == 1 ? 'disabled' }}">
+                                        <a class="page-link" href="{{ path('app_trick_show', {slug: trick.slug, page: currentPage - 1}) }}">
+                                            ←
+                                        </a>
+                                    </li>
+                                    {# Pages #}
+                                    {% for i in max(1, currentPage - 2)..min(totalPages, currentPage + 2) %}
+                                        <li class="page-item {{ currentPage == i ? 'active' }}">
+                                            <a class="page-link" href="{{ path('app_trick_show', {slug: trick.slug, page: i}) }}">
+                                                {{ i }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                    {# Next #}
+                                    <li class="page-item {{ currentPage == totalPages ? 'disabled' }}">
+                                        <a class="page-link" href="{{ path('app_trick_show', {slug: trick.slug, page: currentPage + 1}) }}">
+                                            →
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        {% endif %}
                     </div>
                 {% endblock %}
                 
