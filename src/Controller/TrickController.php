@@ -37,8 +37,12 @@ final class TrickController extends AbstractController
         EntityManagerInterface $em,
         SluggerInterface $slugger
     ): Response {
+        
+        //Security before add trick
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        
         $trick = new Trick();
-
+        
         $form = $this->createForm(TrickType::class, $trick, [
             'is_edit' => false,
         ]);
@@ -121,6 +125,8 @@ final class TrickController extends AbstractController
         SluggerInterface $slugger
     ): Response {
 
+        $this->denyAccessUnlessGranted('TRICK_EDIT', $trick);
+        
         $form = $this->createForm(TrickType::class, $trick, [
             'is_edit' => true,
         ]);
@@ -157,6 +163,8 @@ final class TrickController extends AbstractController
         Trick $trick,
         EntityManagerInterface $em
     ): Response {
+
+        $this->denyAccessUnlessGranted('TRICK_DELETE', $trick);
 
         if ($this->isCsrfTokenValid('delete'.$trick->getSlug(), $request->request->get('_token'))) {
             $em->remove($trick);
