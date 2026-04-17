@@ -148,7 +148,9 @@ final class TrickController extends AbstractController
 
             $em->flush();
 
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_trick_show', [
+                'slug' => $trick->getSlug()
+            ]);
         }
 
         return $this->render('trick/edit.html.twig', [

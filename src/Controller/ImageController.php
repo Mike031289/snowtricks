@@ -14,10 +14,9 @@ final class ImageController extends AbstractController
 {
     // This controller is only responsible for deleting images, as they are uploaded and managed in the TrickController.
     #[Route('/image/{id}/delete', name: 'app_image_delete', methods: ['POST'])]
-    #[IsGranted('IMAG_DELETE', subject: 'image', message: 'Vous devrez disposer de droits requis', statusCode: 404)]
+    #[IsGranted('IMAGE_DELETE', subject: 'image', message: 'Vous devrez disposer de droits requis', statusCode: 404)]
     public function delete(Image $image, Request $request, EntityManagerInterface $em): Response
     {
-
         if ($this->isCsrfTokenValid('delete_image_'.$image->getId(), $request->request->get('_token'))) {
 
             $trick = $image->getTrick();

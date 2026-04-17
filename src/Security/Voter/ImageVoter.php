@@ -34,6 +34,9 @@ final class ImageVoter extends Voter
         if (!$subject instanceof Image) {
             return false;
         }
+        if ($subject->isMain()) {
+            throw new \Exception('Impossible de supprimer l’image principale');
+        }
 
         // ... (check conditions and return true to grant permission) ...
         return match ($attribute) {
@@ -57,7 +60,8 @@ final class ImageVoter extends Voter
         }
 
         // At lest one image in trick so not delete if only one image in the trick
-        if ($trick->getImages()->count() <= 1) {
+        if ($trick->getImages()->count() <= 1 || ($trick->getImages() === ($trick->getMainImage()))){
+
             return false;
         }
 
