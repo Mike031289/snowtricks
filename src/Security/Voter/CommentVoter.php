@@ -9,8 +9,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 final class CommentVoter extends Voter
 {
-    public const EDIT = 'Comment_EDIT';
-    public const DELETE = 'Comment_DELETE';
+    public const EDIT = 'COMMENT_EDIT';
+    public const DELETE = 'COMMENT_DELETE';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
