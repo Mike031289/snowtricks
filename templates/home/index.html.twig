@@ -30,13 +30,15 @@
                                     <i class="bi bi-eye"></i>
                                     Afficher
                                 </a>
-                                {% if app.user and app.user == trick.author %}
+                                {% if is_granted('TRICK_EDIT', trick) %}
                                     <div class="mt-2">
                                         <a href="{{ path('app_trick_edit', {slug: trick.slug}) }}" class="btn btn-warning btn-sm">
                                             <i class="bi bi-pencil"></i>
                                             Modifier
                                         </a>
-                                        {# DELETE sécurisé avec formulaire #}
+                                    {% endif %}
+                                    {# DELETE sécurisé avec formulaire #}
+                                    {% if is_granted('TRICK_DELETE', trick) %}
                                         <form method="post" action="{{ path('app_trick_delete', {slug: trick.slug}) }}" style="display:inline-block;" onsubmit="return confirm('Tu es sûr de vouloir supprimer ce trick ?');">
                                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ trick.slug) }}">
                                                 <button class="btn btn-danger btn-sm">

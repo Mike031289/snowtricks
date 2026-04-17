@@ -15,8 +15,8 @@ final class CommentController extends AbstractController
     #[Route('/comment/{id}/edit', name: 'app_comment_edit')]
     public function edit(Comment $comment, Request $request, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
+        $this->denyAccessUnlessGranted('COMMENT_EDIT', $comment);
+        
         if ($comment->getAuthor() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
@@ -45,6 +45,8 @@ final class CommentController extends AbstractController
     #[Route('/comment/{id}/delete', name: 'app_comment_delete', methods: ['POST'])]
     public function delete(Comment $comment, Request $request, EntityManagerInterface $em): Response
     {
+        $this->denyAccessUnlessGranted('COMMENT_DELETE', $comment);
+        
         if ($this->isCsrfTokenValid('delete_comment_'.$comment->getId(), $request->request->get('_token'))) {
 
             if ($comment->getAuthor() !== $this->getUser()) {
