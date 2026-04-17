@@ -79,7 +79,7 @@
                     </div>
                     {# COMMENTS #}
                     {# add comment form #}
-                    {% if app.user %}
+                    {% if is_granted('ROLE_USER') %}
                         <h4>
                             Laisser un commentaire
                         </h4>

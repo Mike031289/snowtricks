@@ -3,7 +3,7 @@
     Accueil - SnowTricks
 {% endblock %}
 {% block body %}
-    {% if app.user %}
+    {% if is_granted('ROLE_USER', app.user ) %}
         <a href="{{ path('app_trick_new') }}" class="btn btn-success mb-4 float-end">
             <i class="bi bi-plus"></i>
             Ajouter un trick

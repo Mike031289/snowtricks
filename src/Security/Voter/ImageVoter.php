@@ -34,9 +34,6 @@ final class ImageVoter extends Voter
         if (!$subject instanceof Image) {
             return false;
         }
-        if ($subject->isMain()) {
-            throw new \Exception('Impossible de supprimer l’image principale');
-        }
 
         // ... (check conditions and return true to grant permission) ...
         return match ($attribute) {

@@ -9,6 +9,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 final class TrickVoter extends Voter
 {
+    public const ADD = 'TRICK_ADD';
     public const EDIT = 'TRICK_EDIT';
     public const DELETE = 'TRICK_DELETE';
     
@@ -16,7 +17,7 @@ final class TrickVoter extends Voter
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, [self::EDIT, self::DELETE])
+        return in_array($attribute, [self::ADD, self::EDIT, self::DELETE])
             && $subject instanceof Trick;
     }
 
@@ -30,6 +31,9 @@ final class TrickVoter extends Voter
 
         // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
+            case self::ADD:
+                // logic to determine if the user can ADD
+                return $this->canAdd($subject, $user);
             case self::EDIT:
                 // logic to determine if the user can EDIT
                 return $this->canEdit($subject, $user);
@@ -39,6 +43,11 @@ final class TrickVoter extends Voter
         }
 
         return false;
+    }
+    
+    private function canAdd(Trick $trick, User $user): bool
+    {
+        return $trick->getAuthor() === $user;
     }
     
     private function canEdit(Trick $trick, User $user): bool
