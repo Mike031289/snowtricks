@@ -154,6 +154,9 @@ final class TrickController extends AbstractController
         return $this->render('trick/edit.html.twig', [
             'trick' => $trick,
             'form' => $form->createView(),
+            'images' =>$trick->getImages(),
+            'mainImage' =>$trick->getMainImage(),
+            'videos' =>$trick->getVideos(),
         ]);
     }
 
