@@ -145,14 +145,16 @@
                                             <iframe src="{{ video.embedUrl }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                                         </div>
                                         {# DELETE BUTTON (top right overlay) #}
-                                        <form method="post" action="{{ path('app_video_delete', {id: video.id}) }}" class="position-absolute top-0 end-0 m-1" onsubmit="return confirm('Supprimer cette vidéo ?');">
-                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_video_' ~ video.id) }}">
-                                                <button class="btn btn-danger btn-sm rounded-circle shadow" style="width:30px; height:30px; display:flex; align-items:center; justify-content:center;">
-                                                    <i class="bi bi-trash">
-                                                        X
-                                                    </i>
-                                                </button>
-                                            </form>
+                                        {% if is_granted('VIDEO_DELETE', video) %}
+                                            <form method="post" action="{{ path('app_video_delete', {id: video.id}) }}" class="position-absolute top-0 end-0 m-1" onsubmit="return confirm('Supprimer cette vidéo ?');">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete_video_' ~ video.id) }}">
+                                                    <button class="btn btn-danger btn-sm rounded-circle shadow" style="width:30px; height:30px; display:flex; align-items:center; justify-content:center;">
+                                                        <i class="bi bi-trash">
+                                                            X
+                                                        </i>
+                                                    </button>
+                                                </form>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 {% else %}
