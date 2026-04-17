@@ -15,6 +15,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+
 
 #[Route('/trick')]
 final class TrickController extends AbstractController
@@ -32,13 +34,15 @@ final class TrickController extends AbstractController
     }
 
     #[Route('/ajouter', name: 'app_trick_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER', message: 'Vous devrez disposer de droits requis', statusCode: 404)]
     public function new(
         Request $request,
         EntityManagerInterface $em,
         SluggerInterface $slugger
     ): Response {
+    
         $trick = new Trick();
-
+        
         $form = $this->createForm(TrickType::class, $trick, [
             'is_edit' => false,
         ]);
@@ -46,6 +50,8 @@ final class TrickController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
             $trick->setAuthor($this->getUser());
             $trick->setCreatedAt(new \DateTimeImmutable());
@@ -89,8 +95,11 @@ final class TrickController extends AbstractController
         $comment = new Comment();
         $commentForm = $this->createForm(CommentType::class, $comment);
         $commentForm->handleRequest($request);
-
+        
         if ($commentForm->isSubmitted() && $commentForm->isValid()) {
+            
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+            
             $comment->setAuthor($this->getUser());
             $comment->setTrick($trick);
             $comment->setCreatedAt(new \DateTimeImmutable());
@@ -114,6 +123,7 @@ final class TrickController extends AbstractController
     }
 
     #[Route('/{slug}/modifier', name: 'app_trick_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('TRICK_EDIT', subject: 'trick', message: 'Vous devrez disposer de droits requis', statusCode: 404)]
     public function edit(
         Request $request,
         Trick $trick,
@@ -128,6 +138,8 @@ final class TrickController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
             $trick->setUpdatedAt(new \DateTimeImmutable());
 
@@ -142,16 +154,22 @@ final class TrickController extends AbstractController
 
             $em->flush();
 
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_trick_show', [
+                'slug' => $trick->getSlug()
+            ]);
         }
 
         return $this->render('trick/edit.html.twig', [
             'trick' => $trick,
             'form' => $form->createView(),
+            'images' =>$trick->getImages(),
+            'mainImage' =>$trick->getMainImage(),
+            'videos' =>$trick->getVideos(),
         ]);
     }
 
     #[Route('/{slug}/supprimer', name: 'app_trick_delete', methods: ['POST'])]
+    #[IsGranted('TRICK_DELETE', subject: 'trick', message: 'Vous devrez disposer de droits requis', statusCode: 404)]
     public function delete(
         Request $request,
         Trick $trick,
@@ -159,6 +177,9 @@ final class TrickController extends AbstractController
     ): Response {
 
         if ($this->isCsrfTokenValid('delete'.$trick->getSlug(), $request->request->get('_token'))) {
+            
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+            
             $em->remove($trick);
             $em->flush();
         }

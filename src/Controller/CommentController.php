@@ -9,14 +9,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class CommentController extends AbstractController
 {
     #[Route('/comment/{id}/edit', name: 'app_comment_edit')]
+    #[IsGranted('COMMENT_EDIT', subject: 'comment', message: 'Vous devrez disposer de droits requis', statusCode: 404)]
     public function edit(Comment $comment, Request $request, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
         if ($comment->getAuthor() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
@@ -43,8 +43,10 @@ final class CommentController extends AbstractController
     }
 
     #[Route('/comment/{id}/delete', name: 'app_comment_delete', methods: ['POST'])]
+     #[IsGranted('COMMENT_DELETE', subject: 'comment', message: 'Vous devrez disposer de droits requis', statusCode: 404)]
     public function delete(Comment $comment, Request $request, EntityManagerInterface $em): Response
     {
+        
         if ($this->isCsrfTokenValid('delete_comment_'.$comment->getId(), $request->request->get('_token'))) {
 
             if ($comment->getAuthor() !== $this->getUser()) {

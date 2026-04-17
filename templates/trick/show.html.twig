@@ -79,7 +79,7 @@
                     </div>
                     {# COMMENTS #}
                     {# add comment form #}
-                    {% if app.user %}
+                    {% if is_granted('ROLE_USER') %}
                         <h4>
                             Laisser un commentaire
                         </h4>
@@ -97,7 +97,7 @@
                     {# list comments with author and date and content  #}
                     <h3 class="mt-4">
                         {{ trick.comments|length }}
-                            Commentaires
+                        Commentaires
                     </h3>
                     {% for comment in comments %}
                         <div class="border rounded p-3 mb-2">
@@ -110,16 +110,18 @@
                             <p class="mb-2">
                                 {{ comment.content }}
                             </p>
-                            {% if app.user and comment.author == app.user %}
+                            {% if is_granted('COMMENT_EDIT', comment) %}
                                 <a href="{{ path('app_comment_edit', {id: comment.id}) }}" class="btn btn-sm btn-warning">
                                     <i class=""></i>
                                     Modifier
                                 </a>
+                            {% endif %}
+                            {% if is_granted('COMMENT_DELETE', comment) %}
                                 <form method="post" action="{{ path('app_comment_delete', {id: comment.id}) }}" style="display:inline;" onsubmit="return confirm('Delete this comment?');">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete_comment_' ~ comment.id) }}">
                                         <button class="btn btn-sm btn-danger">
                                             <i class=""></i>
-                                            Delete
+                                            Supprimer
                                         </button>
                                     </form>
                                 {% endif %}
