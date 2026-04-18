@@ -21,30 +21,30 @@ class ChangePasswordFormType extends AbstractType
                 'type' => PasswordType::class,
                 'options' => [
                     'attr' => [
-                        'autocomplete' => 'new-password',
+                        'autocomplete' => 'nouveau mot de passe',
                     ],
                 ],
                 'first_options' => [
                     'constraints' => [
                         new NotBlank(
-                            message: 'Please enter a password',
+                            message: 'Veuillez saisir un mot de passe',
                         ),
                         new Length(
                             min: 12,
-                            minMessage: 'Your password should be at least {{ limit }} characters',
+                            minMessage: 'Votre mot de passe doit comporter au moins {{ limit }} caractères',
                             // max length allowed by Symfony for security reasons
                             max: 4096,
                         ),
                         new PasswordStrength(),
                         new NotCompromisedPassword(),
                     ],
-                    'label' => 'New password',
+                    'label' => 'Nouveau mot de passe',
                 ],
                 'second_options' => [
-                    'label' => 'Repeat Password',
+                    'label' => 'Confirmez votre mot de passe',
                 ],
-                'invalid_message' => 'The password fields must match.',
-                // Instead of being set onto the object directly,
+                'invalid_message' => 'Les deux mots de passe doivent être identique.',
+                // Instead of being set on to the object directly,
                 // this is read and encoded in the controller
                 'mapped' => false,
             ])
