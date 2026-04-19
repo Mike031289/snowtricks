@@ -1,5 +1,6 @@
 body {
 
+    /* ======== Navabar ========= */
     .navbar-snow {
         background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
@@ -7,12 +8,13 @@ body {
 
     .navbar-snow .nav-link {
         color: #ffffff;
-        transition: 0.3s;
+        transition: 0.2s;
     }
 
     .navbar-snow .nav-link:hover {
         color: #00d4ff;
         transform: translateY(-1px);
+        opacity: 0.8;
     }
 
     .navbar-snow .navbar-brand {
@@ -31,5 +33,41 @@ body {
     img:hover {
         transform: scale(1.05);
         transition: 0.3s;
+    }
+
+    .navbar-nav {
+        gap: 12px;
+    }
+
+    .navbar-brand {
+        margin-right: 30px;
+    }
+
+    .navbar-nav .nav-item {
+        display: flex;
+        align-items: center;
+    }
+
+    /* ======== User Avatar =========*/
+    .avatar {
+        width: 36px;
+        height: 36px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        display: block;
+    }
+
+    .avatar-default {
+        width: 36px;
+        height: 36px;
+        background: #6c757d;
+        color: white;
+        font-size: 18px;
+
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 }
