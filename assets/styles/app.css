@@ -267,4 +267,11 @@ body {
 
     }
 
+    /* ============ TRICK FORM ========= */
+    
+    label.required::after {
+        content: " *";
+        color: red;
+    }
+
 }
