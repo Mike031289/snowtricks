@@ -31,7 +31,7 @@ final class ImageController extends AbstractController
             $em->flush();
 
             return $this->redirectToRoute('app_trick_edit', [
-                'slug' => $trick->getSlug()
+                'id' => $trick->getId()
             ]);
         }
 

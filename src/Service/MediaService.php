@@ -25,8 +25,8 @@ class MediaService
         if (!$file) {
             return;
         }
-
-        $filename = uniqid() . '.' . $file->guessExtension();
+        $slug = $trick->getSlug();
+        $filename = (string)$slug.'_'.uniqid() . '.' . $file->guessExtension();
 
         $file->move($this->imagesDirectory, $filename);
 
@@ -47,7 +47,8 @@ class MediaService
                 continue;
             }
 
-            $filename = uniqid() . '.' . $file->guessExtension();
+            $slug = $trick->getSlug();
+            $filename = (string)$slug.'_'.uniqid() . '.' . $file->guessExtension();
 
             $file->move($this->imagesDirectory, $filename);
 

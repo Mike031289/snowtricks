@@ -57,7 +57,7 @@ final class ImageVoter extends Voter
         }
 
         // At lest one image in trick so not delete if only one image in the trick
-        if ($trick->getImages()->count() <= 1 || ($trick->getImages() === ($trick->getMainImage()))){
+        if ($trick->getImages()->count() <= 0 || ($trick->getImages() === ($trick->getMainImage()))){
 
             return false;
         }

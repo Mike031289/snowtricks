@@ -8,13 +8,15 @@
             {% endblock %}
         </title>
         {% block stylesheets %}
-            {{ importmap('app') }}
             <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+            {{ importmap('app') }}
+            {# link to load faster main image #}
+            <link rel="preload" as="image" href="{{ asset('images/snow-banner.jpg') }}">
         {% endblock %}
     </head>
     <body>
         {# NAVBAR #}
-        <nav class="navbar navbar-expand-lg navbar-dark navbar-snow">
+        <nav class="navbar navbar-expand-lg navbar-dark navbar-snow sticky-navbar">
             <div class="container">
                 {# LOGO #}
                 <a class="navbar-brand fw-bold" href="{{ path('app_home') }}">

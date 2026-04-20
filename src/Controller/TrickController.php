@@ -57,8 +57,9 @@ final class TrickController extends AbstractController
             $trick->setCreatedAt(new \DateTimeImmutable());
             $trick->setUpdatedAt(new \DateTimeImmutable());
 
+            $local = \rand(5, 15);
             $trick->setSlug(
-                $slugger->slug($trick->getName())->lower()
+                $slugger->slug($trick->getName().'-'.$local)->lower()
             );
 
             // MAIN IMAGE + MEDIA
@@ -122,7 +123,7 @@ final class TrickController extends AbstractController
         ]);
     }
 
-    #[Route('/{slug}/modifier', name: 'app_trick_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/modifier', name: 'app_trick_edit', methods: ['GET', 'POST'])]
     #[IsGranted('TRICK_EDIT', subject: 'trick', message: 'Vous devrez disposer de droits requis', statusCode: 404)]
     public function edit(
         Request $request,
@@ -137,8 +138,12 @@ final class TrickController extends AbstractController
 
         $form->handleRequest($request);
 
+       
+                
         if ($form->isSubmitted() && $form->isValid()) {
-            
+
+            if ($this->isCsrfTokenValid('edit' . $trick->getId(), $request->request->get('_token')));
+                  
             $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
             $trick->setUpdatedAt(new \DateTimeImmutable());
@@ -153,10 +158,12 @@ final class TrickController extends AbstractController
             $this->mediaService->handleVideos($form, $trick);
 
             $em->flush();
-
+        
+        
             return $this->redirectToRoute('app_trick_show', [
                 'slug' => $trick->getSlug()
             ]);
+        
         }
 
         return $this->render('trick/edit.html.twig', [
@@ -168,17 +175,17 @@ final class TrickController extends AbstractController
         ]);
     }
 
-    #[Route('/{slug}/supprimer', name: 'app_trick_delete', methods: ['POST'])]
+    #[Route('/{id}/supprimer', name: 'app_trick_delete', methods: ['POST'])]
     #[IsGranted('TRICK_DELETE', subject: 'trick', message: 'Vous devrez disposer de droits requis', statusCode: 404)]
     public function delete(
         Request $request,
         Trick $trick,
         EntityManagerInterface $em
     ): Response {
-
-        if ($this->isCsrfTokenValid('delete'.$trick->getSlug(), $request->request->get('_token'))) {
+        
+        if ($this->isCsrfTokenValid('delete'.$trick->getId(), $request->request->get('_token'))) {
             
-            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
             
             $em->remove($trick);
             $em->flush();
