@@ -10,12 +10,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Service responsible for handling media (images & videos) related to a Trick.
- * 
+ * Service responsible for handling media (images & videos) for a Trick entity.
+ *
  * Responsibilities:
- * - Upload and store images
- * - Generate filenames
- * - Convert video URLs to embed format
+ * - Upload and store images on filesystem
+ * - Generate safe and unique filenames
+ * - Convert video URLs into embed URLs
  * - Persist Image and Video entities
  */
 class MediaService
@@ -28,36 +28,26 @@ class MediaService
     ) {}
 
     /**
-     * Handle the main image upload for a Trick.
-     * 
-     * @param FormInterface $form
-     * @param Trick $trick
+     * Handle main image upload for a Trick.
      */
     public function handleMainImage(FormInterface $form, Trick $trick): void
     {
         $file = $form->get('mainImage')->getData();
 
-        // If no file is uploaded, do nothing
+        // No file uploaded → nothing to do
         if (!$file) {
             return;
         }
 
-        // Generate a unique filename based on slug
-        $slug = $trick->getSlug();
-        $filename = (string) $slug . '_' . uniqid() . '.' . $file->guessExtension();
+        $filename = $this->generateFilename($trick->getSlug(), $file->guessExtension());
 
-        // Move file to configured directory
         $file->move($this->imagesDirectory, $filename);
 
-        // Set filename as main image on Trick entity
         $trick->setMainImage($filename);
     }
 
     /**
-     * Handle multiple image uploads for a Trick.
-     * 
-     * @param FormInterface $form
-     * @param Trick $trick
+     * Handle multiple additional images upload for a Trick.
      */
     public function handleImages(FormInterface $form, Trick $trick): void
     {
@@ -68,28 +58,19 @@ class MediaService
         }
 
         foreach ($files as $file) {
-
-            // Skip empty inputs
             if (!$file) {
                 continue;
             }
 
-            $slug = $trick->getSlug();
-            $filename = $slug . '_' . uniqid() . '.' . $file->guessExtension();
+            $filename = $this->generateFilename($trick->getSlug(), $file->guessExtension());
 
-            // Move uploaded file
             $file->move($this->imagesDirectory, $filename);
 
-            // Create Image entity
             $image = new Image();
             $image->setUrl($filename);
             $image->setAlt($trick->getName());
             $image->setCreatedAt(new \DateTimeImmutable());
-
-            // Important: default value to avoid SQL constraint errors
             $image->setIsMain(false);
-
-            // Associate image with Trick
             $image->setTrick($trick);
 
             $this->em->persist($image);
@@ -97,11 +78,7 @@ class MediaService
     }
 
     /**
-     * Handle video URLs and convert them into embed format.
-     * Accepts comma-separated URLs.
-     * 
-     * @param FormInterface $form
-     * @param Trick $trick
+     * Handle video URLs (comma-separated) and convert them into embed format.
      */
     public function handleVideos(FormInterface $form, Trick $trick): void
     {
@@ -111,32 +88,23 @@ class MediaService
             return;
         }
 
-        // Split input string into individual URLs
         $videos = array_map('trim', explode(',', $videosString));
 
         foreach ($videos as $url) {
-
             if (!$url) {
                 continue;
             }
 
-            // Convert URL into embeddable format
-            $embed = $this->convertToEmbedUrl($url);
+            $embedUrl = $this->convertToEmbedUrl($url);
 
-            // Skip unsupported URLs
-            if (!$embed) {
+            if (!$embedUrl) {
                 continue;
             }
 
-            // Create Video entity
             $video = new Video();
-            $video->setEmbedUrl($embed);
+            $video->setEmbedUrl($embedUrl);
             $video->setCreatedAt(new \DateTimeImmutable());
-
-            // Important: default value to avoid SQL constraint errors
             $video->setIsMain(false);
-
-            // Associate video with Trick
             $video->setTrick($trick);
 
             $this->em->persist($video);
@@ -144,17 +112,14 @@ class MediaService
     }
 
     /**
-     * Convert a video URL into an embeddable URL.
+     * Convert a URL into an embeddable video URL.
      * Supports YouTube and Dailymotion.
-     * 
-     * @param string $url
-     * @return string|null
      */
     private function convertToEmbedUrl(string $url): ?string
     {
         $url = trim($url);
 
-        // Basic URL validation
+        // Validate URL format
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
             return null;
         }
@@ -163,17 +128,14 @@ class MediaService
         // YOUTUBE
         // =========================
 
-        // youtube.com/watch?v=XXXX
         if (preg_match('/youtube\.com\/watch\?v=([^&]+)/', $url, $m)) {
             return 'https://www.youtube.com/embed/' . $m[1];
         }
 
-        // youtu.be/XXXX
         if (preg_match('/youtu\.be\/([^?&]+)/', $url, $m)) {
             return 'https://www.youtube.com/embed/' . $m[1];
         }
 
-        // Already an embed URL
         if (preg_match('/youtube\.com\/embed\/([^?&]+)/', $url)) {
             return $url;
         }
@@ -182,22 +144,26 @@ class MediaService
         // DAILYMOTION
         // =========================
 
-        // dailymotion.com/video/XXXX
         if (preg_match('/dailymotion\.com\/video\/([^_?&]+)/', $url, $m)) {
             return 'https://www.dailymotion.com/embed/video/' . $m[1];
         }
 
-        // geo.dailymotion.com/player.html?video=XXXX
         if (preg_match('/dailymotion\.com\/player\.html\?video=([^&]+)/', $url, $m)) {
             return 'https://www.dailymotion.com/embed/video/' . $m[1];
         }
 
-        // Already an embed URL
         if (preg_match('/dailymotion\.com\/embed\/video\/([^?&]+)/', $url)) {
             return $url;
         }
 
-        // Unsupported provider
         return null;
+    }
+
+    /**
+     * Generate a safe and unique filename for uploads.
+     */
+    private function generateFilename(string $slug, ?string $extension): string
+    {
+        return $slug . '_' . uniqid() . '.' . ($extension ?? 'jpg');
     }
 }

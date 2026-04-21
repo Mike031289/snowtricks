@@ -98,8 +98,9 @@ final class TrickController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
            if (!$this->isCsrfTokenValid('edit' . $trick->getId(), $request->request->get('_token'))) {
-            throw $this->redirectToRoute('app_trick_show', [
-                'slug' => $trick->getSlug()
+            return $this->redirectToRoute('app_trick_show', [
+                'id' => $trick->getId(),
+                'slug' => $trick->getSlug(),
             ]);
         }
                   
@@ -142,16 +143,23 @@ final class TrickController extends AbstractController
         Trick $trick,
         EntityManagerInterface $em
     ): Response {
-        
+
         if ($this->isCsrfTokenValid('delete'.$trick->getId(), $request->request->get('_token'))) {
-            
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-            
+
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
             $em->remove($trick);
             $em->flush();
         }
+        
+        $referer = $request->headers->get('referer');
 
-        return $this->redirectToRoute('app_home');
+        if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
+            return $this->redirect($referer);
+        }
+
+        return $this->redirectToRoute('app_profile');
+
     }
 
     #[Route('/{id}/{slug}', name: 'app_trick_show', methods: ['GET', 'POST'])]
@@ -185,8 +193,8 @@ final class TrickController extends AbstractController
             $em->flush();
 
             return $this->redirectToRoute('app_trick_show', [
-                'slug' => $trick->getSlug(),
                 'id' => $trick->getId(),
+                'slug' => $trick->getSlug(),
                 'page' => $page,
             ]);
         }

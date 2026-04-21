@@ -3,8 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Service\AvatarService;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -19,15 +23,35 @@ final class ProfileController extends AbstractController
 
         return $this->render('profile/index.html.twig', [
             'user' => $user,
-            'tricks' => $user->getTricks(), // cleaner and more efficient
+            'tricks' => $user->getTricks(),
         ]);
     }
 
     #[Route('/profile/avatar', name: 'app_profile_avatar', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
-    public function updateAvatar(): Response
-    {        
-        // This method is intentionally left blank as the avatar update logic is handled in the ProfileEditController
+    public function updateAvatar(
+        Request $request,
+        EntityManagerInterface $em,
+        AvatarService $avatarService
+    ): Response {
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$this->isCsrfTokenValid('avatar_upload', $request->request->get('_token'))) {
+            return $this->redirectToRoute('app_profile');
+        }
+
+        $file = $request->files->get('avatar');
+
+        if ($file instanceof UploadedFile) {
+
+            $filename = $avatarService->upload($user, $file);
+
+            $user->setAvatar($filename);
+            $em->flush();
+        }
+
         return $this->redirectToRoute('app_profile');
     }
 }
