@@ -10,18 +10,48 @@ import './styles/app.css';
 /*
  * SnowTricks App JS
  */
-// delete Trick modal system
+
 document.addEventListener('DOMContentLoaded', () => {
 
+    // ===== DELETE MODAL =====
     const modal = document.getElementById('deleteModal');
 
-    if (!modal) return;
+    if (modal) {
+        modal.addEventListener('show.bs.modal', (event) => {
+            const button = event.relatedTarget;
+            if (!button) return;
+        });
+    }
 
-    modal.addEventListener('show.bs.modal', (event) => {
+    // ===== AVATAR =====
+    const input = document.getElementById('avatarInput');
+    const form = document.getElementById('avatarForm');
+    const preview = document.getElementById('avatarPreview');
 
-        const button = event.relatedTarget;
-        if (!button) return;
+    if (!input || !form) return;
 
+    input.addEventListener('change', function () {
+
+        console.log('avatar selected');
+
+        const file = this.files[0];
+        if (!file) return;
+
+        // Preview
+        const reader = new FileReader();
+        reader.onload = function (e) {
+
+            if (preview.tagName === 'IMG') {
+                preview.src = e.target.result;
+            } else {
+                preview.innerHTML = `<img src="${e.target.result}" class="avatar-lg">`;
+            }
+        };
+
+        reader.readAsDataURL(file);
+
+        // Auto submit
+        form.submit();
     });
 
 });

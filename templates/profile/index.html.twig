@@ -23,7 +23,7 @@
                         </div>
                     {% endif %}
 
-                    {# Quick upload icon #}
+                    {# CLICK ICON #}
                     <label for="avatarInput" class="avatar-edit">
                         <i class="bi bi-pencil-fill"></i>
                     </label>
@@ -97,28 +97,28 @@
                                     {% for trick in tricks %}
                                         <div class="col-md-4">
 
-                                            <div class="card shadow-sm h-100 trick-card">
+                                            <div class="card shadow-sm h-100">
                                                 <div class="card-body">
 
                                                     <h6 class="fw-bold mb-2">
                                                         {{ trick.name }}
                                                     </h6>
 
-                                                    <div class="d-flex justify-content-between align-items-center">
+                                                    <div class="d-flex justify-content-between">
 
                                                         {# VIEW #}
                                                         <a href="{{ path('app_trick_show', {id: trick.id, slug: trick.slug}) }}" class="text-primary">
                                                             <i class="bi bi-eye"></i>
                                                         </a>
 
-                                                        {# EDIT (secured by Voter only) #}
+                                                        {# EDIT #}
                                                         {% if is_granted('TRICK_EDIT', trick) %}
                                                             <a href="{{ path('app_trick_edit', {id: trick.id}) }}" class="text-warning">
                                                                 <i class="bi bi-pencil"></i>
                                                             </a>
                                                         {% endif %}
 
-                                                        {# DELETE (secured + CSRF) #}
+                                                        {# DELETE #}
                                                         {% if is_granted('TRICK_DELETE', trick) %}
                                                             <form method="post" action="{{ path('app_trick_delete', {id: trick.id}) }}" onsubmit="return confirm('Supprimer ce trick ?');">
 
@@ -127,7 +127,6 @@
                                                                     <button class="btn btn-link text-danger p-0">
                                                                         <i class="bi bi-trash"></i>
                                                                     </button>
-
                                                                 </form>
                                                             {% endif %}
 
@@ -148,7 +147,6 @@
                             <div class="tab-pane fade" id="create">
 
                                 <div class="card p-4 text-center shadow-sm">
-
                                     <h5>
                                         <i class="bi bi-plus-circle"></i>
                                         Créer un trick
@@ -162,7 +160,6 @@
                                         <i class="bi bi-plus"></i>
                                         Ajouter
                                     </a>
-
                                 </div>
 
                             </div>
@@ -171,7 +168,6 @@
                             <div class="tab-pane fade" id="account">
 
                                 <div class="card p-4 shadow-sm">
-
                                     <h5>
                                         <i class="bi bi-shield-lock"></i>
                                         Sécurité
@@ -181,7 +177,6 @@
                                         <i class="bi bi-key"></i>
                                         Mot de passe
                                     </a>
-
                                 </div>
 
                             </div>
@@ -190,14 +185,12 @@
                             <div class="tab-pane fade" id="avatarTab">
 
                                 <div class="card p-4 shadow-sm">
-
                                     <h5>
                                         <i class="bi bi-person-circle"></i>
                                         Avatar
                                     </h5>
 
                                     <form method="post" enctype="multipart/form-data" action="{{ path('app_profile_avatar') }}">
-
                                         <input type="hidden" name="_token" value="{{ csrf_token('avatar_upload') }}">
 
                                             <input type="file" name="avatar" class="form-control mb-3">
@@ -206,9 +199,7 @@
                                                     <i class="bi bi-upload"></i>
                                                     Upload
                                                 </button>
-
                                             </form>
-
                                         </div>
 
                                     </div>
@@ -216,6 +207,5 @@
                                 </div>
 
                             </div>
-
                         {% endblock %}
                         
