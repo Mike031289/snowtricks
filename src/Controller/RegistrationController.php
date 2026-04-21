@@ -56,7 +56,8 @@ class RegistrationController extends AbstractController
             
             // do anything else you need here, like send an email
             
-            $this->addFlash('success', 'Nous vous avons envoyé un e-mail de confirmation afin de finaliser votre inscription. <br> Veuillez vérifier votre boîte de réception et cliquer sur le lien de confirmation pour activer votre compte avant de pouvoir vous connecter.');
+            $this->addFlash('success', 'Nous vous avons envoyé un e-mail de confirmation afin de finaliser votre inscription. 
+            Veuillez vérifier votre boîte de réception et cliquer sur le lien de confirmation pour activer votre compte avant de pouvoir vous connecter.');
             
             return $this->redirectToRoute('app_register');
         }

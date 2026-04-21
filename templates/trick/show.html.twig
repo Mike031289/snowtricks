@@ -86,14 +86,18 @@
                         {{ form_start(commentForm) }}
                         {{ form_widget(commentForm.content) }}
                         <button class="btn btn-primary mt-2">
-                        <i class="bi bi-chat-dots"></i>
+                            <i class="bi bi-chat-dots"></i>
                             Commenter
                         </button>
                         {{ form_end(commentForm) }}
                     {% else %}
-                        <p>
-                            Veuillez vous connecter pour laisser un commentaire.
-                        </p>
+                        <div class="alert alert-secondary " role="alert">
+                            Veuillez vous 
+                            <a class="alert-link m-2 text-primary" href="{{ path('app_login') }}">
+                                 connecter
+                            </a>
+                             pour laisser un commentaire.
+                        </div>
                     {% endif %}
                     {# list comments with author and date and content  #}
                     <h3 class="mt-4">
