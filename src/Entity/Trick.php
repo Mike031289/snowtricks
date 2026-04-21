@@ -7,8 +7,32 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: TrickRepository::class)]
+
+/**
+ * Database-level unique constraints (prevent duplicates in DB)
+ */
+#[ORM\Table(
+    name: 'trick',
+    uniqueConstraints: [
+        new ORM\UniqueConstraint(name: 'uniq_trick_slug', columns: ['slug']),
+        new ORM\UniqueConstraint(name: 'uniq_trick_name', columns: ['name']),
+    ]
+)]
+
+/**
+ * Application-level validation (user-friendly errors)
+ */
+#[UniqueEntity(
+    fields: ['name'],
+    message: 'Ce nom de figure existe déjà.'
+)]
+#[UniqueEntity(
+    fields: ['slug'],
+    message: 'Ce slug est déjà utilisé.'
+)]
 class Trick
 {
     #[ORM\Id]
@@ -16,10 +40,10 @@ class Trick
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 180)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 180)]
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -67,6 +91,8 @@ class Trick
         $this->comments = new ArrayCollection();
     }
 
+    // ===================== GETTERS / SETTERS =====================
+
     public function getId(): ?int
     {
         return $this->id;
@@ -80,7 +106,6 @@ class Trick
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -92,7 +117,6 @@ class Trick
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
-
         return $this;
     }
 
@@ -104,7 +128,6 @@ class Trick
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -116,7 +139,6 @@ class Trick
     public function setMainImage(string $mainImage): static
     {
         $this->mainImage = $mainImage;
-
         return $this;
     }
 
@@ -128,7 +150,6 @@ class Trick
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
@@ -140,7 +161,6 @@ class Trick
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
-
         return $this;
     }
 
@@ -152,7 +172,6 @@ class Trick
     public function setAuthor(?User $author): static
     {
         $this->author = $author;
-
         return $this;
     }
 
@@ -164,13 +183,11 @@ class Trick
     public function setGroups(?Group $groups): static
     {
         $this->groups = $groups;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Image>
-     */
+    // ===================== RELATIONS =====================
+
     public function getImages(): Collection
     {
         return $this->images;
@@ -182,25 +199,19 @@ class Trick
             $this->images->add($image);
             $image->setTrick($this);
         }
-
         return $this;
     }
 
     public function removeImage(Image $image): static
     {
         if ($this->images->removeElement($image)) {
-            // set the owning side to null (unless already changed)
             if ($image->getTrick() === $this) {
                 $image->setTrick(null);
             }
         }
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Video>
-     */
     public function getVideos(): Collection
     {
         return $this->videos;
@@ -212,25 +223,19 @@ class Trick
             $this->videos->add($video);
             $video->setTrick($this);
         }
-
         return $this;
     }
 
     public function removeVideo(Video $video): static
     {
         if ($this->videos->removeElement($video)) {
-            // set the owning side to null (unless already changed)
             if ($video->getTrick() === $this) {
                 $video->setTrick(null);
             }
         }
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Comment>
-     */
     public function getComments(): Collection
     {
         return $this->comments;
@@ -242,19 +247,16 @@ class Trick
             $this->comments->add($comment);
             $comment->setTrick($this);
         }
-
         return $this;
     }
 
     public function removeComment(Comment $comment): static
     {
         if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
             if ($comment->getTrick() === $this) {
                 $comment->setTrick(null);
             }
         }
-
         return $this;
     }
 }

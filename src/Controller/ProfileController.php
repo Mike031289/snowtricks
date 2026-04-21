@@ -22,4 +22,12 @@ final class ProfileController extends AbstractController
             'tricks' => $user->getTricks(), // cleaner and more efficient
         ]);
     }
+
+    #[Route('/profile/avatar', name: 'app_profile_avatar', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function updateAvatar(): Response
+    {        
+        // This method is intentionally left blank as the avatar update logic is handled in the ProfileEditController
+        return $this->redirectToRoute('app_profile');
+    }
 }

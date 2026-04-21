@@ -5,60 +5,218 @@
 {% endblock %}
 
 {% block body %}
-    <h1>
-        Mon profil
-    </h1>
 
-    <p>
-        Bienvenue
-        {{ app.user.username }}
-        sur votre profil.
-    </p>
+    <div class="container mt-5">
 
-    <h2>
-        Mes figures
-    </h2>
+        {# ================= PROFILE HEADER ================= #}
+        <div class="d-flex align-items-center mb-4 gap-3">
 
-    {% if tricks is empty %}
-        <p>
-            Vous n'avez encore créé aucune astuce.
-        </p>
-    {% else %}
-        <ul>
-            {% for trick in tricks %}
-                <li>
-                    <strong>
-                        {{ trick.name }}
-                    </strong>
+            <div class="avatar-wrapper position-relative">
 
-                    <a href="{{ path('app_trick_show', {id: trick.id, slug: trick.slug}) }}">
-                        voir les détails
-                    </a>
+                {# Avatar safe (works even if field not yet in entity) #}
+                {% if app.user.avatar is defined and app.user.avatar %}
+                    <img
+                    id="avatarPreview" src="{{ asset('uploads/avatars/' ~ app.user.avatar) }}" class="avatar-lg">
+                        {% else %}
+                        <div id="avatarPreview" class="avatar-default-lg">
+                            <i class="bi bi-person"></i>
+                        </div>
+                    {% endif %}
 
-                    <a href="{{ path('app_trick_edit', {id: trick.id}) }}">
-                        Modifier
-                    </a>
+                    {# Edit icon (click to upload) #}
+                    <label for="avatarInput" class="avatar-edit">
+                        <i class="bi bi-pencil-fill"></i>
+                    </label>
 
-                    <form method="post" action="{{ path('app_trick_delete', {id: trick.id}) }}" style="display:inline-block;" onsubmit="return confirm('Are you sure?');">
-                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ trick.id) }}">
-                            <button type="submit">
-                                supprimer
+                    {# Hidden upload form with CSRF #}
+                    <form id="avatarForm" method="post" enctype="multipart/form-data" action="{{ path('app_profile_avatar') }}">
+
+                        <input type="hidden" name="_token" value="{{ csrf_token('avatar_upload') }}">
+
+                            <input type="file" id="avatarInput" name="avatar" accept="image/*" hidden></form>
+
+                        </div>
+
+                        <div>
+                            <h2 class="mb-0">
+                                {{ app.user.username }}
+                            </h2>
+                            <small class="text-muted">
+                                Bienvenue sur votre espace personnel
+                            </small>
+                        </div>
+
+                    </div>
+
+                    {# ================= NAV TABS ================= #}
+                    <ul class="nav nav-tabs mb-4">
+
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tricks">
+                                <i class="bi bi-snow"></i>
+                                Mes tricks
                             </button>
-                        </form>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+                        </li>
 
-        <hr>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#create">
+                                <i class="bi bi-plus-circle"></i>
+                                Ajouter
+                            </button>
+                        </li>
 
-            <h2>
-                Compte settings
-            </h2>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#account">
+                                <i class="bi bi-gear"></i>
+                                Compte
+                            </button>
+                        </li>
 
-            <a href="{{ path('app_forgot_password_request') }}">
-                Changer mon mot de passe
-            </a>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#avatar">
+                                <i class="bi bi-image"></i>
+                                Avatar
+                            </button>
+                        </li>
 
-        {% endblock %}
-        
+                    </ul>
+
+                    {# ================= TAB CONTENT ================= #}
+                    <div class="tab-content">
+
+                        {# ===== TRICKS TAB ===== #}
+                        <div class="tab-pane fade show active" id="tricks">
+
+                            {% if tricks is empty %}
+                                <p class="text-muted">
+                                    Vous n'avez encore créé aucun trick.
+                                </p>
+                            {% else %}
+
+                                <div class="row g-3">
+                                    {% for trick in tricks %}
+                                        <div class="col-md-4">
+
+                                            <div class="card shadow-sm h-100 trick-card">
+                                                <div class="card-body">
+
+                                                    <h6 class="fw-bold mb-2">
+                                                        {{ trick.name }}
+                                                    </h6>
+
+                                                    <div class="d-flex justify-content-between align-items-center">
+
+                                                        {# VIEW #}
+                                                        <a href="{{ path('app_trick_show', {id: trick.id, slug: trick.slug}) }}" class="text-primary">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+
+                                                        {# EDIT secured #}
+                                                        {% if is_granted('TRICK_EDIT', trick) %}
+                                                        <input type="hidden" name="_token" value="{{ csrf_token('edit' ~ trick.id) }}">
+                                                            <a href="{{ path('app_trick_edit', {id: trick.id}) }}" class="text-warning">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </a>
+                                                        {% endif %}
+
+                                                        {# DELETE secured + CSRF #}
+                                                        {% if is_granted('TRICK_DELETE', trick) %}
+                                                            <form method="post" action="{{ path('app_trick_delete', {id: trick.id}) }}" onsubmit="return confirm('Supprimer ce trick ?');">
+
+                                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ trick.id) }}">
+
+                                                                    <button class="btn btn-link text-danger p-0">
+                                                                        <i class="bi bi-trash"></i>
+                                                                    </button>
+                                                                </form>
+                                                            {% endif %}
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                            {# ===== CREATE TAB ===== #}
+                            <div class="tab-pane fade" id="create">
+
+                                <div class="card p-4 shadow-sm text-center">
+
+                                    <h5 class="mb-3">
+                                        <i class="bi bi-plus-circle"></i>
+                                        Créer un nouveau trick
+                                    </h5>
+
+                                    <p class="text-muted">
+                                        Partage une nouvelle figure avec la communauté
+                                    </p>
+
+                                    <a href="{{ path('app_trick_new') }}" class="btn btn-primary">
+                                        <i class="bi bi-plus"></i>
+                                        Ajouter un trick
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                            {# ===== ACCOUNT TAB ===== #}
+                            <div class="tab-pane fade" id="account">
+
+                                <div class="card p-4 shadow-sm">
+
+                                    <h5 class="mb-3">
+                                        <i class="bi bi-shield-lock"></i>
+                                        Sécurité
+                                    </h5>
+
+                                    <a href="{{ path('app_forgot_password_request') }}" class="btn btn-warning">
+                                        <i class="bi bi-key"></i>
+                                        Changer le mot de passe
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                            {# ===== AVATAR TAB ===== #}
+                            <div class="tab-pane fade" id="avatar">
+
+                                <div class="card p-4 shadow-sm">
+
+                                    <h5 class="mb-3">
+                                        <i class="bi bi-person-circle"></i>
+                                        Mettre à jour l'avatar
+                                    </h5>
+
+                                    <form method="post" enctype="multipart/form-data" action="{{ path('app_profile_avatar') }}">
+
+                                        <input type="hidden" name="_token" value="{{ csrf_token('avatar_upload') }}">
+
+                                            <div class="mb-3">
+                                                <input type="file" name="avatar" class="form-control"></div>
+
+                                                <button class="btn btn-primary">
+                                                    <i class="bi bi-upload"></i>
+                                                    Upload
+                                                </button>
+
+                                            </form>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% endblock %}
+                        
