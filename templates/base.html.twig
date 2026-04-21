@@ -62,10 +62,12 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
-                                        <a class="dropdown-item" href="#">
+                                        {% if app.user %}
+                                        <a class="dropdown-item" href="{{ path('app_profile') }}">
                                             <i class="bi bi-person"></i>
                                             Profil
                                         </a>
+                                        {% endif %}
                                     </li>
                                     <li>
                                         <a class="dropdown-item text-danger" href="{{ path('app_logout') }}">

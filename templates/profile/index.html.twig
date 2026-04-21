@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Mon profil
+{% endblock %}
+
+{% block body %}
+    <h1>
+        Mon profil
+    </h1>
+
+    <p>
+        Bienvenue
+        {{ app.user.username }}
+        sur votre profil.
+    </p>
+
+    <h2>
+        Mes figures
+    </h2>
+
+    {% if tricks is empty %}
+        <p>
+            Vous n'avez encore créé aucune astuce.
+        </p>
+    {% else %}
+        <ul>
+            {% for trick in tricks %}
+                <li>
+                    <strong>
+                        {{ trick.name }}
+                    </strong>
+
+                    <a href="{{ path('app_trick_show', {slug: trick.slug}) }}">
+                        voir les détails
+                    </a>
+
+                    <a href="{{ path('app_trick_edit', {id: trick.id}) }}">
+                        Modifier
+                    </a>
+
+                    <form method="post" action="{{ path('app_trick_delete', {id: trick.id}) }}" style="display:inline-block;" onsubmit="return confirm('Are you sure?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ trick.id) }}">
+                            <button type="submit">
+                                supprimer
+                            </button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <hr>
+
+            <h2>
+                Compte settings
+            </h2>
+
+            <a href="{{ path('app_forgot_password_request') }}">
+                Changer mon mot de passe
+            </a>
+
+        {% endblock %}
+        
