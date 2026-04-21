@@ -92,76 +92,115 @@
                         {{ form_end(commentForm) }}
                     {% else %}
                         <div class="alert alert-secondary " role="alert">
-                            Veuillez vous 
+                            Veuillez vous
                             <a class="alert-link m-2 text-primary" href="{{ path('app_login') }}">
-                                 connecter
+                                connecter
                             </a>
-                             pour laisser un commentaire.
+                            pour laisser un commentaire.
                         </div>
                     {% endif %}
-                    {# list comments with author and date and content  #}
-                    <h3 class="mt-4">
-                        {{ trick.comments|length }}
-                        Commentaires
-                    </h3>
+                    {# ================= COMMENTS ================= #}
+                    <h4 class="mt-5 mb-4">
+                        💬
+                        {{ comments|length }}
+                        commentaire
+                        {{ comments|length > 1 ? 's' : '' }}
+                    </h4>
                     {% for comment in comments %}
-                        <div class="border rounded p-3 mb-2">
-                            <strong>
-                                {{ comment.author.username }}
-                            </strong>
-                            <small class="text-muted">
-                                {{ comment.createdAt|date('d/m/Y H:i') }}
-                            </small>
-                            <p class="mb-2">
-                                {{ comment.content }}
-                            </p>
-                            {% if is_granted('COMMENT_EDIT', comment) %}
-                                <a href="{{ path('app_comment_edit', {id: comment.id}) }}" class="btn btn-sm btn-warning">
-                                    <i class=""></i>
-                                    Modifier
-                                </a>
-                            {% endif %}
-                            {% if is_granted('COMMENT_DELETE', comment) %}
-                                <form method="post" action="{{ path('app_comment_delete', {id: comment.id}) }}" style="display:inline;" onsubmit="return confirm('Delete this comment?');">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_comment_' ~ comment.id) }}">
-                                        <button class="btn btn-sm btn-danger">
-                                            <i class=""></i>
-                                            Supprimer
-                                        </button>
-                                    </form>
+                        <div class="card mb-3 shadow-sm border-0">
+                            <div class="card-body d-flex gap-3">
+                                {# ===== AVATAR ===== #}
+                                <div>
+                                    {% if comment.author.avatar %}
+                                        <img
+                                        src="{{ asset('uploads/avatars/' ~ comment.author.avatar) }}" class="rounded-circle" style="width:50px;height:50px;object-fit:cover;">
+                                            {% else %}
+                                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width:50px;height:50px;">
+                                                <i class="bi bi-person text-muted"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    {# ===== CONTENT ===== #}
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <strong>
+                                                    {{ comment.author.username }}
+                                                </strong>
+                                                <br>
+                                                    <small class="text-muted">
+                                                        {{ comment.createdAt|date('d/m/Y à H:i') }}
+                                                    </small>
+                                                </div>
+                                                {# ACTIONS #}
+                                                <div class="d-flex gap-2">
+                                                    {% if is_granted('COMMENT_EDIT', comment) %}
+                                                        <a href="{{ path('app_comment_edit', {id: comment.id}) }}" class="text-warning">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                    {% endif %}
+                                                    {% if is_granted('COMMENT_DELETE', comment) %}
+                                                        <form method="post" action="{{ path('app_comment_delete', {id: comment.id}) }}" onsubmit="return confirm('Supprimer ce commentaire ?');">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_comment_' ~ comment.id) }}">
+                                                                <button class="btn btn-link text-danger p-0">
+                                                                    <i class="bi bi-trash"></i>
+                                                                </button>
+                                                            </form>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <p class="mt-3 mb-0">
+                                                    {{ comment.content }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="text-center text-muted py-4">
+                                        <i class="bi bi-chat-dots fs-2"></i>
+                                        <p class="mt-2">
+                                            Aucun commentaire pour le moment
+                                        </p>
+                                    </div>
+                                {% endfor %}
+                                {% if totalPages > 1 %}
+                                    <nav class="mt-3">
+                                        <ul class="pagination justify-content-center">
+                                            {# PREVIOUS #}
+                                            <li class="page-item {{ currentPage == 1 ? 'disabled' }}">
+                                                <a class="page-link" href="{{ path('app_trick_show', {
+                                                        id: trick.id,
+                                                        slug: trick.slug,
+                                                        page: currentPage - 1
+                                                    }) }}">
+                                                    ←
+                                                </a>
+                                            </li>
+                                            {# PAGES #}
+                                            {% for i in 1..totalPages %}
+                                                <li class="page-item {{ currentPage == i ? 'active' }}">
+                                                    <a class="page-link" href="{{ path('app_trick_show', {
+                                                            id: trick.id,
+                                                            slug: trick.slug,
+                                                            page: i
+                                                        }) }}">
+                                                        {{ i }}
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
+                                            {# NEXT #}
+                                            <li class="page-item {{ currentPage == totalPages ? 'disabled' }}">
+                                                <a class="page-link" href="{{ path('app_trick_show', {
+                                                    id: trick.id,
+                                                    slug: trick.slug,
+                                                    page: currentPage + 1
+                                                }) }}">
+                                                    →
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
                                 {% endif %}
                             </div>
-                        {% else %}
-                            <p>
-                                Aucun commentaire pour le moment. Soyez le premier à commenter !
-                            </p>
-                        {% endfor %}
-                        {% if totalPages > 1 %}
-                            <nav class="mt-3">
-                                <ul class="pagination justify-content-center">
-                                    {# Previous #}
-                                    <li class="page-item {{ currentPage == 1 ? 'disabled' }}">
-                                        <a class="page-link" href="{{ path('app_trick_show', {slug: trick.slug, page: currentPage - 1}) }}">
-                                            ←
-                                        </a>
-                                    </li>
-                                    {# Pages #}
-                                    {% for i in max(1, currentPage - 2)..min(totalPages, currentPage + 2) %}
-                                        <li class="page-item {{ currentPage == i ? 'active' }}">
-                                            <a class="page-link" href="{{ path('app_trick_show', {slug: trick.slug, page: i}) }}">
-                                                {{ i }}
-                                            </a>
-                                        </li>
-                                    {% endfor %}
-                                    {# Next #}
-                                    <li class="page-item {{ currentPage == totalPages ? 'disabled' }}">
-                                        <a class="page-link" href="{{ path('app_trick_show', {slug: trick.slug, page: currentPage + 1}) }}">
-                                            →
-                                        </a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        {% endif %}
-                    </div>
-                {% endblock %}
-                
+                        {% endblock %}
+                        

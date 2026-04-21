@@ -5,9 +5,7 @@
 {% block body %}
     {# ================= HERO BANNER ================= #}
     <section class="hero-banner text-center text-white">
-        {# Hero background image #}
         <img src="{{ asset('images/snow-banner.jpg') }}" alt="Montagne de snowboard" class="hero-img" loading="eager" fetchpriority="high">
-            {# Hero overlay content #}
             <div class="hero-overlay d-flex align-items-center justify-content-center">
                 <div class="hero-content">
                     <h1 class="display-4 fw-bold">
@@ -16,8 +14,7 @@
                     <p class="lead">
                         Explore, partage et maîtrise les tricks de snowboard
                     </p>
-                    {# Show add button only for authenticated users #}
-                    {% if is_granted('ROLE_USER', app.user) %}
+                    {% if is_granted('ROLE_USER') %}
                         <a href="{{ path('app_trick_new') }}" class="btn btn-light mt-3">
                             <i class="bi bi-plus-circle"></i>
                             Ajouter un trick
@@ -32,34 +29,30 @@
                 Derniers Tricks
             </h2>
             <div class="row g-4">
-                {# Loop through tricks #}
                 {% for trick in tricks %}
                     <div class="col-md-4">
                         <div class="card trick-card h-100 shadow-sm">
-                            {# Trick image #}
                             <div class="trick-image">
                                 <img src="{{ asset('uploads/images/' ~ trick.mainImage) }}" alt="{{ trick.name }}"></div>
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        {# Trick title #}
                                         <h5 class="card-title mb-0">
                                             {{ trick.name }}
                                         </h5>
-                                        {# Action icons (UI only) #}
                                         <div class="d-flex gap-2 align-items-center">
-                                            {# View trick #}
-                                            <a href="{{ path('app_trick_show',{id: trick.id, slug: trick.slug}) }}" class="text-primary" title="Voir le trick">
+                                            {# VIEW #}
+                                            <a href="{{ path('app_trick_show', {id: trick.id, slug: trick.slug}) }}" class="text-primary">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            {# Edit trick (secured by voter) #}
+                                            {# EDIT #}
                                             {% if is_granted('TRICK_EDIT', trick) %}
-                                                <a href="{{ path('app_trick_edit', {id: trick.id}) }}" class="text-warning" title="Modifier le trick">
+                                                <a href="{{ path('app_trick_edit', {id: trick.id}) }}" class="text-warning">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
                                             {% endif %}
-                                            {# Delete trick (secured by voter + CSRF) #}
+                                            {# DELETE BUTTON - FIXED #}
                                             {% if is_granted('TRICK_DELETE', trick) %}
-                                                <button type="button" class="btn btn-link text-danger p-0" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                                <button type="button" class="btn btn-link text-danger p-0" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ trick.id }}">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             {% endif %}
@@ -68,46 +61,43 @@
                                 </div>
                             </div>
                         </div>
-                        {# ================= DELETE MODAL (SINGLE INSTANCE OUTSIDE LOOP) ================= #}
-                        <div class="modal fade" id="deleteModal" tabindex="-1">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    {# Modal header #}
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">
-                                            Confirmation de suppression
-                                        </h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    {# Modal body #}
-                                    <div class="modal-body">
-                                        <p class="mb-0">
-                                            ⚠️ Es-tu sûr de vouloir supprimer cette figure ?
-                                            <br>
-                                                Cette action supprimera définitivement toutes les données associées.
-                                                <strong>
-                                                    Cette action est irréversible.
-                                                </strong>
-                                            </p>
+                        {# ================= MODAL PAR TRICK ================= #}
+                        {% if is_granted('TRICK_DELETE', trick) %}
+                            <div class="modal fade" id="deleteModal-{{ trick.id }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">
+                                                Confirmation de suppression
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
-                                        {# Modal footer #}
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                Annuler
-                                            </button>
-                                            {# Secure delete form (CSRF protected) #}
-                                            {% if is_granted('TRICK_DELETE', trick) %}
-                                                <form method="post" id="deleteForm" action="{{ path('app_trick_delete', {id: trick.id}) }}" class="d-inline">
+                                        <div class="modal-body">
+                                            <p>
+                                                ⚠️ Supprimer
+                                                <strong>
+                                                    {{ trick.name }}
+                                                </strong>
+                                                ?
+                                                <br>
+                                                    Cette action est irréversible.
+                                                </p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Annuler
+                                                </button>
+                                                <form method="post" action="{{ path('app_trick_delete', {id: trick.id}) }}">
                                                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ trick.id) }}">
                                                         <button class="btn btn-danger">
                                                             Supprimer
                                                         </button>
                                                     </form>
-                                                {% endif %}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                {% endif %}
                             {% else %}
                                 <p class="text-center">
                                     Aucun trick disponible.
@@ -119,13 +109,11 @@
                     {% if totalPages > 1 %}
                         <nav class="mt-5">
                             <ul class="pagination justify-content-center">
-                                {# Previous page #}
                                 <li class="page-item {{ currentPage == 1 ? 'disabled' }}">
                                     <a class="page-link" href="{{ path('app_home', {page: currentPage - 1}) }}">
                                         ←
                                     </a>
                                 </li>
-                                {# Page numbers #}
                                 {% for i in max(1, currentPage - 2)..min(totalPages, currentPage + 2) %}
                                     <li class="page-item {{ currentPage == i ? 'active' }}">
                                         <a class="page-link" href="{{ path('app_home', {page: i}) }}">
@@ -133,7 +121,6 @@
                                         </a>
                                     </li>
                                 {% endfor %}
-                                {# Next page #}
                                 <li class="page-item {{ currentPage == totalPages ? 'disabled' }}">
                                     <a class="page-link" href="{{ path('app_home', {page: currentPage + 1}) }}">
                                         →
