@@ -1,14 +1,21 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Créer un Trick{% endblock %}
-
+{% block title %}
+    Créer un Trick
+{% endblock %}
 {% block body %}
-    <h1>Créer un nouveau Trick</h1>
-
-    {{ include('trick/_form.html.twig') }}
-
-    <a href="{{ path('app_home') }}" class="btn btn-secondary mt-3 w-100">
-        <i class="bi bi-arrow-left"></i>
-        Retour
-    </a>
+    <div class="container my-5" style="max-width: 700px;">
+        <h1 class="mb-4 text-center">
+            <i class="bi bi-collection-play me-2"></i>
+            Ajouter une figure
+        </h1>
+        {# Form #}
+        {{ include('trick/_form.html.twig') }}
+        {# Back button #}
+        <div class="mt-3 text-center">
+            <a href="{{ path('app_home') }}" class="btn btn-secondary w-100">
+                <i class="bi bi-arrow-left me-2"></i>
+                Retour
+            </a>
+        </div>
+    </div>
 {% endblock %}
