@@ -10,55 +10,105 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class TrickType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
-    {   
-        // Determine if we are in edit mode (if the trick already has an ID) to conditionally set the 'mapped' option for the mainImage field
+    {
         $isEdit = $options['is_edit'] ?? false;
-    
+
         $builder
-        
-            ->add('name')
-            ->add('description')
+
+            // ===== TRICK NAME =====
+            ->add('name', null, [
+                'label' => 'Nom de la figure',
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'Le nom de la figure est obligatoire.',
+                    ]),
+                    new Assert\Length([
+                        'min' => 3,
+                        'max' => 255,
+                        'minMessage' => 'Le nom doit contenir au moins {{ limit }} caractères.',
+                        'maxMessage' => 'Le nom ne peut pas dépasser {{ limit }} caractères.',
+                    ]),
+                ],
+            ])
+
+            // ===== DESCRIPTION =====
+            ->add('description', TextareaType::class, [
+                'label' => 'Description',
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'La description est obligatoire.',
+                    ]),
+                    new Assert\Length([
+                        'min' => 10,
+                        'minMessage' => 'La description doit contenir au moins {{ limit }} caractères.',
+                    ]),
+                ],
+            ])
+
+            // ===== MAIN IMAGE =====
             ->add('mainImage', FileType::class, [
                 'label' => 'Image principale',
-                'mapped' =>  false, // this field is not directly associated with the Trick entity
-                'required' => !$isEdit, // dynamically required if creating a new trick, optional if editing 
+                'mapped' => false,
+                'required' => !$isEdit,
+                'constraints' => [
+                    new Assert\File([
+                        'maxSize' => '2M',
+                        'maxSizeMessage' => 'L’image ne doit pas dépasser 2 Mo.',
+                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/webp'],
+                        'mimeTypesMessage' => 'Formats autorisés : JPG, PNG, WEBP.',
+                    ]),
+                    ...(!$isEdit ? [
+                        new Assert\NotBlank([
+                            'message' => 'Une image principale est obligatoire.',
+                        ])
+                    ] : []),
+                ],
             ])
-            
+
+            // ===== ADDITIONAL IMAGES =====
             ->add('images', FileType::class, [
                 'label' => 'Images supplémentaires',
                 'multiple' => true,
-                'mapped' => false, // this field is not directly associated with the Trick entity
-                'required' => false,
-            ])
-
-            ->add('videos', TextareaType::class, [
-                'label' => 'Vidéos (YouTube)',
-                'attr' => [
-                    'placeholder' => 'https://youtube.com/watch?v=xxx, https://youtu.be/xxx',
-                ],
                 'mapped' => false,
                 'required' => false,
             ])
-                        
-            // Group selection (dropdown)
+
+            // ===== VIDEOS =====
+            ->add('videos', TextareaType::class, [
+                'label' => 'Vidéos (YouTube)',
+                'mapped' => false,
+                'required' => false,
+                'attr' => [
+                    'placeholder' => 'https://youtube.com/watch?v=xxx',
+                ],
+            ])
+
+            // ===== GROUP =====
             ->add('groups', EntityType::class, [
                 'class' => Group::class,
-                'choice_label' => 'name', // name is the property to display in the dropdown. Don't use 'id' as it will show the ID instead of the name.
+                'choice_label' => 'name',
                 'placeholder' => 'Choisir un groupe',
                 'required' => true,
-            ])
-        ;
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'Veuillez sélectionner un groupe.',
+                    ]),
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Trick::class,
-            'is_edit' => false, // default value for the is_edit option
+            'is_edit' => false,
         ]);
     }
 }

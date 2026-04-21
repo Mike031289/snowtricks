@@ -150,8 +150,10 @@ class ResetPasswordController extends AbstractController
             //     $translator->trans(ResetPasswordExceptionInterface::MESSAGE_PROBLEM_HANDLE, [], 'ResetPasswordBundle'),
             //     $translator->trans($e->getReason(), [], 'ResetPasswordBundle')
             // ));
-
-            return $this->redirectToRoute('app_check_email');
+            
+            $this->addFlash('reset_password_error', 'Veuillez vérifier votre boîte de réception ou réessayer plus tard.');
+    
+            return $this->redirectToRoute('app_check_email');   
         }
 
         $email = (new TemplatedEmail())

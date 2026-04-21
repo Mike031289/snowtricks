@@ -1,18 +1,48 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}
     Réinitialiser votre mot de passe
 {% endblock %}
-
 {% block body %}
-    <h1>
-        Réinitialiser votre mot de passe
-    </h1>
-
-    {{ form_start(resetForm) }}
-    {{ form_row(resetForm.plainPassword) }}
-    <button class="btn btn-primary mt-3">
-        Réinitialiser le mot de passe
-    </button>
-    {{ form_end(resetForm) }}
+    <div class="container" style="max-width: 500px;">
+        <h1 class="mb-4 text-center">
+            🔐 Nouveau mot de passe
+        </h1>
+        <p class="text-muted text-center mb-4">
+            Choisissez un nouveau mot de passe sécurisé.
+        </p>
+        {{ form_start(resetForm, {'attr': {'novalidate': 'novalidate' }}
+        ) }}
+        <div class="mb-3">
+            {{ form_label(resetForm.plainPassword, 'Mot de passe') }}
+            {{ form_widget(resetForm.plainPassword.first, {
+            'attr': {
+                'class': 'form-control ' ~ (resetForm.plainPassword.first.vars.errors|length ? 'is-invalid' : '')
+            }
+        }) }}
+            <div class="invalid-feedback d-block">
+                {{ form_errors(resetForm.plainPassword.first) }}
+            </div>
+        </div>
+        <div class="mb-3">
+            {{ form_label(resetForm.plainPassword.second, 'Confirmer le mot de passe') }}
+            {{ form_widget(resetForm.plainPassword.second, {
+            'attr': {
+                'class': 'form-control ' ~ (resetForm.plainPassword.second.vars.errors|length ? 'is-invalid' : '')
+            }
+        }) }}
+            <div class="invalid-feedback d-block">
+                {{ form_errors(resetForm.plainPassword.second) }}
+            </div>
+        </div>
+        <button class="btn btn-primary w-100 mt-3">
+            <i class="bi bi-key"></i>
+            Réinitialiser le mot de passe
+        </button>
+        {{ form_end(resetForm) }}
+        <p class="mt-4 text-center">
+            <a href="{{ path('app_login') }}" class="text-muted">
+                ← Retour à la connexion
+            </a>
+        </p>
+    </div>
 {% endblock %}

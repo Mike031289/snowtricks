@@ -32,13 +32,14 @@ final class CommentController extends AbstractController
             $em->flush();
 
             return $this->redirectToRoute('app_trick_show', [
-                'slug' => $comment->getTrick()->getSlug()
+                'slug' => $comment->getTrick()->getSlug(),
+                'id' => $comment->getTrick()->getId(),
             ]);
         }
 
         return $this->render('comment/edit.html.twig', [
             'form' => $form->createView(),
-            'comment' => $comment
+            'comment' => $comment,
         ]);
     }
 
@@ -58,8 +59,16 @@ final class CommentController extends AbstractController
             $em->remove($comment);
             $em->flush();
 
-            }
-            
-        return $this->redirectToRoute('app_trick_show', ['slug' => $slug]);
+            return $this->redirectToRoute('app_trick_show', [
+                'slug' => $slug,
+                'id' => $comment->getTrick()->getId(),
+            ]);    
+        
+        }
+        
+        return $this->redirectToRoute('app_trick_show', [
+            'slug' => $comment->getTrick()->getSlug(),
+            'id' => $comment->getTrick()->getId(),
+        ]);
     }
 }

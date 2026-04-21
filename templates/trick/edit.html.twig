@@ -76,92 +76,89 @@
         </div>
         {# ===================== ACTIONS ===================== #}
         <div class="mt-4">
-            <button type="submit" class="btn btn-primary">
-                <i class="bi bi-save"></i>
-                Enregistrer
-            </button>
-            <a href="{{ path('app_home') }}" class="btn btn-secondary">
-                <i class="bi bi-x"></i>
-                Annuler
-            </a>
-        </div>
-        {{ form_end(form) }}
-        {# ===================== EXISTING IMAGES ===================== #}
-        <div class="mb-4">
-            <h5 class="mt-5 mb-3">
-                Images existantes
-            </h5>
-            <div class="row mb-4">
-                <div class="col-md-3 mb-3">
-                    {#  Main Image by default #}
-                    <img src="{{ asset('uploads/images/' ~ mainImage) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;" alt="{{ mainImage }}">
-                        <p class="small text-muted">
-                            Image principale par défaut:
-                            {{ mainImage }}
-                        </p>
-                    </div>
-                    {% for image in images %}
-                        <div class="col-md-3 mb-3">
-                            <div class="position-relative">
-                                {# image #}
-                                <img src="{{ asset('uploads/images/' ~ image.url) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;" alt="{{ image.alt }}">
-                                    <p class="small text-muted">
-                                        Nom de l'image :
-                                        {{ image.url }}
-                                    </p>
-                                    {# DELETE BUTTON (top right overlay) #}
-                                    {% if is_granted('IMAGE_DELETE', image) %}
-                                        <form method="post" action="{{ path('app_image_delete', {id: image.id}) }}" class="position-absolute top-0 end-0 m-1" onsubmit="return confirm('Supprimer cette image ?');">
-                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_image_' ~ image.id) }}">
-                                                {% if image.url != mainImage %}
-                                                    <button class="btn btn-danger btn-sm rounded-circle shadow" style="width:30px; height:30px; display:flex; align-items:center; justify-content:center;">
-                                                        <i class="bi bi-trash">
-                                                            X
-                                                        </i>
-                                                    </button>
-                                                {% endif %}
-                                            </form>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            {% else %}
-                                <p>
-                                    Aucune image.
-                                </p>
-                            {% endfor %}
+            <button class="btn btn-primary">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ trick.id) }}">
+                    <i class="bi bi-check-circle"></i>
+                    Enregistrer
+                </button>
+                <a href="{{ path('app_home') }}" class="btn btn-secondary">
+                    <i class="bi bi-x"></i>
+                    Annuler
+                </a>
+            </div>
+            {{ form_end(form) }}
+            {# ===================== EXISTING IMAGES ===================== #}
+            <div class="mb-4">
+                <h5 class="mt-5 mb-3">
+                    Images existantes
+                </h5>
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3">
+                        {#  Main Image by default #}
+                        <img src="{{ asset('uploads/images/' ~ mainImage) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;" alt="{{ mainImage }}">
+                            <p class="small text-muted">
+                                Image principale par défaut:
+                                {{ mainImage }}
+                            </p>
                         </div>
-                    </div>
-                    {# ===================== EXISTING VIDEOS ===================== #}
-                    <div class="mb-4">
-                        <h5 class="mt-5 mb-3">
-                            Vidéos existantes
-                        </h5>
-                        <div class="row mb-4">
-                            {% for video in videos %}
-                                <div class="col-md-4 mb-3">
-                                    <div class="position-relative">
-                                        {# video (embed YouTube) #}
-                                        <div class="ratio ratio-16x9">
-                                            <iframe src="{{ video.embedUrl }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                        </div>
+                        {% for image in images %}
+                            <div class="col-md-3 mb-3">
+                                <div class="position-relative">
+                                    {# image #}
+                                    <img src="{{ asset('uploads/images/' ~ image.url) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;" alt="{{ image.alt }}">
+                                        <p class="small text-muted">
+                                            Nom de l'image :
+                                            {{ image.url }}
+                                        </p>
                                         {# DELETE BUTTON (top right overlay) #}
-                                        {% if is_granted('VIDEO_DELETE', video) %}
-                                            <form method="post" action="{{ path('app_video_delete', {id: video.id}) }}" class="position-absolute top-0 end-0 m-1" onsubmit="return confirm('Supprimer cette vidéo ?');">
-                                                <input type="hidden" name="_token" value="{{ csrf_token('delete_video_' ~ video.id) }}">
-                                                    <button class="btn btn-danger btn-sm rounded-circle shadow" style="width:30px; height:30px; display:flex; align-items:center; justify-content:center;">
-                                                        <i class="bi bi-trash">
-                                                            X
-                                                        </i>
-                                                    </button>
+                                        {% if is_granted('IMAGE_DELETE', image) %}
+                                            <form method="post" action="{{ path('app_image_delete', {id: image.id}) }}" class="position-absolute top-0 end-0 m-1" onsubmit="return confirm('Supprimer cette image ?');">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete_image_' ~ image.id) }}">
+                                                    {% if image.url != mainImage %}
+                                                        <button class="btn btn-danger btn-sm rounded-circle shadow" style="width:30px; height:30px; display:flex; align-items:center; justify-content:center;">
+                                                            <i class="bi bi-x-lg"></i>
+                                                        </button>
+                                                    {% endif %}
                                                 </form>
                                             {% endif %}
                                         </div>
                                     </div>
                                 {% else %}
                                     <p>
-                                        Aucune vidéo.
+                                        Aucune image.
                                     </p>
                                 {% endfor %}
                             </div>
-                        {% endblock %}
-                        
+                        </div>
+                        {# ===================== EXISTING VIDEOS ===================== #}
+                        <div class="mb-4">
+                            <h5 class="mt-5 mb-3">
+                                Vidéos existantes
+                            </h5>
+                            <div class="row mb-4">
+                                {% for video in videos %}
+                                    <div class="col-md-4 mb-3">
+                                        <div class="position-relative">
+                                            {# video (embed YouTube) #}
+                                            <div class="ratio ratio-16x9">
+                                                <iframe src="{{ video.embedUrl }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                            </div>
+                                            {# DELETE BUTTON (top right overlay) #}
+                                            {% if is_granted('VIDEO_DELETE', video) %}
+                                                <form method="post" action="{{ path('app_video_delete', {id: video.id}) }}" class="position-absolute top-0 end-0 m-1" onsubmit="return confirm('Supprimer cette vidéo ?');">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_video_' ~ video.id) }}">
+                                                        <button class="btn btn-danger btn-sm rounded-circle shadow" style="width:30px; height:30px; display:flex; align-items:center; justify-content:center;">
+                                                            <i class="bi bi-x-lg"></i>
+                                                        </button>
+                                                    </form>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <p>
+                                            Aucune vidéo.
+                                        </p>
+                                    {% endfor %}
+                                </div>
+                            {% endblock %}
+                            
