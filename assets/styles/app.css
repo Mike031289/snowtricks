@@ -5,6 +5,11 @@ body {
         border-color: #355f73 !important;
     }
 
+    .dropdown-item:hover {
+        background-color: #355f73 !important;
+        color: #ffffff !important;
+    }
+    
     .btn-primary:hover {
         background-color: #2a4e5e !important;
         border-color: #2a4e5e !important;
