@@ -3,55 +3,58 @@
     Connexion
 {% endblock %}
 {% block body %}
-    <h1 class="h2 mb-4">
-        Veuillez vous connecter
-    </h1>
-    <form method="post" novalidate>
-        {# Error message #}
-        {% if error %}
-            <div class="alert alert-danger">
-                {{ error.messageKey|trans(error.messageData, 'security') }}
-            </div>
-        {% endif %}
-        {# Username #}
-        <div class="mb-3">
-            <label for="inputUsername" class="form-label">
-                Nom d'utilisateur
-            </label>
-            <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control {{ error ? 'is-invalid' : '' }}" autocomplete="username" autofocus></div>
-            {# Password #}
+    <div class="container" style="max-width: 500px;">
+        <h1 class="h2 mb-4 text-center">
+            <i class="bi bi-box-arrow-in-right me-2"></i>
+            Connexion
+        </h1>
+        <form method="post" novalidate>
+            {# Error message #}
+            {% if error %}
+                <div class="alert alert-danger">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+            {# Username #}
             <div class="mb-3">
-                <label for="inputPassword" class="form-label">
-                    Mot de passe
+                <label for="inputUsername" class="form-label">
+                    Nom d'utilisateur
                 </label>
-                <input type="password" name="password" id="inputPassword" class="form-control {{ error ? 'is-invalid' : '' }}" autocomplete="current-password"></div>
-                {# CSRF token #}
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-                    {# Remember me #}
-                    <div class="form-check mb-3">
-                        <input type="checkbox" name="_remember_me" id="remember_me" class="form-check-input">
-                            <label for="remember_me" class="form-check-label">
-                                Se souvenir de moi
-                            </label>
-                        </div>
-                        {# Forgot password #}
-                        <p class="mb-3">
-                            <a href="{{ path('app_forgot_password_request') }}" class="text-muted">
-                                Mot de passe oublié ?
+                <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control {{ error ? 'is-invalid' : '' }}" autocomplete="username" autofocus></div>
+                {# Password #}
+                <div class="mb-3">
+                    <label for="inputPassword" class="form-label">
+                        Mot de passe
+                    </label>
+                    <input type="password" name="password" id="inputPassword" class="form-control {{ error ? 'is-invalid' : '' }}" autocomplete="current-password"></div>
+                    {# CSRF token #}
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                        {# Remember me #}
+                        <div class="form-check mb-3">
+                            <input type="checkbox" name="_remember_me" id="remember_me" class="form-check-input">
+                                <label for="remember_me" class="form-check-label">
+                                    Se souvenir de moi
+                                </label>
+                            </div>
+                            {# Forgot password #}
+                            <p class="mb-3">
+                                <a href="{{ path('app_forgot_password_request') }}" class="text-muted">
+                                    Mot de passe oublié ?
+                                </a>
+                            </p>
+                            {# Submit #}
+                            <button class="btn btn-primary w-100" type="submit">
+                                <i class="bi bi-person me-2"></i>
+                                Se connecter
+                            </button>
+                        </form>
+                        {# Register link #}
+                        <p class="mt-3 text-center">
+                            Vous êtes nouveau ?
+                            <a href="{{ path('app_register') }}">
+                                Inscrivez-vous
                             </a>
                         </p>
-                        {# Submit #}
-                        <button class="btn btn-primary w-100" type="submit">
-                            <i class="bi bi-box-arrow-in-right"></i>
-                            Se connecter
-                        </button>
-                    </form>
-                    {# Register link #}
-                    <p class="mt-3">
-                        Vous êtes nouveau ?
-                        <a href="{{ path('app_register') }}">
-                            Inscrivez-vous
-                        </a>
-                    </p>
+                    </div>
                 {% endblock %}
                 
