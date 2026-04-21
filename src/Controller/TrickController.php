@@ -57,9 +57,8 @@ final class TrickController extends AbstractController
             $trick->setCreatedAt(new \DateTimeImmutable());
             $trick->setUpdatedAt(new \DateTimeImmutable());
 
-            $local = \rand(5, 15);
             $trick->setSlug(
-                $slugger->slug($trick->getName().'-'.$local)->lower()
+                $slugger->slug($trick->getName())->lower()
             );
 
             // MAIN IMAGE + MEDIA
@@ -78,7 +77,7 @@ final class TrickController extends AbstractController
         ]);
     }
 
-    #[Route('/{slug}', name: 'app_trick_show', methods: ['GET', 'POST'])]
+    #[Route('/{id}/{slug}', name: 'app_trick_show', methods: ['GET', 'POST'])]
     public function show(
         Trick $trick,
         Request $request,

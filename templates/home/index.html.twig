@@ -48,7 +48,7 @@
                                         {# Action icons (UI only) #}
                                         <div class="d-flex gap-2 align-items-center">
                                             {# View trick #}
-                                            <a href="{{ path('app_trick_show', {slug: trick.slug}) }}" class="text-primary" title="Voir le trick">
+                                            <a href="{{ path('app_trick_show',{id: trick.id, slug: trick.slug}) }}" class="text-primary" title="Voir le trick">
                                                 <i class="bi bi-eye"></i>
                                             </a>
                                             {# Edit trick (secured by voter) #}
