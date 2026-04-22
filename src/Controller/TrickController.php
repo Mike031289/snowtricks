@@ -1,4 +1,12 @@
 <?php
+// src/Controller/TrickController.php
+
+/*
+ * This file is to handle trick-related requests. It includes actions for creating, editing, deleting, and displaying tricks, as well as adding comments. It also ensures that only authorized users can perform certain actions and provides feedback through flash messages. The controller interacts with the database using Doctrine's EntityManager and handles media uploads through a dedicated MediaService. It also implements pagination for comments and uses Symfony's security features to protect routes and actions. 
+ *
+ * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com> Dev-Application PHP Symfony
+ * 
+ */ 
 
 namespace App\Controller;
 
@@ -132,10 +140,19 @@ final class TrickController extends AbstractController
 
             $this->addFlash('success', '✏️ Trick modifié avec succès.');
 
+            // Redirect to previous page
+            $referer = $request->headers->get('referer');
+
+            if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
+                return $this->redirect($referer);
+            }
+    
+            // Fallback redirect
             return $this->redirectToRoute('app_trick_show', [
                 'id' => $trick->getId(),
                 'slug' => $trick->getSlug(),
             ]);
+                
         }
 
         return $this->render('trick/edit.html.twig', [
@@ -165,12 +182,14 @@ final class TrickController extends AbstractController
 
         $this->addFlash('success', '🗑️ Trick supprimé avec succès.');
 
+        // Redirect to previous page
         $referer = $request->headers->get('referer');
 
         if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
             return $this->redirect($referer);
         }
-
+        
+        // Fallback redirect
         return $this->redirectToRoute('app_profile');
     }
 
@@ -210,6 +229,13 @@ final class TrickController extends AbstractController
 
                 $this->addFlash('success', '💬 Commentaire ajouté !');
 
+                // Redirect to previous page
+                $referer = $request->headers->get('referer');
+                if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
+                    return $this->redirect($referer);
+                }
+
+                // Fallback redirect
                 return $this->redirectToRoute('app_trick_show', [
                     'page' => $page,
                     'id' => $trick->getId(),

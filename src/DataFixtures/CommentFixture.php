@@ -1,5 +1,13 @@
 <?php
+// src/DataFixtures/CommentFixture.php
 
+/*
+ * This file is part of the SnowTricks project.
+ *
+ * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com> Dev-Application PHP Symfony
+ * 
+ */
+ 
 namespace App\DataFixtures;
 
 use App\Entity\Comment;

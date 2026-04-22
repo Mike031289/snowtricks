@@ -1,12 +1,11 @@
 <?php
 // src/Controller/ProfileController.php
+
 /**
  * This file is part of the SnowTricks project.
  *
- * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com>
+ * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com> Dev-Application PHP Symfony
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
  */
 
 namespace App\Controller;

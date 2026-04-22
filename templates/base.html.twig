@@ -63,10 +63,10 @@
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
                                         {% if app.user %}
-                                        <a class="dropdown-item" href="{{ path('app_profile') }}">
-                                            <i class="bi bi-person"></i>
-                                            Profil
-                                        </a>
+                                            <a class="dropdown-item" href="{{ path('app_profile') }}">
+                                                <i class="bi bi-person"></i>
+                                                Profil
+                                            </a>
                                         {% endif %}
                                     </li>
                                     <li>
@@ -96,13 +96,14 @@
         </nav>
         {# FLASH MESSAGES #}
         <div class="container mt-3">
-            {% for label, messages in app.flashes %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ label }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show mt-3" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
             {% endfor %}
+        {% endfor %}
         </div>
         {# CONTENU #}
         <main class="container mt-4">

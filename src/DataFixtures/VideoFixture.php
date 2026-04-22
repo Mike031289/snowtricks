@@ -1,11 +1,19 @@
 <?php
+// src/DataFixtures/VideoFixture.php
+
+/*
+ * This file is part of the SnowTricks project.
+ *
+ * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com> Dev-Application PHP Symfony
+ * 
+*/
 
 namespace App\DataFixtures;
 
 use App\Entity\Video;
 use App\Entity\Trick;
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class VideoFixture extends Fixture implements DependentFixtureInterface
