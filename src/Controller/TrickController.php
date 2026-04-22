@@ -1,39 +1,53 @@
 <?php
+// src/Controller/TrickController.php
+/**
+ * This file is part of the SnowTricks project.
+ *
+ * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com>
+ * 
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Entity\Trick;
 use App\Entity\Comment;
-use App\Form\CommentType;
 use App\Form\TrickType;
-use App\Repository\CommentRepository;
-use App\Repository\TrickRepository;
+use App\Form\CommentType;
 use App\Service\MediaService;
+use App\Repository\CommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-
-#[Route('/trick')]
 final class TrickController extends AbstractController
 {
     public function __construct(
         private MediaService $mediaService
-    ) {}
+    ) {
+    }
 
-    #[Route('/liste', name: 'app_trick_index', methods: ['GET'])]
-    public function index(TrickRepository $trickRepository): Response
+    #[Route('profile/tricks', name: 'app_profile_tricks', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function profile(): Response
     {
-        return $this->render('trick/index.html.twig', [
-            'tricks' => $trickRepository->findAll(),
+        /** @var User $user */
+        $user = $this->getUser();
+        $tricks = $user->getTricks();
+        return $this->render('profile/index.html.twig', [
+            'user' => $user,
+            'tricks' => $tricks,
+
         ]);
     }
 
-    #[Route('/ajouter', name: 'app_trick_new', methods: ['GET', 'POST'])]
+    #[Route('/profile/trick/new', name: 'app_trick_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER', message: 'Vous devrez disposer de droits requis', statusCode: 404)]
     public function new(
         Request $request,
@@ -77,8 +91,7 @@ final class TrickController extends AbstractController
         ]);
     }
     
-    
-    #[Route('/{id}/modifier', name: 'app_trick_edit', methods: ['GET', 'POST'])]
+    #[Route('/profile/trick/{id}/edit', name: 'app_trick_edit', methods: ['GET', 'POST'])]
     #[IsGranted('TRICK_EDIT', subject: 'trick', message: 'Vous devrez disposer de droits requis', statusCode: 404)]
     public function edit(
         Request $request,
@@ -92,8 +105,6 @@ final class TrickController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-
-       
                 
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -131,16 +142,16 @@ final class TrickController extends AbstractController
             'trick' => $trick,
             'form' => $form->createView(),
             'images' =>$trick->getImages(),
-            'mainImage' =>$trick->getMainImage(),
             'videos' =>$trick->getVideos(),
+            'mainImage' =>$trick->getMainImage(),
         ]);
     }
 
-    #[Route('/{id}/supprimer', name: 'app_trick_delete', methods: ['POST'])]
+    #[Route('/profile/trick/{id}/delete', name: 'app_trick_delete', methods: ['POST'])]
     #[IsGranted('TRICK_DELETE', subject: 'trick', message: 'Vous devrez disposer de droits requis', statusCode: 404)]
     public function delete(
-        Request $request,
         Trick $trick,
+        Request $request,
         EntityManagerInterface $em
     ): Response {
 
@@ -193,18 +204,18 @@ final class TrickController extends AbstractController
             $em->flush();
 
             return $this->redirectToRoute('app_trick_show', [
+                'page' => $page,
                 'id' => $trick->getId(),
                 'slug' => $trick->getSlug(),
-                'page' => $page,
             ]);
         }
 
         return $this->render('trick/show.html.twig', [
             'trick' => $trick,
-            'commentForm' => $commentForm->createView(),
-            'comments' => $comments,
             'currentPage' => $page,
+            'comments' => $comments,
             'totalPages' => $totalPages,
+            'commentForm' => $commentForm->createView(),
         ]);
     }
 
