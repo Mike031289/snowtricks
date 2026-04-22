@@ -1,13 +1,4 @@
 <?php
-// src/Controller/TrickController.php
-/**
- * This file is part of the SnowTricks project.
- *
- * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com>
- * 
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
 
 namespace App\Controller;
 
@@ -30,8 +21,7 @@ final class TrickController extends AbstractController
 {
     public function __construct(
         private MediaService $mediaService
-    ) {
-    }
+    ) {}
 
     #[Route('profile/tricks', name: 'app_profile_tricks', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
@@ -39,32 +29,36 @@ final class TrickController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
-        $tricks = $user->getTricks();
+
         return $this->render('profile/index.html.twig', [
             'user' => $user,
-            'tricks' => $tricks,
-
+            'tricks' => $user->getTricks(),
         ]);
     }
 
     #[Route('/profile/trick/new', name: 'app_trick_new', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER', message: 'Vous devrez disposer de droits requis', statusCode: 404)]
+    #[IsGranted('ROLE_USER')]
     public function new(
         Request $request,
         EntityManagerInterface $em,
         SluggerInterface $slugger
     ): Response {
-    
+
         $trick = new Trick();
-        
+
         $form = $this->createForm(TrickType::class, $trick, [
             'is_edit' => false,
         ]);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            
+        if ($form->isSubmitted()) {
+
+            if (!$form->isValid()) {
+                $this->addFlash('danger', '❌ Oups ! Une erreur est s\'est produite. Vérifiez les informations saisies et réessayez.');
+                return $this->redirectToRoute('app_trick_new');
+            }
+
             $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
             $trick->setAuthor($this->getUser());
@@ -75,13 +69,14 @@ final class TrickController extends AbstractController
                 $slugger->slug($trick->getName())->lower()
             );
 
-            // MAIN IMAGE + MEDIA
             $this->mediaService->handleMainImage($form, $trick);
             $this->mediaService->handleImages($form, $trick);
             $this->mediaService->handleVideos($form, $trick);
 
             $em->persist($trick);
             $em->flush();
+
+            $this->addFlash('success', '✅ Trick créé avec succès !');
 
             return $this->redirectToRoute('app_home');
         }
@@ -90,9 +85,9 @@ final class TrickController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-    
+
     #[Route('/profile/trick/{id}/edit', name: 'app_trick_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('TRICK_EDIT', subject: 'trick', message: 'Vous devrez disposer de droits requis', statusCode: 404)]
+    #[IsGranted('TRICK_EDIT', subject: 'trick')]
     public function edit(
         Request $request,
         Trick $trick,
@@ -105,17 +100,23 @@ final class TrickController extends AbstractController
         ]);
 
         $form->handleRequest($request);
-                
-        if ($form->isSubmitted() && $form->isValid()) {
 
-           if (!$this->isCsrfTokenValid('edit' . $trick->getId(), $request->request->get('_token'))) {
-            return $this->redirectToRoute('app_trick_show', [
-                'id' => $trick->getId(),
-                'slug' => $trick->getSlug(),
-            ]);
-        }
-                  
-            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if ($form->isSubmitted()) {
+
+            if (!$form->isValid()) {
+                $this->addFlash('danger', '❌ Oups ! Une erreur est s\'est produite. Vérifiez les informations saisies et réessayez.');
+                return $this->redirectToRoute('app_trick_edit', [
+                    'id' => $trick->getId()
+                ]);
+            }
+
+            if (!$this->isCsrfTokenValid('edit' . $trick->getId(), $request->request->get('_token'))) {
+                $this->addFlash('danger', '❌ Une erreur s\'est produite. Si le problème persiste, contactez le support.');
+                return $this->redirectToRoute('app_trick_show', [
+                    'id' => $trick->getId(),
+                    'slug' => $trick->getSlug(),
+                ]);
+            }
 
             $trick->setUpdatedAt(new \DateTimeImmutable());
 
@@ -123,46 +124,47 @@ final class TrickController extends AbstractController
                 $slugger->slug($trick->getName())->lower()
             );
 
-            // MEDIA HANDLING (SERVICE UNIQUE)
             $this->mediaService->handleMainImage($form, $trick);
             $this->mediaService->handleImages($form, $trick);
             $this->mediaService->handleVideos($form, $trick);
 
             $em->flush();
-        
-        
+
+            $this->addFlash('success', '✏️ Trick modifié avec succès.');
+
             return $this->redirectToRoute('app_trick_show', [
                 'id' => $trick->getId(),
                 'slug' => $trick->getSlug(),
             ]);
-        
         }
 
         return $this->render('trick/edit.html.twig', [
             'trick' => $trick,
             'form' => $form->createView(),
-            'images' =>$trick->getImages(),
-            'videos' =>$trick->getVideos(),
-            'mainImage' =>$trick->getMainImage(),
+            'images' => $trick->getImages(),
+            'videos' => $trick->getVideos(),
+            'mainImage' => $trick->getMainImage(),
         ]);
     }
 
     #[Route('/profile/trick/{id}/delete', name: 'app_trick_delete', methods: ['POST'])]
-    #[IsGranted('TRICK_DELETE', subject: 'trick', message: 'Vous devrez disposer de droits requis', statusCode: 404)]
+    #[IsGranted('TRICK_DELETE', subject: 'trick')]
     public function delete(
         Trick $trick,
         Request $request,
         EntityManagerInterface $em
     ): Response {
 
-        if ($this->isCsrfTokenValid('delete'.$trick->getId(), $request->request->get('_token'))) {
-
-            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-            $em->remove($trick);
-            $em->flush();
+        if (!$this->isCsrfTokenValid('delete'.$trick->getId(), $request->request->get('_token'))) {
+            $this->addFlash('danger', '❌ Action invalide.');
+            return $this->redirectToRoute('app_profile');
         }
-        
+
+        $em->remove($trick);
+        $em->flush();
+
+        $this->addFlash('success', '🗑️ Trick supprimé avec succès.');
+
         $referer = $request->headers->get('referer');
 
         if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
@@ -170,7 +172,6 @@ final class TrickController extends AbstractController
         }
 
         return $this->redirectToRoute('app_profile');
-
     }
 
     #[Route('/{id}/{slug}', name: 'app_trick_show', methods: ['GET', 'POST'])]
@@ -189,25 +190,32 @@ final class TrickController extends AbstractController
         $totalPages = ceil($total / $limit);
 
         $comment = new Comment();
-        $commentForm = $this->createForm(CommentType::class, $comment);
-        $commentForm->handleRequest($request);
-        
-        if ($commentForm->isSubmitted() && $commentForm->isValid()) {
-            
-            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-            
-            $comment->setAuthor($this->getUser());
-            $comment->setTrick($trick);
-            $comment->setCreatedAt(new \DateTimeImmutable());
+        $form = $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
 
-            $em->persist($comment);
-            $em->flush();
+        if ($form->isSubmitted()) {
 
-            return $this->redirectToRoute('app_trick_show', [
-                'page' => $page,
-                'id' => $trick->getId(),
-                'slug' => $trick->getSlug(),
-            ]);
+            if (!$form->isValid()) {
+                $this->addFlash('danger', '❌ Commentaire invalide.');
+            } else {
+
+                $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+                $comment->setAuthor($this->getUser());
+                $comment->setTrick($trick);
+                $comment->setCreatedAt(new \DateTimeImmutable());
+
+                $em->persist($comment);
+                $em->flush();
+
+                $this->addFlash('success', '💬 Commentaire ajouté !');
+
+                return $this->redirectToRoute('app_trick_show', [
+                    'page' => $page,
+                    'id' => $trick->getId(),
+                    'slug' => $trick->getSlug(),
+                ]);
+            }
         }
 
         return $this->render('trick/show.html.twig', [
@@ -215,8 +223,7 @@ final class TrickController extends AbstractController
             'currentPage' => $page,
             'comments' => $comments,
             'totalPages' => $totalPages,
-            'commentForm' => $commentForm->createView(),
+            'commentForm' => $form->createView(),
         ]);
     }
-
 }
