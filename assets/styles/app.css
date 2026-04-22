@@ -1,5 +1,9 @@
 body {
     /* ======== GENERAL ======= */
+    /* *{
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    } */
+
     .btn-primary {
         background-color: #355f73 !important;
         border-color: #355f73 !important;

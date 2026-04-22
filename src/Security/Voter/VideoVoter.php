@@ -1,11 +1,12 @@
 <?php
+// src/Security/Voter/VideoVoter.php
 
 namespace App\Security\Voter;
 
-use App\Entity\Video;
 use App\Entity\User;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use App\Entity\Video;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 final class VideoVoter extends Voter
 {

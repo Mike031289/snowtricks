@@ -12,8 +12,8 @@ namespace App\DataFixtures;
 
 use App\Entity\Image;
 use App\Entity\Trick;
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class ImageFixture extends Fixture implements DependentFixtureInterface

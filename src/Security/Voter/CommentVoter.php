@@ -1,11 +1,13 @@
 <?php
+// src/Security/Voter/CommentVoter.php
 
 namespace App\Security\Voter;
-use App\Entity\Comment;
+
 use App\Entity\User;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use App\Entity\Comment;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 final class CommentVoter extends Voter
 {

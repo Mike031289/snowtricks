@@ -1,4 +1,5 @@
 <?php
+// src/Service/AvatarService.php
 
 namespace App\Service;
 

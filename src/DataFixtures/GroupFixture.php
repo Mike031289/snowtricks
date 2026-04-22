@@ -11,8 +11,8 @@
 namespace App\DataFixtures;
 
 use App\Entity\Group;
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 
 class GroupFixture extends Fixture
 {

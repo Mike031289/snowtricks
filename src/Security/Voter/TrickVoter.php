@@ -1,11 +1,12 @@
 <?php
+// src/Security/Voter/TrickVoter.php
 
 namespace App\Security\Voter;
 
-use App\Entity\Trick;
 use App\Entity\User;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use App\Entity\Trick;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 final class TrickVoter extends Voter
 {

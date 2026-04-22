@@ -1,11 +1,12 @@
 <?php
+// src/Security/Voter/ImageVoter.php
 
 namespace App\Security\Voter;
 
-use App\Entity\Image;
 use App\Entity\User;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use App\Entity\Image;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 final class ImageVoter extends Voter
 {

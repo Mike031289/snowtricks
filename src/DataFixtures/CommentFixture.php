@@ -10,11 +10,11 @@
  
 namespace App\DataFixtures;
 
-use App\Entity\Comment;
 use App\Entity\User;
 use App\Entity\Trick;
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Entity\Comment;
 use Doctrine\Persistence\ObjectManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class CommentFixture extends Fixture implements DependentFixtureInterface
