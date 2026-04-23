@@ -182,10 +182,13 @@ body {
     }
 
     /* ========= HOME PAGE ========= */
-    .hero-banner {
-        position: relative;
-        height: 65vh;
-        overflow: hidden;
+    /* texte */
+    .hero-title {
+        font-size: 3rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
     }
 
     .hero-img {
@@ -196,16 +199,11 @@ body {
     }
 
     /* overlay darck */
-    .hero-overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.35);
-    }
-
-    .hero-content {
-        z-index: 2;
+    
+    .hero-banner {
         position: relative;
-        animation: fadeInUp 0.6s ease;
+        height: 65vh;
+        overflow: hidden;
     }
 
     .hero-banner::before {
@@ -213,6 +211,21 @@ body {
         position: absolute;
         inset: 0;
         background: rgba(0,0,0,0.45);
+    }
+    
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0,0,0,0.4);
+    }
+
+    .hero-content {
+        z-index: 2;
+        position: relative;
+        animation: fadeInUp 0.6s ease;
     }
 
     @keyframes fadeInUp {

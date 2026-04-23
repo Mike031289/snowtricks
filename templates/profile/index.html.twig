@@ -107,82 +107,84 @@
                                                                 {{ trick.name }}
                                                             </h6>
                                                             <div class="d-flex justify-content-center gap-3 mt-2">
+                                                                {# VIEW #}
                                                                 <a href="{{ path('app_trick_show', {id: trick.id, slug: trick.slug}) }}" class="text-primary">
                                                                     <i class="bi bi-eye"></i>
                                                                 </a>
+                                                                {# EDIT #}
                                                                 {% if is_granted('TRICK_EDIT', trick) %}
                                                                     <a href="{{ path('app_trick_edit', {id: trick.id}) }}" class="text-warning">
                                                                         <i class="bi bi-pencil"></i>
                                                                     </a>
                                                                 {% endif %}
-                                                                {# DELETE BUTTON - FIXED #}
+                                                                {# DELETE #}
                                                                 {% if is_granted('TRICK_DELETE', trick) %}
                                                                     <button type="button" class="btn btn-link text-danger p-0" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ trick.id }}">
                                                                         <i class="bi bi-trash"></i>
                                                                     </button>
                                                                 {% endif %}
-                            {# ================= MODAL PAR TRICK ================= #}
-                                            {% if is_granted('TRICK_DELETE', trick) %}
-                                                <div class="modal fade" id="deleteModal-{{ trick.id }}" tabindex="-1">
-                                                    <div class="modal-dialog modal-dialog-centered">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title">
-                                                                    Confirmation de suppression
-                                                                </h5>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <p>
-                                                                    ⚠️ Supprimer
-                                                                    <strong>
-                                                                        {{ trick.name }}
-                                                                    </strong>
-                                                                    ?
-                                                                    <br>
-                                                                        Cette action est irréversible.
-                                                                    </p>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                                        Annuler
-                                                                    </button>
-                                                                    <form method="post" action="{{ path('app_trick_delete', {id: trick.id}) }}">
-                                                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ trick.id) }}">
-                                                                            <button class="btn btn-danger">
-                                                                                Supprimer
-                                                                            </button>
-                                                                        </form>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    {% endif %}
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            {% endfor %}
+                                                {# ===== MODAL PAR TRICK ===== #}
+                                                {% if is_granted('TRICK_DELETE', trick) %}
+                                                    <div class="modal fade" id="deleteModal-{{ trick.id }}" tabindex="-1">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">
+                                                                        Confirmation de suppression
+                                                                    </h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <p>
+                                                                        ⚠️ Supprimer
+                                                                        <strong>
+                                                                            {{ trick.name }}
+                                                                        </strong>
+                                                                        ?
+                                                                        <br>
+                                                                            Cette action est irréversible.
+                                                                        </p>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                                            Annuler
+                                                                        </button>
+                                                                        <form method="post" action="{{ path('app_trick_delete', {id: trick.id}) }}">
+                                                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ trick.id) }}">
+                                                                                <button class="btn btn-danger">
+                                                                                    Supprimer
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
                                         </div>
-                                    {% endif %}
-                                </div>
-                                {# ===== CREATE ===== #}
-                                <div class="tab-pane fade" id="create">
-                                    <div class="card p-4 shadow-sm text-center">
-                                        <h5>
-                                            <i class="bi bi-plus-circle"></i>
-                                            Créer un trick
-                                        </h5>
-                                        <p class="text-muted">
-                                            Partage une nouvelle figure
-                                        </p>
-                                        <a href="{{ path('app_trick_new') }}" class="btn btn-primary">
-                                            <i class="bi bi-plus"></i>
-                                            Ajouter
-                                        </a>
+                                        {# ===== CREATE ===== #}
+                                        <div class="tab-pane fade" id="create">
+                                            <div class="card p-4 shadow-sm text-center">
+                                                <h5>
+                                                    <i class="bi bi-plus-circle"></i>
+                                                    Créer un trick
+                                                </h5>
+                                                <p class="text-muted">
+                                                    Partage une nouvelle figure
+                                                </p>
+                                                <a href="{{ path('app_trick_new') }}" class="btn btn-primary">
+                                                    <i class="bi bi-plus"></i>
+                                                    Ajouter
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    {% endblock %}
-                    
+                            {% endblock %}
+                            
