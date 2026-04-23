@@ -150,6 +150,37 @@ body {
     }
 
     /* ======== USER AVATAR =========*/
+
+    .avatar-edit {
+        position: absolute;
+        /* bottom: 0; */
+        top:-2rem;
+        right: -1rem;
+        background: #6fa3bd !important;
+        border-radius: 80% 35%;
+        padding: 10px;
+        cursor: pointer; /* important */
+        transition: all 0.2s ease;
+    }
+
+    .avatar-wrapper:hover .avatar-edit {
+        opacity: 1;
+    }
+
+    .avatar-edit {
+        color: #ffff;
+    }
+
+    .avatar-edit:hover {
+        background: #355f73 !important;
+        color: white;
+        transform: scale(1.1);
+    }
+
+    .avatar-edit i {
+        pointer-events: none; /* évite bugs de clic */
+    }
+
     .avatar {
         width: 36px;
         height: 36px;
@@ -165,7 +196,6 @@ body {
         background: #6c757d;
         color: white;
         font-size: 18px;
-
         border-radius: 50%;
         display: flex;
         align-items: center;
