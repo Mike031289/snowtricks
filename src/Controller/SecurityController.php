@@ -13,43 +13,38 @@
 
 namespace App\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
     #[Route(path: '/connexion', name: 'app_login')]
-    public function login(
-        AuthenticationUtils $authenticationUtils,
-    ): Response {
-
-        // If already logged → redirect
+    public function login(AuthenticationUtils $authenticationUtils): Response
+    {
+        // redirect to home if already logged in
         if ($this->getUser()) {
             $this->addFlash('info', '👋 Vous êtes déjà connecté.');
             return $this->redirectToRoute('app_home');
         }
 
-        // Get login error
+        // error is null if no error, otherwise contains the error message
         $error = $authenticationUtils->getLastAuthenticationError();
 
-        if ($error) {
-            $this->addFlash('danger', '❌ Identifiants invalides.');
-        }
-
-        // Last username
+        // lastUsername contains the last username entered by the user, which can be used to pre-fill the login form
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
+            'error' => $error, // error is null if no error, otherwise contains the error message
         ]);
     }
 
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
-        // Symfony handles logout automatically
-        throw new \LogicException('This method is intercepted by Symfony.');
+        // Symfony intercepte automatiquement cette méthode
+        throw new \LogicException('Logout géré automatiquement par Symfony.');
     }
 }

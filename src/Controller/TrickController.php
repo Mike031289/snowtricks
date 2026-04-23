@@ -60,12 +60,7 @@ final class TrickController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-
-            if (!$form->isValid()) {
-                $this->addFlash('danger', '❌ Oups ! Une erreur est s\'est produite. Vérifiez les informations saisies et réessayez.');
-                return $this->redirectToRoute('app_trick_new');
-            }
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
