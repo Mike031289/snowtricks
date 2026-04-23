@@ -8,7 +8,7 @@
     <div class="container mt-4">
         <h1 class="mb-4">
             <i class="bi bi-pencil-square"></i>
-            Modifier le trick
+            Modifier la figure
         </h1>
         {# ===================== FORM START ===================== #}
         {{ form_start(form, {'attr': {'enctype': 'multipart/form-data' }}
@@ -77,7 +77,7 @@
         {# ===================== ACTIONS ===================== #}
         <div class="mt-4">
             <button class="btn btn-primary">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ trick.id) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('edit' ~ trick.id) }}">
                     <i class="bi bi-check-circle"></i>
                     Enregistrer
                 </button>

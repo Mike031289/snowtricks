@@ -1,20 +1,14 @@
+{# templates/profile/index.html.twig #}
 {% extends 'base.html.twig' %}
-
 {% block title %}
     Mon profil
 {% endblock %}
-
 {% block body %}
-
     <div class="container mt-5">
-
-        {# ================= PROFILE HEADER ================= #}
-        <div class="d-flex align-items-center mb-4 gap-3">
-
+        {# ================= HEADER ================= #}
+        <div class="d-flex align-items-center mb-4 gap-3 flex-wrap">
             <div class="avatar-wrapper position-relative">
-
-                {# Avatar preview safe #}
-                {% if app.user.avatar is defined and app.user.avatar %}
+                {% if app.user.avatar %}
                     <img
                     id="avatarPreview" src="{{ asset('uploads/avatars/' ~ app.user.avatar) }}" class="avatar-lg">
                         {% else %}
@@ -22,190 +16,184 @@
                             <i class="bi bi-person"></i>
                         </div>
                     {% endif %}
-
-                    {# CLICK ICON #}
-                    <label for="avatarInput" class="avatar-edit">
+                    <label for="avatarInput" class="avatar-edit" title="Modifier l'avatar">
                         <i class="bi bi-pencil-fill"></i>
                     </label>
-
-                    {# Hidden upload form #}
                     <form id="avatarForm" method="post" enctype="multipart/form-data" action="{{ path('app_profile_avatar') }}">
-
                         <input type="hidden" name="_token" value="{{ csrf_token('avatar_upload') }}">
-
                             <input type="file" id="avatarInput" name="avatar" accept="image/*" hidden></form>
-
                         </div>
-
-                        <div>
-                            <h2 class="mb-0">
+                        <div class="profile-info d-flex flex-column">
+                            <h2 class="mb-0 fw-bold text-primary d-flex align-items-center gap-2 flex-wrap">
                                 {{ app.user.username }}
                             </h2>
                             <small class="text-muted">
                                 Bienvenue sur votre espace personnel
                             </small>
+                            <small class="d-block text-muted badge bg-light text-dark mt-1">
+                                Vous êtes membre depuis :
+                                {{ app.user.createdAt|date('d/m/Y') }}
+                                <br>
+                                    <span class="badge bg-light text-dark mt-1">
+                                        Dernière connexion :
+                                        {{ app.user.lastLoginAt|date('d/m H:i') }}
+                                    </span>
+                                </small>
+                            </div>
                         </div>
-
-                    </div>
-
-                    {# ================= NAV TABS ================= #}
-                    <ul class="nav nav-tabs mb-4">
-
-                        <li class="nav-item">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tricks">
-                                <i class="bi bi-snow"></i>
-                                Mes tricks
-                            </button>
-                        </li>
-
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#create">
-                                <i class="bi bi-plus-circle"></i>
-                                Ajouter
-                            </button>
-                        </li>
-
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#account">
-                                <i class="bi bi-gear"></i>
-                                Compte
-                            </button>
-                        </li>
-
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#avatarTab">
-                                <i class="bi bi-image"></i>
-                                Avatar
-                            </button>
-                        </li>
-
-                    </ul>
-
-                    {# ================= TAB CONTENT ================= #}
-                    <div class="tab-content">
-
-                        {# ===== TRICKS ===== #}
-                        <div class="tab-pane fade show active" id="tricks">
-
-                            {% if tricks is empty %}
-                                <p class="text-muted">
-                                    Vous n'avez encore créé aucun trick.
-                                </p>
-                            {% else %}
-
-                                <div class="row g-3">
-                                    {% for trick in tricks %}
-                                        <div class="col-md-4">
-
-                                            <div class="card shadow-sm h-100">
-                                                <div class="card-body">
-
-                                                    <h6 class="fw-bold mb-2">
-                                                        {{ trick.name }}
-                                                    </h6>
-
-                                                    <div class="d-flex justify-content-between">
-
-                                                        {# VIEW #}
-                                                        <a href="{{ path('app_trick_show', {id: trick.id, slug: trick.slug}) }}" class="text-primary">
-                                                            <i class="bi bi-eye"></i>
-                                                        </a>
-
-                                                        {# EDIT #}
-                                                        {% if is_granted('TRICK_EDIT', trick) %}
-                                                            <a href="{{ path('app_trick_edit', {id: trick.id}) }}" class="text-warning">
-                                                                <i class="bi bi-pencil"></i>
-                                                            </a>
-                                                        {% endif %}
-
-                                                        {# DELETE #}
-                                                        {% if is_granted('TRICK_DELETE', trick) %}
-                                                            <form method="post" action="{{ path('app_trick_delete', {id: trick.id}) }}" onsubmit="return confirm('Supprimer ce trick ?');">
-
-                                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ trick.id) }}">
-
-                                                                    <button class="btn btn-link text-danger p-0">
-                                                                        <i class="bi bi-trash"></i>
-                                                                    </button>
-                                                                </form>
-                                                            {% endif %}
-
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-
-                                {% endif %}
-
-                            </div>
-
-                            {# ===== CREATE ===== #}
-                            <div class="tab-pane fade" id="create">
-
-                                <div class="card p-4 text-center shadow-sm">
-                                    <h5>
-                                        <i class="bi bi-plus-circle"></i>
-                                        Créer un trick
-                                    </h5>
-
-                                    <p class="text-muted">
-                                        Partage une nouvelle figure
-                                    </p>
-
-                                    <a href="{{ path('app_trick_new') }}" class="btn btn-primary">
-                                        <i class="bi bi-plus"></i>
-                                        Ajouter
-                                    </a>
-                                </div>
-
-                            </div>
-
-                            {# ===== ACCOUNT ===== #}
-                            <div class="tab-pane fade" id="account">
-
-                                <div class="card p-4 shadow-sm">
-                                    <h5>
-                                        <i class="bi bi-shield-lock"></i>
-                                        Sécurité
-                                    </h5>
-
-                                    <a href="{{ path('app_forgot_password_request') }}" class="btn btn-warning">
-                                        <i class="bi bi-key"></i>
-                                        Mot de passe
-                                    </a>
-                                </div>
-
-                            </div>
-
-                            {# ===== AVATAR TAB ===== #}
-                            <div class="tab-pane fade" id="avatarTab">
-
-                                <div class="card p-4 shadow-sm">
+                        {# ================= NAV ================= #}
+                        <ul class="nav nav-tabs mb-4 flex-wrap">
+                            <li class="nav-item">
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#avatarTab">
+                                    <i class="bi bi-image"></i>
+                                    Avatar
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#account">
+                                    <i class="bi bi-gear"></i>
+                                    Compte
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tricks">
+                                    <i class="bi bi-snow"></i>
+                                    Mes tricks
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#create">
+                                    <i class="bi bi-plus-circle"></i>
+                                    Ajouter
+                                </button>
+                            </li>
+                        </ul>
+                        {# ================= CONTENT ================= #}
+                        <div class="tab-content">
+                            {# ===== AVATAR ===== #}
+                            <div class="tab-pane fade show active" id="avatarTab">
+                                <div class="card p-4 shadow-sm text-center">
                                     <h5>
                                         <i class="bi bi-person-circle"></i>
                                         Avatar
                                     </h5>
-
                                     <form method="post" enctype="multipart/form-data" action="{{ path('app_profile_avatar') }}">
                                         <input type="hidden" name="_token" value="{{ csrf_token('avatar_upload') }}">
-
                                             <input type="file" name="avatar" class="form-control mb-3">
-
                                                 <button class="btn btn-primary">
-                                                    <i class="bi bi-upload"></i>
-                                                    Upload
+                                                    <i class="bi bi-check-circle"></i>
+                                                    Mettre à jour
                                                 </button>
                                             </form>
                                         </div>
-
                                     </div>
-
-                                </div>
-
-                            </div>
-                        {% endblock %}
-                        
+                                    {# ===== ACCOUNT ===== #}
+                                    <div class="tab-pane fade" id="account">
+                                        <div class="card p-4 shadow-sm text-center">
+                                            <h5>
+                                                <i class="bi bi-shield-lock"></i>
+                                                Sécurité
+                                            </h5>
+                                            <a href="{{ path('app_forgot_password_request') }}" class="btn btn-warning">
+                                                <i class="bi bi-key"></i>
+                                                Mot de passe
+                                            </a>
+                                        </div>
+                                    </div>
+                                    {# ===== TRICKS ===== #}
+                                    <div class="tab-pane fade" id="tricks">
+                                        {% if tricks is empty %}
+                                            <p class="text-muted">
+                                                Vous n'avez encore créé aucun trick.
+                                            </p>
+                                        {% else %}
+                                            <div class="row g-3">
+                                                {% for trick in tricks %}
+                                                    <div class="col-12 col-md-6 col-lg-4">
+                                                        <div class="card h-100 shadow-sm">
+                                                            <div class="card-body text-center">
+                                                                <h6 class="fw-bold">
+                                                                    {{ trick.name }}
+                                                                </h6>
+                                                                <div class="d-flex justify-content-center gap-3 mt-2">
+                                                                    {# VIEW #}
+                                                                    <a href="{{ path('app_trick_show', {id: trick.id, slug: trick.slug}) }}" class="text-primary">
+                                                                        <i class="bi bi-eye"></i>
+                                                                    </a>
+                                                                    {# EDIT #}
+                                                                    {% if is_granted('TRICK_EDIT', trick) %}
+                                                                        <a href="{{ path('app_trick_edit', {id: trick.id}) }}" class="text-warning">
+                                                                            <i class="bi bi-pencil"></i>
+                                                                        </a>
+                                                                    {% endif %}
+                                                                    {# DELETE #}
+                                                                    {% if is_granted('TRICK_DELETE', trick) %}
+                                                                        <button type="button" class="btn btn-link text-danger p-0" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ trick.id }}">
+                                                                            <i class="bi bi-trash"></i>
+                                                                        </button>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {# ===== MODAL PAR TRICK ===== #}
+                                                    {% if is_granted('TRICK_DELETE', trick) %}
+                                                        <div class="modal fade" id="deleteModal-{{ trick.id }}" tabindex="-1">
+                                                            <div class="modal-dialog modal-dialog-centered">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title">
+                                                                            Confirmation de suppression
+                                                                        </h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <p>
+                                                                            ⚠️ Supprimer
+                                                                            <strong>
+                                                                                {{ trick.name }}
+                                                                            </strong>
+                                                                            ?
+                                                                            <br>
+                                                                                Cette action est irréversible.
+                                                                            </p>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                                                Annuler
+                                                                            </button>
+                                                                            <form method="post" action="{{ path('app_trick_delete', {id: trick.id}) }}">
+                                                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ trick.id) }}">
+                                                                                    <button class="btn btn-danger">
+                                                                                        Supprimer
+                                                                                    </button>
+                                                                                </form>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            {# ===== CREATE ===== #}
+                                            <div class="tab-pane fade" id="create">
+                                                <div class="card p-4 shadow-sm text-center">
+                                                    <h5>
+                                                        <i class="bi bi-plus-circle"></i>
+                                                        Créer un trick
+                                                    </h5>
+                                                    <p class="text-muted">
+                                                        Partage une nouvelle figure
+                                                    </p>
+                                                    <a href="{{ path('app_trick_new') }}" class="btn btn-primary">
+                                                        <i class="bi bi-plus"></i>
+                                                        Ajouter
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endblock %}
+                                

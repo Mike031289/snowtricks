@@ -1,10 +1,18 @@
 <?php
+// src/DataFixtures/GroupFixture.php
+
+/*
+ * This file is part of the SnowTricks project.
+ *
+ * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com> Dev-Application PHP Symfony
+ * 
+ */
 
 namespace App\DataFixtures;
 
 use App\Entity\Group;
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 
 class GroupFixture extends Fixture
 {

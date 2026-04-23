@@ -1,15 +1,23 @@
 <?php
+// src/DataFixtures/TrickFixture.php
+
+/*
+ * This file is part of the SnowTricks project.
+ *
+ * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com> Dev-Application PHP Symfony
+ * 
+ */
 
 namespace App\DataFixtures;
 
+use App\Entity\User;
 use App\Entity\Trick;
 use App\Entity\Image;
 use App\Entity\Group;
-use App\Entity\User;
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class TrickFixture extends Fixture implements DependentFixtureInterface
 {

@@ -26,7 +26,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    {# LEFT / CENTER NAV #}
+                    {# LEFT NAV #}
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('app_home') }}">
@@ -45,7 +45,6 @@
                     {# RIGHT USER AREA #}
                     <ul class="navbar-nav ms-auto align-items-center">
                         {% if app.user %}
-                            {# AVATAR + DROPDOWN #}
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
                                     {% if app.user.avatar is defined and app.user.avatar %}
@@ -63,10 +62,10 @@
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
                                         {% if app.user %}
-                                        <a class="dropdown-item" href="{{ path('app_profile') }}">
-                                            <i class="bi bi-person"></i>
-                                            Profil
-                                        </a>
+                                            <a class="dropdown-item" href="{{ path('app_profile') }}">
+                                                <i class="bi bi-person"></i>
+                                                Profil
+                                            </a>
                                         {% endif %}
                                     </li>
                                     <li>
@@ -98,8 +97,9 @@
         <div class="container mt-3">
             {% for label, messages in app.flashes %}
                 {% for message in messages %}
-                    <div class="alert alert-{{ label }}">
+                    <div class="alert alert-{{ label }} alert-dismissible fade show mt-3" role="alert">
                         {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 {% endfor %}
             {% endfor %}
@@ -107,9 +107,57 @@
         {# CONTENU #}
         <main class="container mt-4">
             {% block body %}{% endblock %}
+            {# ================= SCROLL BUTTONS ================= #}
+            <button id="scrollTopBtn" class="scroll-btn scroll-top" title="Remonter">
+                <i class="bi bi-arrow-up"></i>
+            </button>
+            <button id="scrollBottomBtn" class="scroll-btn scroll-bottom" title="Descendre">
+                <i class="bi bi-arrow-down"></i>
+            </button>
         </main>
-        {# Bootstrap JS #}
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        {% block javascripts %}{% endblock %}
+        {# ================= FOOTER AJOUTÉ ================= #}
+        <footer id="siteFooter" class="bg-light border-top mt-5">
+            <div class="container py-4">
+                <div class="row text-center text-md-start align-items-center">
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <h6 class="fw-bold mb-0">
+                            ❄ SnowTricks
+                        </h6>
+                        <small class="text-muted">
+                            Plateforme snowboard
+                        </small>
+                    </div>
+                    <div class="col-md-4 mb-3 mb-md-0 text-center">
+                        <small class="text-muted">
+                            ©
+                            {{ "now"|date("Y") }}
+                            SnowTricks
+                        </small>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <small class="text-muted d-block mb-1">
+                            © Adjoukou AGBELOU | Full Stack Dev PHP/Symfony
+                        </small>
+                        <small class="text-muted d-block mb-1">
+                            <i class="bi bi-globe"></i>
+                            <a href="https://www.dmdprod.com/" target="_blank" class="text-decoration-none text-muted">
+                                https://dmdprod.com
+                            </a>
+                        </small>
+                        <div class="d-flex justify-content-center justify-content-md-end gap-3">
+                            <a href="https://www.linkedin.com/in/mike-adjoukou-agbelou-23640098/" target="_blank" class="text-decoration-none text-primary">
+                                <i class="bi bi-linkedin"></i>
+                            </a>
+                            <a href="https://github.com/Mike031289" target="_blank" class="text-decoration-none text-dark">
+                                <i class="bi bi-github"></i>
+                            </a>
+                            <a href="mailto:mike.agbelou@gmail.com" class="text-decoration-none text-danger">
+                                <i class="bi bi-envelope-fill"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </body>
 </html>

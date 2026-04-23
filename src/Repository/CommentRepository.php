@@ -1,11 +1,12 @@
 <?php
+// src/Repository/CommentRepository.php
 
 namespace App\Repository;
 
-use App\Entity\Comment;
 use App\Entity\Trick;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Entity\Comment;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Comment>

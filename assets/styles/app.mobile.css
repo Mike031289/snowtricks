@@ -1,0 +1,62 @@
+/* ================= MOBILE ================= */
+
+@media (max-width: 991px) {
+    .navbar-nav {
+        text-align: left;
+        width: 100%;
+    }
+
+    .navbar-nav .nav-item {
+        width: 100%;
+    }
+
+    .navbar-nav .dropdown-menu {
+        position: static !important;
+        float: none;
+        width: 100%;
+    }
+
+    section.hero-banner{
+        height: 30vh;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .hero-banner {
+        height: 45vh;
+    }
+
+    .hero-overlay {
+        align-items: flex-end;
+        padding-bottom: 2rem;
+    }
+
+    .hero-title {
+        font-size: 1.8rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .hero-content .btn {
+        width: 100%;
+        max-width: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .hero-banner {
+        height: 40vh;
+    }
+
+    .hero-title {
+        font-size: 1.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+}

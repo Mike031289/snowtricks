@@ -128,9 +128,17 @@
                                                     {{ comment.author.username }}
                                                 </strong>
                                                 <br>
-                                                    <small class="text-muted">
-                                                        {{ comment.createdAt|date('d/m/Y à H:i') }}
-                                                    </small>
+                                                    {% if comment.updatedAt and comment.updatedAt != comment.createdAt %}
+                                                        <small class="text-muted">
+                                                            Modifié le
+                                                            {{ comment.updatedAt|date('d/m/Y à H:i') }}
+                                                        </small>
+                                                    {% else %}
+                                                        <small class="text-muted">
+                                                            Publié le
+                                                            {{ comment.createdAt|date('d/m/Y à H:i') }}
+                                                        </small>
+                                                    {% endif %}
                                                 </div>
                                                 {# ACTIONS #}
                                                 <div class="d-flex gap-2">
@@ -140,7 +148,7 @@
                                                         </a>
                                                     {% endif %}
                                                     {% if is_granted('COMMENT_DELETE', comment) %}
-                                                        <form method="post" action="{{ path('app_comment_delete', {id: comment.id}) }}" onsubmit="return confirm('Supprimer ce commentaire ?');">
+                                                        <form method="post" action="{{ path('app_comment_delete', {id: comment.id}) }}">
                                                             <input type="hidden" name="_token" value="{{ csrf_token('delete_comment_' ~ comment.id) }}">
                                                                 <button class="btn btn-link text-danger p-0">
                                                                     <i class="bi bi-trash"></i>
