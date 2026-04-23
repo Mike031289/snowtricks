@@ -6,6 +6,7 @@
  */
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/app.css';
+import './styles/app.mobile.css';
 
 /*
  * SnowTricks App JS

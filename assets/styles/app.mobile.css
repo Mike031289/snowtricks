@@ -1,0 +1,45 @@
+/* ================= MOBILE ================= */
+
+@media (max-width: 991px) {
+    .navbar-nav {
+        text-align: left;
+        width: 100%;
+    }
+
+    .navbar-nav .nav-item {
+        width: 100%;
+    }
+
+    .navbar-nav .dropdown-menu {
+        position: static !important;
+        float: none;
+        width: 100%;
+    }
+
+    section.hero-banner{
+        height: 30vh;
+    }
+
+    .hero-overlay,
+    .hero-banner::before,
+    .hero-banner img{
+        height: auto;
+    }
+}
+
+/* ================= MOBILE FIX ================= */
+
+@media (max-width: 768px) {
+
+    section.hero-banner{
+        height: 27vh;
+    }
+
+}
+
+@media (max-width: 480px) {
+
+     section.hero-banner{
+        height: 25vh;
+    }
+}
