@@ -13,37 +13,33 @@ namespace App\DataFixtures;
 use App\Entity\Group;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
-class GroupFixture extends Fixture
+class GroupFixtures extends Fixture
 {
-    // private const GROUPS = [
-    //     'Grabs',
-    //     'Flips',
-    //     'Rotations',
-    //     'Slides'
-    // ];
-    
+    public function __construct(private SluggerInterface $slugger) {}
+
     public function load(ObjectManager $manager): void
     {
-        // $groups = self::GROUPS;
         $groups = [
             'Grabs',
             'Flips',
             'Rotations',
             'Slides'
         ];
-        
-        // slug arrow function
-        $slug = fn($string) => strtolower(str_replace(' ', '-', $string));
 
         foreach ($groups as $groupName) {
+
             $group = new Group();
+
             $group->setName($groupName);
-            $group->setSlug($slug($groupName));
+            $group->setSlug(
+                $this->slugger->slug($groupName)->lower()
+            );
 
             $manager->persist($group);
-            
-            // other fixtures can get this object using the GroupFixtures::GROUP_REFERENCE constant
+
+            // Référence utilisable dans les autres fixtures
             $this->addReference($groupName, $group);
         }
 

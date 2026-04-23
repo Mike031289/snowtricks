@@ -122,7 +122,7 @@ class MediaService
 
         // Validate URL format
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            return null;
+            return $url = 'https://' . $url;
         }
 
         // =========================
@@ -157,7 +157,7 @@ class MediaService
             return $url;
         }
 
-        return null;
+        return $url; // Return original URL if no conversion possible (could be handled differently, e.g. return null)
     }
 
     /**
