@@ -128,9 +128,17 @@
                                                     {{ comment.author.username }}
                                                 </strong>
                                                 <br>
-                                                    <small class="text-muted">
-                                                        {{ comment.createdAt|date('d/m/Y à H:i') }}
-                                                    </small>
+                                                    {% if comment.updatedAt and comment.updatedAt != comment.createdAt %}
+                                                        <small class="text-muted">
+                                                            Modifié le
+                                                            {{ comment.updatedAt|date('d/m/Y à H:i') }}
+                                                        </small>
+                                                    {% else %}
+                                                        <small class="text-muted">
+                                                            Publié le
+                                                            {{ comment.createdAt|date('d/m/Y à H:i') }}
+                                                        </small>
+                                                    {% endif %}
                                                 </div>
                                                 {# ACTIONS #}
                                                 <div class="d-flex gap-2">

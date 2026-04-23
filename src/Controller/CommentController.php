@@ -47,8 +47,7 @@ final class CommentController extends AbstractController
                 ]);
             }
 
-            // Update date (or better: use updatedAt if you have it)
-            $comment->setCreatedAt(new \DateTimeImmutable());
+            $comment->setUpdatedAt(new \DateTimeImmutable());
 
             $em->persist($comment);
             $em->flush();
