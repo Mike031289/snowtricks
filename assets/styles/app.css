@@ -354,4 +354,37 @@ body {
         transition: 0.2s;
     }
 
+    /* scroll buttons */
+    .scroll-btn {
+        position: fixed;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        border: none;
+        background: #6b9db5;
+        color: white;
+        display: flex; /* ⚠ important */
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        cursor: pointer;
+        pointer-events: none; /* no click */
+        opacity: 0;          /* invisible on depart */
+        transition: 0.3s;
+    }
+
+    .scroll-btn.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .scroll-top {
+        bottom: 80px;
+    }
+
+    .scroll-bottom {
+        bottom: 20px;
+    }
 }

@@ -25,6 +25,64 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Auto-dismiss flash messages after 5 seconds
+    setTimeout(() => {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        });
+    }, 5000);
+
+    // ===== SCROLL BUTTONS =====
+    const topBtn = document.getElementById("scrollTopBtn");
+    const bottomBtn = document.getElementById("scrollBottomBtn");
+    const footer = document.getElementById("siteFooter");
+
+    // safety check
+    if (topBtn && bottomBtn) {
+
+        // ===== TOP BUTTON =====
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > 300) {
+                topBtn.classList.add("show");
+            } else {
+                topBtn.classList.remove("show");
+            }
+        });
+
+        topBtn.addEventListener("click", () => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        // ===== BOTTOM BUTTON =====
+        bottomBtn.classList.add("show"); // visible par défaut
+
+        bottomBtn.addEventListener("click", () => {
+            window.scrollTo({
+                top: document.documentElement.scrollHeight,
+                behavior: "smooth"
+            });
+        });
+
+        // ===== HIDE BOTTOM BUTTON ON FOOTER =====
+        if (footer) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        bottomBtn.classList.remove("show");
+                    } else {
+                        bottomBtn.classList.add("show");
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            observer.observe(footer);
+        }
+    }
+
     // ===== AVATAR =====
     const input = document.getElementById('avatarInput');
     const form = document.getElementById('avatarForm');
@@ -55,14 +113,5 @@ document.addEventListener('DOMContentLoaded', () => {
         // Auto submit
         form.submit();
     });
-
-    // Auto-dismiss flash messages after 5 seconds
-    setTimeout(() => {
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(alert => {
-            const bsAlert = new bootstrap.Alert(alert);
-            bsAlert.close();
-        });
-    }, 5000);
 
 });

@@ -107,9 +107,16 @@
         {# CONTENU #}
         <main class="container mt-4">
             {% block body %}{% endblock %}
+            {# ================= SCROLL BUTTONS ================= #}
+            <button id="scrollTopBtn" class="scroll-btn scroll-top" title="Remonter">
+                <i class="bi bi-arrow-up"></i>
+            </button>
+            <button id="scrollBottomBtn" class="scroll-btn scroll-bottom" title="Descendre">
+                <i class="bi bi-arrow-down"></i>
+            </button>
         </main>
         {# ================= FOOTER AJOUTÉ ================= #}
-        <footer class="bg-light border-top mt-5">
+        <footer id="siteFooter" class="bg-light border-top mt-5">
             <div class="container py-4">
                 <div class="row text-center text-md-start align-items-center">
                     <div class="col-md-4 mb-3 mb-md-0">
@@ -152,6 +159,5 @@
                 </div>
             </div>
         </footer>
-        {% block javascripts %}{% endblock %}
     </body>
 </html>
