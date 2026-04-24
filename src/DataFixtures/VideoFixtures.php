@@ -19,16 +19,13 @@ class VideoFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         /**
-         * 6 REAL VIDEO LINKS (YouTube + Dailymotion)
+         * 3 REAL VIDEO LINKS (YouTube + Dailymotion)
          * FORMAT WATCH (important for your converter)
          */
         $videoUrls = [
-            'https://www.youtube.com/embed/CevxZvSJLk8',
             'https://www.youtube.com/embed/aqz-KE-bpKQ',
-            'https://www.youtube.com/embed/ysz5S6PUM-U',
-            'https://www.dailymotion.com/embed/video/x80y2k3',
-            'https://www.dailymotion.com/embed/video/x81x0qz',
             'https://www.dailymotion.com/embed/video/x7tgczk',
+            'https://www.dailymotion.com/embed/video/x80q4x9',
         ];
 
         $tricks = [
@@ -48,8 +45,8 @@ class VideoFixtures extends Fixture implements DependentFixtureInterface
 
             $trick = $this->getReference($name, Trick::class);
 
-            // 6 videos per trick (stable & deterministic)
-            for ($i = 0; $i < 6; $i++) {
+            // 3 videos per trick (stable & deterministic)
+            for ($i = 0; $i < 3; $i++) {
 
                 $video = new Video();
 

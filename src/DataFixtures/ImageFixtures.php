@@ -45,7 +45,7 @@ class ImageFixtures extends Fixture implements DependentFixtureInterface
 
             $slug = $this->slugger->slug($name)->lower();
 
-            for ($i = 1; $i <= 4; $i++) {
+            for ($i = 1; $i <= 3; $i++) {
 
                 $image = new Image();
 
