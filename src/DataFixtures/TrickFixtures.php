@@ -68,7 +68,7 @@ class TrickFixtures extends Fixture implements DependentFixtureInterface
             $trick->setCreatedAt(new \DateTimeImmutable());
             $trick->setUpdatedAt(new \DateTimeImmutable());
 
-            $trick->setMainImage($slug . '_1.jpg');
+            $trick->setMainImage('fixtures/' .$slug . '_1.jpg');
 
             $manager->persist($trick);
 

@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 class AvatarService
 {
     public function __construct(
-        #[Autowire('%images_directory%')]
+        #[Autowire('%avatars_directory%')]
         private string $uploadDirectory,
 
         private SluggerInterface $slugger

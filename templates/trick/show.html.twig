@@ -7,7 +7,7 @@
     <div class="container mt-4">
         {# HERO IMAGE #}
         <div class="position-relative mb-4">
-            <img src="{{ asset('uploads/images/' ~ trick.mainImage) }}" class="img-fluid w-100 rounded shadow" style="max-height: 400px; object-fit: cover;" alt="{{ trick.name }}">
+            <img src="{{ asset('uploads/tricks/' ~ trick.mainImage) }}" class="img-fluid w-100 rounded shadow" style="max-height: 400px; object-fit: cover;" alt="{{ trick.name }}">
                 <h1 class="position-absolute bottom-0 start-0 text-white p-3" style="background: rgba(0,0,0,0.5); width: 100%;">
                     {{ trick.name }}
                 </h1>
@@ -43,7 +43,7 @@
             <div class="row mb-4">
                 <div class="col-md-3 mb-3">
                     {#  Main Image by default #}
-                    <img src="{{ asset('uploads/images/' ~ trick.mainImage) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;" alt="{{ trick.mainImage }}">
+                    <img src="{{ asset('uploads/tricks/' ~ trick.mainImage) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;" alt="{{ trick.mainImage }}">
                         <p class="small text-muted">
                             Image principale par défaut:
                             {{ trick.mainImage }}
@@ -51,7 +51,7 @@
                     </div>
                     {% for image in trick.images %}
                         <div class="col-md-3 mb-3">
-                            <img src="{{ asset('uploads/images/' ~ image.url) }}" class="img-fluid rounded shadow-sm" alt="{{ image.alt }}" style="height:150px; object-fit:cover;">
+                            <img src="{{ asset('uploads/tricks/' ~ image.url) }}" class="img-fluid rounded shadow-sm" alt="{{ image.alt }}" style="height:150px; object-fit:cover;">
                                 <p class="small text-muted">
                                     Image :
                                     {{ trick.mainImage }}
