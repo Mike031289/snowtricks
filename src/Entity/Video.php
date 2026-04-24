@@ -22,7 +22,7 @@ class Video
     private ?string $embedUrl = null;
 
     #[ORM\Column]
-    private ?bool $isMain = null;
+    private ?bool $isMain = false;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;

@@ -5,7 +5,7 @@
 {% block body %}
     {# ================= HERO BANNER ================= #}
     <section class="hero-banner text-center text-white">
-        <img src="{{ asset('images/snow-banner.jpg') }}" alt="Montagne de snowboard" class="hero-img" loading="eager" fetchpriority="high">
+        <img src="{{ asset('images/snow-banner.jpg') }}" alt="Snowboard" class="hero-img" loading="eager" fetchpriority="high">
             <div class="hero-overlay d-flex align-items-center justify-content-center">
                 <div class="hero-content">
                     <h1 class="display-4 fw-bold">
@@ -33,7 +33,7 @@
                     <div class="col-md-4">
                         <div class="card trick-card h-100 shadow-sm">
                             <div class="trick-image">
-                                <img src="{{ asset('uploads/images/' ~ trick.mainImage) }}" alt="{{ trick.name }}"></div>
+                                <img src="{{ asset('uploads/tricks/' ~ trick.mainImage) }}" alt="{{ trick.name }}"></div>
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h5 class="card-title mb-0">

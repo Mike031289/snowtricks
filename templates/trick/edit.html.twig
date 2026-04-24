@@ -22,7 +22,7 @@
         </p>
         {# ===================== MAIN IMAGE ===================== #}
         <div class="position-relative d-inline-block w-100 mb-4">
-            <img src="{{ asset('uploads/images/' ~ mainImage) }}" class="img-fluid rounded shadow" style="max-height:500px ; object-fit:cover; width:100%;">
+            <img src="{{ asset('uploads/tricks/' ~ mainImage) }}" class="img-fluid rounded shadow" style="max-height:500px ; object-fit:cover; width:100%;">
                 {# Optional edit icon (UX) #}
                 <span class="position-absolute top-0 end-0 m-1 badge bg-light text-dark">
                     <i class="bi bi-pencil d-flex">
@@ -95,7 +95,7 @@
                 <div class="row mb-4">
                     <div class="col-md-3 mb-3">
                         {#  Main Image by default #}
-                        <img src="{{ asset('uploads/images/' ~ mainImage) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;" alt="{{ mainImage }}">
+                        <img src="{{ asset('uploads/tricks/' ~ mainImage) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;" alt="{{ mainImage }}">
                             <p class="small text-muted">
                                 Image principale par défaut:
                                 {{ mainImage }}
@@ -105,7 +105,7 @@
                             <div class="col-md-3 mb-3">
                                 <div class="position-relative">
                                     {# image #}
-                                    <img src="{{ asset('uploads/images/' ~ image.url) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;" alt="{{ image.alt }}">
+                                    <img src="{{ asset('uploads/tricks/' ~ image.url) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;" alt="{{ image.alt }}">
                                         <p class="small text-muted">
                                             Nom de l'image :
                                             {{ image.url }}
