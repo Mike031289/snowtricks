@@ -19,6 +19,16 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  * - Convert video URLs into embed URLs
  * - Persist Image and Video entities
  */
+
+namespace App\Service;
+
+use App\Entity\Image;
+use App\Entity\Video;
+use App\Entity\Trick;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+
 class MediaService
 {
     public function __construct(
@@ -28,14 +38,13 @@ class MediaService
         private EntityManagerInterface $em
     ) {}
 
-    /**
-     * Handle main image upload for a Trick.
-     */
+    // =========================
+    // MAIN IMAGE
+    // =========================
     public function handleMainImage(FormInterface $form, Trick $trick): void
     {
         $file = $form->get('mainImage')->getData();
 
-        // No file uploaded → nothing to do
         if (!$file) {
             return;
         }
@@ -47,9 +56,9 @@ class MediaService
         $trick->setMainImage($filename);
     }
 
-    /**
-     * Handle multiple additional images upload for a Trick.
-     */
+    // =========================
+    // MULTIPLE IMAGES
+    // =========================
     public function handleImages(FormInterface $form, Trick $trick): void
     {
         $files = $form->get('images')->getData();
@@ -59,6 +68,7 @@ class MediaService
         }
 
         foreach ($files as $file) {
+
             if (!$file) {
                 continue;
             }
@@ -68,7 +78,7 @@ class MediaService
             $file->move($this->imagesDirectory, $filename);
 
             $image = new Image();
-            $image->setUrl($filename);
+            $image->setUrl($filename); 
             $image->setAlt($trick->getName());
             $image->setCreatedAt(new \DateTimeImmutable());
             $image->setIsMain(false);
@@ -78,9 +88,9 @@ class MediaService
         }
     }
 
-    /**
-     * Handle video URLs (comma-separated) and convert them into embed format.
-     */
+    // =========================
+    // VIDEOS
+    // =========================
     public function handleVideos(FormInterface $form, Trick $trick): void
     {
         $videosString = $form->get('videos')->getData();
@@ -92,13 +102,14 @@ class MediaService
         $videos = array_map('trim', explode(',', $videosString));
 
         foreach ($videos as $url) {
+
             if (!$url) {
                 continue;
             }
 
             $embedUrl = $this->convertToEmbedUrl($url);
 
-            if (!$embedUrl) {
+            if ($embedUrl === null) {
                 continue;
             }
 
@@ -112,57 +123,34 @@ class MediaService
         }
     }
 
-    /**
-     * Convert a URL into an embeddable video URL.
-     * Supports YouTube and Dailymotion.
-     */
+    // =========================
+    // CONVERSION URL → EMBED
+    // =========================
     private function convertToEmbedUrl(string $url): ?string
     {
         $url = trim($url);
 
-        // Validate URL format
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            return $url = 'https://' . $url;
+            $url = 'https://' . $url;
         }
 
-        // =========================
         // YOUTUBE
-        // =========================
-
-        if (preg_match('/youtube\.com\/watch\?v=([^&]+)/', $url, $m)) {
+        if (preg_match('/youtube\.com\/watch\?v=([^&]+)/', $url, $m)
+            || preg_match('/youtu\.be\/([^?&]+)/', $url, $m)) {
             return 'https://www.youtube.com/embed/' . $m[1];
         }
 
-        if (preg_match('/youtu\.be\/([^?&]+)/', $url, $m)) {
-            return 'https://www.youtube.com/embed/' . $m[1];
-        }
-
-        if (preg_match('/youtube\.com\/embed\/([^?&]+)/', $url)) {
-            return $url;
-        }
-
-        // =========================
         // DAILYMOTION
-        // =========================
-
         if (preg_match('/dailymotion\.com\/video\/([^_?&]+)/', $url, $m)) {
             return 'https://www.dailymotion.com/embed/video/' . $m[1];
         }
 
-        if (preg_match('/dailymotion\.com\/player\.html\?video=([^&]+)/', $url, $m)) {
-            return 'https://www.dailymotion.com/embed/video/' . $m[1];
-        }
-
-        if (preg_match('/dailymotion\.com\/embed\/video\/([^?&]+)/', $url)) {
-            return $url;
-        }
-
-        return $url; // Return original URL if no conversion possible (could be handled differently, e.g. return null)
+        return null; // Unsupported URL
     }
 
-    /**
-     * Generate a safe and unique filename for uploads.
-     */
+    // =========================
+    // FILE NAME
+    // =========================
     private function generateFilename(string $slug, ?string $extension): string
     {
         return $slug . '_' . uniqid() . '.' . ($extension ?? 'jpg');

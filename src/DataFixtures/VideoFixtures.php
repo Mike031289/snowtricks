@@ -1,12 +1,5 @@
 <?php
-// src/DataFixtures/VideoFixture.php
-
-/*
- * This file is part of the SnowTricks project.
- *
- * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com> Dev-Application PHP Symfony
- * 
-*/
+// src/DataFixtures/VideoFixtures.php
 
 namespace App\DataFixtures;
 
@@ -25,6 +18,19 @@ class VideoFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
+        /**
+         * 6 REAL VIDEO LINKS (YouTube + Dailymotion)
+         * FORMAT WATCH (important for your converter)
+         */
+        $videoUrls = [
+            'https://www.youtube.com/embed/CevxZvSJLk8',
+            'https://www.youtube.com/embed/aqz-KE-bpKQ',
+            'https://www.youtube.com/embed/ysz5S6PUM-U',
+            'https://www.dailymotion.com/embed/video/x80y2k3',
+            'https://www.dailymotion.com/embed/video/x81x0qz',
+            'https://www.dailymotion.com/embed/video/x7tgczk',
+        ];
+
         $tricks = [
             'Indy Grab',
             'Melon Grab',
@@ -38,23 +44,17 @@ class VideoFixtures extends Fixture implements DependentFixtureInterface
             'Noseslide'
         ];
 
-        $videoUrls = [
-            'https://www.youtube.com/embed/xxx1',
-            'https://www.youtube.com/embed/xxx2',
-            'https://www.dailymotion.com/embed/video/x7u5zph',
-            'https://www.dailymotion.com/embed/video/x84sh7d',
-        ];
-
         foreach ($tricks as $name) {
 
             $trick = $this->getReference($name, Trick::class);
 
-            for ($i = 1; $i <= 3; $i++) {
+            // 6 videos per trick (stable & deterministic)
+            for ($i = 0; $i < 6; $i++) {
 
                 $video = new Video();
 
-                $video->setEmbedUrl($videoUrls[array_rand($videoUrls)]);
-                $video->setIsMain($i === 1);
+                $video->setEmbedUrl($videoUrls[$i]);
+                $video->setIsMain($i === 0);
                 $video->setCreatedAt(new \DateTimeImmutable());
                 $video->setTrick($trick);
 

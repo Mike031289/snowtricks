@@ -2,10 +2,8 @@
 // src/DataFixtures/ImageFixture.php
 
 /*
- * This file is part of the SnowTricks project.
- *
- * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com> Dev-Application PHP Symfony
- * 
+* This file is part of the SnowTricks project.
+* (c) Adjoukou AGBELOU <adjoukou.agbelou@live.com> Dev-Application PHP Symfony
 */
 
 namespace App\DataFixtures;
@@ -14,10 +12,13 @@ use App\Entity\Image;
 use App\Entity\Trick;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-class ImageFixture extends Fixture implements DependentFixtureInterface
+class ImageFixtures extends Fixture implements DependentFixtureInterface
 {
+    public function __construct(private SluggerInterface $slugger) {}
+
     public function getDependencies(): array
     {
         return [TrickFixtures::class];
@@ -42,14 +43,19 @@ class ImageFixture extends Fixture implements DependentFixtureInterface
 
             $trick = $this->getReference($name, Trick::class);
 
-            for ($i = 1; $i <= 2; $i++) {
+            $slug = $this->slugger->slug($name)->lower();
+
+            for ($i = 1; $i <= 4; $i++) {
 
                 $image = new Image();
 
-                $slug = strtolower(str_replace(' ', '', $name));
+                /**
+                 * FIXTURES STORAGE PATH just for development and testing purposes.
+                 * In production, images should be uploaded by users and stored in a proper directory like upload/images/.
+                 */
+                $image->setUrl('fixtures/' . $slug . '_' . $i . '.jpg');
 
-                $image->setUrl($slug . $i . '.jpg');
-                $image->setAlt($name . ' image ' . $i);
+                $image->setAlt(sprintf('%s image %d', $name, $i));
                 $image->setIsMain($i === 1);
                 $image->setCreatedAt(new \DateTimeImmutable());
                 $image->setTrick($trick);

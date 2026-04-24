@@ -68,7 +68,7 @@
                         {% for video in trick.videos %}
                             <div class="col-md-4 mb-3">
                                 <div class="ratio ratio-16x9">
-                                    <iframe src="{{ video.embedUrl }}" title="YouTube video" allowfullscreen></iframe>
+                                    <iframe src="{{ video.embedUrl }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                                 </div>
                             </div>
                         {% else %}
