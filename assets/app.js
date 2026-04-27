@@ -34,6 +34,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, 5000);
 
+    // ===== Medias carroussel =====
+
+    window.openImage = function (src) {
+        const img = document.getElementById('modalImageContent');
+        if (img) img.src = src;
+    };
+
+    window.openVideo = function (src) {
+        const iframe = document.getElementById('modalVideoContent');
+        if (iframe) iframe.src = src;
+    };
+
+    const modalVideo = document.getElementById('modalVideo');
+
+    if (modalVideo) {
+        modalVideo.addEventListener('hidden.bs.modal', function () {
+            const iframe = document.getElementById('modalVideoContent');
+            if (iframe) iframe.src = '';
+        });
+    }
+
     // ===== SCROLL BUTTONS =====
     const topBtn = document.getElementById("scrollTopBtn");
     const bottomBtn = document.getElementById("scrollBottomBtn");
