@@ -47,11 +47,22 @@
 # Uploaded Files
 ######################################
 
-# User uploaded files (images/videos)
-# These should not be versioned
-public/uploads/images/
-public/uploads/avatar/
+# Ignore everything in uploads
+/public/uploads/*
 
+# Allow tricks directory (keep folder structure)
+!/public/uploads/tricks/
+
+# Ignore everything inside tricks
+/public/uploads/tricks/*
+
+# Allow only fixtures (versioned test images)
+!/public/uploads/tricks/fixtures/
+!/public/uploads/tricks/fixtures/*
+
+# Allow avatars folder but ignore its content (user uploads)
+!/public/uploads/avatars/
+/public/uploads/avatars/*
 
 ######################################
 # PHPUnit & Testing
