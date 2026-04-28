@@ -87,8 +87,11 @@ class TrickType extends AbstractType
                 'mapped' => false,
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'https://youtube.com/watch?v=xxx',
+                    'class' => 'form-control',
+                    'rows' => 4,
+                    'placeholder' => "Collez une ou plusieurs URLs Séparées par un retour à la ligne ou une virgule Ex : \nhttps://youtube.com/watch?v=xxx\nhttps://www.dailymotion.com/video/x6zxwl, https://youtu.be/yyy",
                 ],
+                'help' => 'Séparez les liens par un retour à la ligne ou une virgule',
             ])
 
             // ===== GROUP =====

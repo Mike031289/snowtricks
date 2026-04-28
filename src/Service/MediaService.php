@@ -99,11 +99,14 @@ class MediaService
             return;
         }
 
-        $videos = array_map('trim', explode(',', $videosString));
+        // split : commas + line breaks
+        $urls = preg_split('/[\r\n,]+/', $videosString);
 
-        foreach ($videos as $url) {
+        foreach ($urls as $url) {
 
-            if (!$url) {
+            $url = trim($url);
+
+            if (empty($url)) {
                 continue;
             }
 
@@ -111,6 +114,13 @@ class MediaService
 
             if ($embedUrl === null) {
                 continue;
+            }
+
+            // Avoid duplicates
+            foreach ($trick->getVideos() as $existingVideo) {
+                if ($existingVideo->getEmbedUrl() === $embedUrl) {
+                    continue 2; // skip this vidéo
+                }
             }
 
             $video = new Video();

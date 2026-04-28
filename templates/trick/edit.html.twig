@@ -10,155 +10,144 @@
             <i class="bi bi-pencil-square"></i>
             Modifier la figure
         </h1>
-        {# ===================== FORM START ===================== #}
+        {# ================= FORM ================= #}
         {{ form_start(form, {'attr': {'enctype': 'multipart/form-data' }}
         ) }}
         <h5 class="mb-3">
             Image principale actuelle
         </h5>
         <p class="small text-muted">
-            Nom de l'image :
+            Nom :
             {{ mainImage }}
         </p>
-        {# ===================== MAIN IMAGE ===================== #}
-        <div class="position-relative d-inline-block w-100 mb-4">
-            <img src="{{ asset('uploads/tricks/' ~ mainImage) }}" class="img-fluid rounded shadow" style="max-height:500px ; object-fit:cover; width:100%;">
-                {# Optional edit icon (UX) #}
-                <span class="position-absolute top-0 end-0 m-1 badge bg-light text-dark">
-                    <i class="bi bi-pencil d-flex">
-                        {{ form_widget(form.mainImage, {'attr': {'class': 'form-control' }}
-                        ) }}
-                        <span class="m-2"></span>
-                    </i>
-                </span>
-            </div>
-            <p class="text-muted me-3">
-                Télécharger une nouvelle image principale écrasera l'actuelle. L'image doit être au format JPG ou PNG et ne pas dépasser 2MB.
-            </p>
-        </div>
-        {# ===================== BASIC FIELDS ===================== #}
-        <div class="mb-3 mt-4">
-            {{ form_label(form.name) }}
-            {{ form_widget(form.name, {'attr': {'class': 'form-control' }}
-            ) }}
-        </div>
-        <div class="mb-3">
-            {{ form_label(form.description) }}
-            {{ form_widget(form.description, {'attr': {'class': 'form-control' }}
-            ) }}
-        </div>
-        <div class="mb-3">
-            {{ form_label(form.groups) }}
-            {{ form_widget(form.groups, {'attr': {'class': 'form-select' }}
-            ) }}
-        </div>
-        {# ===================== ADD NEW IMAGES ===================== #}
-        <h5 class="mt-4 mb-3">
-            Ajouter de nouvelles images
-        </h5>
-        <div id="images-collection">
-            {{ form_widget(form.images, {'attr': {'multiple': 'multiple', 'class': 'form-control' }}
-            ) }}
-            <small class="text-muted">
-                Vous pouvez sélectionner plusieurs images en maintenant CTRL (Windows) ou CMD (Mac)
-            </small>
-        </div>
-        {# ===================== ADD NEW VIDEOS ===================== #}
-        <h5 class="mt-4 mb-3">
-            Ajouter de nouvelles vidéos
-        </h5>
-        <div id="videos-collection">
-            {{ form_widget(form.videos, {'attr': {'class': 'form-control' }}
-            ) }}
-            <small class="text-muted">
-                Entrez les URL des vidéos YouTube, séparées par des virgules.
-            </small>
-        </div>
-        {# ===================== ACTIONS ===================== #}
-        <div class="mt-4">
-            <button class="btn btn-primary">
-                <input type="hidden" name="_token" value="{{ csrf_token('edit' ~ trick.id) }}">
-                    <i class="bi bi-check-circle"></i>
-                    Enregistrer
-                </button>
-                <a href="{{ path('app_home') }}" class="btn btn-secondary">
-                    <i class="bi bi-x"></i>
-                    Annuler
-                </a>
-            </div>
-            {{ form_end(form) }}
-            {# ===================== EXISTING IMAGES ===================== #}
-            <div class="mb-4">
-                <h5 class="mt-5 mb-3">
-                    Images existantes
+        <div class="position-relative mb-4">
+            {% if is_granted('ROLE_USER') %}
+                <img src="{{ asset('uploads/tricks/' ~ mainImage) }}" class="img-fluid w-100 rounded shadow" style="max-height:400px; object-fit:cover;">
+                    <span class="position-absolute top-0 end-0 m-1 badge bg-light text-dark">
+                        <i class="bi bi-pencil d-flex">
+                            {{ form_widget(form.mainImage, {'attr': {'class': 'form-control' }}
+                            ) }}
+                        </i>
+                    </span>
+                </div>
+                {{ form_widget(form.name, {'attr': {'class': 'form-control mb-3' }}
+                ) }}
+                {{ form_widget(form.description, {'attr': {'class': 'form-control mb-3' }}
+                ) }}
+                {{ form_widget(form.groups, {'attr': {'class': 'form-select mb-3' }}
+                ) }}
+                <h5 class="mt-4">
+                    Ajouter images
                 </h5>
-                <div class="row mb-4">
-                    <div class="col-md-3 mb-3">
-                        {#  Main Image by default #}
-                        <img src="{{ asset('uploads/tricks/' ~ mainImage) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;" alt="{{ mainImage }}">
-                            <p class="small text-muted">
-                                Image principale par défaut:
-                                {{ mainImage }}
-                            </p>
-                        </div>
-                        {% for image in images %}
-                            <div class="col-md-3 mb-3">
-                                <div class="position-relative">
-                                    {# image #}
-                                    <img src="{{ asset('uploads/tricks/' ~ image.url) }}" class="img-fluid rounded shadow-sm" style="height:150px; object-fit:cover;" alt="{{ image.alt }}">
-                                        <p class="small text-muted">
-                                            Nom de l'image :
-                                            {{ image.url }}
-                                        </p>
-                                        {# DELETE BUTTON (top right overlay) #}
-                                        {% if is_granted('IMAGE_DELETE', image) %}
-                                            <form method="post" action="{{ path('app_image_delete', {id: image.id}) }}" class="position-absolute top-0 end-0 m-1" onsubmit="return confirm('Supprimer cette image ?');">
-                                                <input type="hidden" name="_token" value="{{ csrf_token('delete_image_' ~ image.id) }}">
-                                                    {% if image.url != mainImage %}
-                                                        <button class="btn btn-danger btn-sm rounded-circle shadow" style="width:30px; height:30px; display:flex; align-items:center; justify-content:center;">
-                                                            <i class="bi bi-x-lg"></i>
-                                                        </button>
+                {{ form_widget(form.images, {'attr': {'class': 'form-control', 'multiple': 'multiple' }}
+                ) }}
+                <h5 class="mt-4">
+                    Ajouter vidéos
+                </h5>
+                {{ form_widget(form.videos, {'attr': {'class': 'form-control' }}
+                ) }}
+                <div class="mt-4">
+                    <input type="hidden" name="_token" value="{{ csrf_token('edit' ~ trick.id) }}">
+                        <button class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i>
+                            Enregistrer
+                        </button>
+                        <a href="{{ path('app_home') }}" class="btn btn-secondary">
+                            <i class="bi bi-x"></i>
+                            Annuler
+                        </a>
+                    </div>
+                    {{ form_end(form) }}
+                {% endif %}
+                {# ================= CAROUSEL IMAGES ================= #}
+                <div class="row mt-5 mb-4">
+                    <div class="col-md-6">
+                        <h3>
+                            {{ images|length }} Images 
+                        </h3>
+                        <div id="carouselImagesEdit" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active position-relative">
+                                    <img src="{{ asset('uploads/tricks/' ~ mainImage) }}" class="d-block w-100 rounded" style="height:300px; object-fit:cover;"></div>
+                                    {% for image in images %}
+                                        <div class="carousel-item position-relative">
+                                            <img src="{{ asset('uploads/tricks/' ~ image.url) }}" class="d-block w-100 rounded" style="height:300px; object-fit:cover;">
+                                                {% if is_granted('IMAGE_DELETE', image) %}
+                                                    <form method="post" action="{{ path('app_image_delete', {id: image.id}) }}" class="position-absolute top-0 end-0 m-2" style="z-index:10;" onsubmit="return confirm('Supprimer cette image ?');">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_image_' ~ image.id) }}">
+                                                            <button class="btn btn-danger btn-sm rounded-circle">
+                                                                <i class="bi bi-x-lg"></i>
+                                                            </button>
+                                                        </form>
                                                     {% endif %}
-                                                </form>
-                                            {% endif %}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselImagesEdit" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon"></span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#carouselImagesEdit" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                                {# ================= CAROUSEL VIDEOS ================= #}
+                                <div class="col-md-6">
+                                    <h3>
+                                        {{ videos|length }} Vidéos
+                                    </h3>
+                                    <div id="carouselVideosEdit" class="carousel slide" data-bs-ride="carousel">
+                                        <div class="carousel-inner">
+                                            {% for video in videos %}
+                                                <div class="carousel-item {% if loop.first %}active{% endif %} position-relative">
+                                                    <div class="ratio ratio-16x9">
+                                                        <iframe src="{{ video.embedUrl }}" style="pointer-events:none;" allowfullscreen></iframe>
+                                                    </div>
+                                                    <div class="position-absolute top-50 start-50 translate-middle" style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#modalVideo" onclick="openVideo('{{ video.embedUrl }}')">
+                                                        <i class="bi bi-play-circle-fill text-white" style="font-size:3rem;"></i>
+                                                    </div>
+                                                    {% if is_granted('VIDEO_DELETE', video) %}
+                                                        <form method="post" action="{{ path('app_video_delete', {id: video.id}) }}" class="position-absolute top-0 end-0 m-2" style="z-index:10;" onsubmit="return confirm('Supprimer cette vidéo ?');">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_video_' ~ video.id) }}">
+                                                                <button class="btn btn-danger btn-sm rounded-circle">
+                                                                    <i class="bi bi-x-lg"></i>
+                                                                </button>
+                                                            </form>
+                                                        {% endif %}
+                                                    </div>
+                                                {% else %}
+                                                    <div class="carousel-item active text-center">
+                                                        <p>
+                                                            Aucune vidéo
+                                                        </p>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselVideosEdit" data-bs-slide="prev">
+                                                <span class="carousel-control-prev-icon"></span>
+                                            </button>
+                                            <button class="carousel-control-next" type="button" data-bs-target="#carouselVideosEdit" data-bs-slide="next">
+                                                <span class="carousel-control-next-icon"></span>
+                                            </button>
                                         </div>
                                     </div>
-                                {% else %}
-                                    <p>
-                                        Aucune image.
-                                    </p>
-                                {% endfor %}
+                                </div>
                             </div>
-                        </div>
-                        {# ===================== EXISTING VIDEOS ===================== #}
-                        <div class="mb-4">
-                            <h5 class="mt-5 mb-3">
-                                Vidéos existantes
-                            </h5>
-                            <div class="row mb-4">
-                                {% for video in videos %}
-                                    <div class="col-md-4 mb-3">
-                                        <div class="position-relative">
-                                            {# video (embed YouTube) #}
+                            {# ================= MODALS ================= #}
+                            <div class="modal fade" id="modalImage">
+                                <div class="modal-dialog modal-xl modal-dialog-centered">
+                                    <div class="modal-content bg-dark">
+                                        <img id="modalImageContent" class="w-100"></div>
+                                    </div>
+                                </div>
+                                <div class="modal fade" id="modalVideo">
+                                    <div class="modal-dialog modal-xl modal-dialog-centered">
+                                        <div class="modal-content">
                                             <div class="ratio ratio-16x9">
-                                                <iframe src="{{ video.embedUrl }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                            </div>
-                                            {# DELETE BUTTON (top right overlay) #}
-                                            {% if is_granted('VIDEO_DELETE', video) %}
-                                                <form method="post" action="{{ path('app_video_delete', {id: video.id}) }}" class="position-absolute top-0 end-0 m-1" onsubmit="return confirm('Supprimer cette vidéo ?');">
-                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_video_' ~ video.id) }}">
-                                                        <button class="btn btn-danger btn-sm rounded-circle shadow" style="width:30px; height:30px; display:flex; align-items:center; justify-content:center;">
-                                                            <i class="bi bi-x-lg"></i>
-                                                        </button>
-                                                    </form>
-                                                {% endif %}
+                                                <iframe id="modalVideoContent" allowfullscreen></iframe>
                                             </div>
                                         </div>
-                                    {% else %}
-                                        <p>
-                                            Aucune vidéo.
-                                        </p>
-                                    {% endfor %}
+                                    </div>
                                 </div>
                             {% endblock %}
                             
