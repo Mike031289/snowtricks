@@ -33,17 +33,19 @@
                     <div class="col-md-4">
                         <div class="card trick-card h-100 shadow-sm">
                             <div class="trick-image">
-                                <img src="{{ asset('uploads/tricks/' ~ trick.mainImage) }}" alt="{{ trick.name }}"></div>
+                                {# VIEW #}
+                                <a href="{{ path('app_trick_show', {id: trick.id, slug: trick.slug}) }}" class="text-primary">
+                                    <img src="{{ asset('uploads/tricks/' ~ trick.mainImage) }}" alt="{{ trick.name }}"></a>
+                                </div>
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <h5 class="card-title mb-0">
-                                            {{ trick.name }}
-                                        </h5>
+                                        {# VIEW #}
+                                        <a href="{{ path('app_trick_show', {id: trick.id, slug: trick.slug}) }}" class="text-primary">
+                                                <h5 class="card-title mb-0">
+                                                    {{ trick.name }}
+                                                </h5>
+                                        </a>
                                         <div class="d-flex gap-2 align-items-center">
-                                            {# VIEW #}
-                                            <a href="{{ path('app_trick_show', {id: trick.id, slug: trick.slug}) }}" class="text-primary">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
                                             {# EDIT #}
                                             {% if is_granted('TRICK_EDIT', trick) %}
                                                 <a href="{{ path('app_trick_edit', {id: trick.id}) }}" class="text-warning">
@@ -130,3 +132,4 @@
                         </nav>
                     {% endif %}
                 {% endblock %}
+                

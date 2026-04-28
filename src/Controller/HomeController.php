@@ -27,7 +27,7 @@ final class HomeController extends AbstractController
         $page = max(1, $request->query->getInt('page', 1));
 
         // Pagination limit
-        $limit = 3;
+        $limit = 10;
 
         // Fetch paginated tricks
         $tricks = $trickRepository->findPaginated($page, $limit);

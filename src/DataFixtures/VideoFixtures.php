@@ -23,9 +23,9 @@ class VideoFixtures extends Fixture implements DependentFixtureInterface
          * FORMAT WATCH (important for your converter)
          */
         $videoUrls = [
-            'https://www.youtube.com/embed/aqz-KE-bpKQ',
-            'https://www.dailymotion.com/embed/video/x7tgczk',
-            'https://www.dailymotion.com/embed/video/x80q4x9',
+            'https://www.youtube.com/watch?v=v6xqATm7JQc',
+            'https://www.youtube.com/watch?v=7VBalG0IhhI&t=5s',
+            'https://www.dailymotion.com/video/x6zxwl',
         ];
 
         $tricks = [
