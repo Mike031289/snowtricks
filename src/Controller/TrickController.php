@@ -197,7 +197,7 @@ final class TrickController extends AbstractController
     ): Response {
 
         $page = max(1, $request->query->getInt('page', 1));
-        $limit = 3;
+        $limit = 10;
 
         $comments = $commentRepository->findPaginatedByTrick($trick, $page, $limit);
         $total = $commentRepository->countByTrick($trick);
