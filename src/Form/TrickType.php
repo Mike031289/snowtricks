@@ -25,6 +25,7 @@ class TrickType extends AbstractType
             ->add('name', null, [
                 'label' => 'Nom de la figure',
                 'required' => true,
+                'empty_data' => '', 
                 'constraints' => [
                     new Assert\NotBlank([
                         'message' => 'Le nom de la figure est obligatoire.',
@@ -32,8 +33,6 @@ class TrickType extends AbstractType
                     new Assert\Length([
                         'min' => 3,
                         'max' => 255,
-                        'minMessage' => 'Le nom doit contenir au moins {{ limit }} caractères.',
-                        'maxMessage' => 'Le nom ne peut pas dépasser {{ limit }} caractères.',
                     ]),
                 ],
             ])
@@ -42,6 +41,7 @@ class TrickType extends AbstractType
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
                 'required' => true,
+                'empty_data' => '',
                 'constraints' => [
                     new Assert\NotBlank([
                         'message' => 'La description est obligatoire.',
