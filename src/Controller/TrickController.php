@@ -104,23 +104,7 @@ final class TrickController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-
-            if (!$form->isValid()) {
-                $this->addFlash('danger', '❌ Oups ! Une erreur est s\'est produite. Vérifiez les informations saisies et réessayez.');
-                return $this->redirectToRoute('app_trick_edit', [
-                    'id' => $trick->getId()
-                ]);
-            }
-
-            if (!$this->isCsrfTokenValid('edit' . $trick->getId(), $request->request->get('_token'))) {
-                $this->addFlash('danger', '❌ Une erreur s\'est produite. Si le problème persiste, contactez le support.');
-                return $this->redirectToRoute('app_trick_show', [
-                    'id' => $trick->getId(),
-                    'slug' => $trick->getSlug(),
-                ]);
-            }
-
+        if ($form->isSubmitted() && $form->isValid()) {
             $trick->setUpdatedAt(new \DateTimeImmutable());
 
             $trick->setSlug(
