@@ -48,21 +48,37 @@ class ResetPasswordController extends AbstractController
         TranslatorInterface $translator
     ): Response {
 
+        // Create the reset password request form
         $form = $this->createForm(ResetPasswordRequestFormType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            /** @var string $email */
-            $email = $form->get('email')->getData();
+            // Get the username from the form input
+            /** @var string $username */
+            $username = $form->get('username')->getData();
+            
+            // Try to find the user by username
+            $user = $this->entityManager
+                ->getRepository(User::class)
+                ->findOneBy(['username' => $username]);
 
+            // SECURITY: Do not reveal whether the user exists or not
+            // This prevents user enumeration attacks
+            if (!$user) {
+                // Redirect to a generic confirmation page
+                return $this->redirectToRoute('app_check_email');
+            }
+            
+            // If user exists, send reset password email using their email address
             return $this->processSendingPasswordResetEmail(
-                $email,
+                $user->getEmail(),
                 $mailer,
                 $translator
             );
         }
 
+        // Render the request form view
         return $this->render('reset_password/request.html.twig', [
             'requestForm' => $form,
         ]);
@@ -170,6 +186,7 @@ class ResetPasswordController extends AbstractController
             ->getRepository(User::class)
             ->findOneBy(['email' => $emailFormData]);
 
+        // SECURITY:This prevents user enumeration attacks
         // Redirect for security (don't reveal if user exists or not)
         if (!$user) {
             $this->addFlash('info', 'Si un compte existe, un email a été envoyé.');
@@ -200,8 +217,8 @@ class ResetPasswordController extends AbstractController
         // Store token
         $this->setTokenObjectInSession($resetToken);
         
-        $this->addFlash('success', 'Un email de réinitialisation vous a été envoyé.');
+        $this->addFlash('success', 'Si compte existe un email de réinitialisation vous a été envoyé.');
 
-        return $this->redirectToRoute('app_check_email');
+        return $this->redirectToRoute('app_login');
     }
 }
