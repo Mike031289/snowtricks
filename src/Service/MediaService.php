@@ -20,15 +20,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  * - Persist Image and Video entities
  */
 
-namespace App\Service;
-
-use App\Entity\Image;
-use App\Entity\Video;
-use App\Entity\Trick;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
-
 class MediaService
 {
     public function __construct(

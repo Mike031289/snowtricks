@@ -12,6 +12,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use Symfony\Component\Mime\Address;
+use App\Service\ResetPasswordService;
 use App\Form\ChangePasswordFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\ResetPasswordRequestFormType;
@@ -44,8 +45,7 @@ class ResetPasswordController extends AbstractController
     #[Route('', name: 'app_forgot_password_request')]
     public function request(
         Request $request,
-        MailerInterface $mailer,
-        TranslatorInterface $translator
+        ResetPasswordService $resetPasswordService
     ): Response {
 
         // Create the reset password request form
@@ -57,25 +57,15 @@ class ResetPasswordController extends AbstractController
             // Get the username from the form input
             /** @var string $username */
             $username = $form->get('username')->getData();
-            
-            // Try to find the user by username
-            $user = $this->entityManager
-                ->getRepository(User::class)
-                ->findOneBy(['username' => $username]);
 
-            // SECURITY: Do not reveal whether the user exists or not
+            // Call the service to handle reset password logic
+            $resetPasswordService->sendResetPasswordEmail($username);
+
+            // SECURITY: Always show the same message
             // This prevents user enumeration attacks
-            if (!$user) {
-                // Redirect to a generic confirmation page
-                return $this->redirectToRoute('app_check_email');
-            }
-            
-            // If user exists, send reset password email using their email address
-            return $this->processSendingPasswordResetEmail(
-                $user->getEmail(),
-                $mailer,
-                $translator
-            );
+            $this->addFlash('info', 'Si un compte existe, un email de réinitialisation a été envoyé. Veuillez vérifier votre boîte mail.');
+
+            return $this->redirectToRoute('app_check_email');
         }
 
         // Render the request form view
@@ -173,52 +163,4 @@ class ResetPasswordController extends AbstractController
         ]);
     }
 
-    /**
-     * Send reset email
-     */
-    private function processSendingPasswordResetEmail(
-        string $emailFormData,
-        MailerInterface $mailer,
-        TranslatorInterface $translator
-    ): RedirectResponse {
-
-        $user = $this->entityManager
-            ->getRepository(User::class)
-            ->findOneBy(['email' => $emailFormData]);
-
-        // SECURITY:This prevents user enumeration attacks
-        // Redirect for security (don't reveal if user exists or not)
-        if (!$user) {
-            $this->addFlash('info', 'Si un compte existe, un email a été envoyé.');
-            return $this->redirectToRoute('app_check_email');
-        }
-
-        try {
-            $resetToken = $this->resetPasswordHelper->generateResetToken($user);
-
-        } catch (ResetPasswordExceptionInterface $e) {
-
-            $this->addFlash('danger', 'Veuillez vérifier votre boîte de réception ou réessayer plus tard.');
-
-            return $this->redirectToRoute('app_check_email');
-        }
-
-        $email = (new TemplatedEmail())
-            ->from(new Address('mike.agbelou@gmail.com', 'SnowTricks'))
-            ->to((string) $user->getEmail())
-            ->subject('Réinitialisation de votre mot de passe')
-            ->htmlTemplate('reset_password/email.html.twig')
-            ->context([
-                'resetToken' => $resetToken,
-            ]);
-
-        $mailer->send($email);
-
-        // Store token
-        $this->setTokenObjectInSession($resetToken);
-        
-        $this->addFlash('success', 'Si compte existe un email de réinitialisation vous a été envoyé.');
-
-        return $this->redirectToRoute('app_login');
-    }
 }
