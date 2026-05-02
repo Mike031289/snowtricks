@@ -29,10 +29,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 final class TrickController extends AbstractController
 {
     public function __construct(
+        private TrickCacheService $trickCacheService,
         private  SluggerInterface $slugger,
         private MediaService $mediaService,
-        private EntityManagerInterface $em,
-        private TrickCacheService $trickCacheService
+        private EntityManagerInterface $em
     ) {}
 
     #[Route('profile/tricks', name: 'app_profile_tricks', methods: ['GET'])]
