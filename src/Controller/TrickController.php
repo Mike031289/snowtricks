@@ -16,6 +16,7 @@ use App\Entity\Comment;
 use App\Form\TrickType;
 use App\Form\CommentType;
 use App\Service\MediaService;
+use App\Service\TrickCacheService;
 use App\Repository\CommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +29,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 final class TrickController extends AbstractController
 {
     public function __construct(
-        private MediaService $mediaService
+        private  SluggerInterface $slugger,
+        private MediaService $mediaService,
+        private EntityManagerInterface $em,
+        private TrickCacheService $trickCacheService
     ) {}
 
     #[Route('profile/tricks', name: 'app_profile_tricks', methods: ['GET'])]
@@ -47,9 +51,7 @@ final class TrickController extends AbstractController
     #[Route('/profile/trick/new', name: 'app_trick_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
     public function new(
-        Request $request,
-        EntityManagerInterface $em,
-        SluggerInterface $slugger
+       Request $request,
     ): Response {
 
         $trick = new Trick();
@@ -69,15 +71,18 @@ final class TrickController extends AbstractController
             $trick->setUpdatedAt(new \DateTimeImmutable());
 
             $trick->setSlug(
-                $slugger->slug($trick->getName())->lower()
+                $this->slugger->slug($trick->getName())->lower()
             );
 
             $this->mediaService->handleMainImage($form, $trick);
             $this->mediaService->handleImages($form, $trick);
             $this->mediaService->handleVideos($form, $trick);
 
-            $em->persist($trick);
-            $em->flush();
+            $this->em->persist($trick);
+            $this->em->flush();
+            
+            // INVALIDATE CACHE AFTER CREATE
+            $this->trickCacheService->clearHomepageCache();
 
             $this->addFlash('success', '✅ Trick créé avec succès !');
 
@@ -92,10 +97,8 @@ final class TrickController extends AbstractController
     #[Route('/profile/trick/{id}/edit', name: 'app_trick_edit', methods: ['GET', 'POST'])]
     #[IsGranted('TRICK_EDIT', subject: 'trick')]
     public function edit(
-        Request $request,
         Trick $trick,
-        EntityManagerInterface $em,
-        SluggerInterface $slugger
+        Request $request,
     ): Response {
 
         $form = $this->createForm(TrickType::class, $trick, [
@@ -108,15 +111,18 @@ final class TrickController extends AbstractController
             $trick->setUpdatedAt(new \DateTimeImmutable());
 
             $trick->setSlug(
-                $slugger->slug($trick->getName())->lower()
+                $this->slugger->slug($trick->getName())->lower()
             );
 
             $this->mediaService->handleMainImage($form, $trick);
             $this->mediaService->handleImages($form, $trick);
             $this->mediaService->handleVideos($form, $trick);
 
-            $em->flush();
+            $this->em->flush();
 
+             // INVALIDATE CACHE AFTER UPDATE
+            $this->trickCacheService->clearHomepageCache();
+            
             $this->addFlash('success', '✏️ Trick modifié avec succès.');
 
             // Redirect to previous page
@@ -146,19 +152,21 @@ final class TrickController extends AbstractController
     #[Route('/profile/trick/{id}/delete', name: 'app_trick_delete', methods: ['POST'])]
     #[IsGranted('TRICK_DELETE', subject: 'trick')]
     public function delete(
-        Trick $trick,
         Request $request,
-        EntityManagerInterface $em
+        Trick $trick
     ): Response {
 
-        if (!$this->isCsrfTokenValid('delete'.$trick->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete'.$trick->getId(), $request->get('_token'))) {
             $this->addFlash('danger', '❌ Action invalide.');
             return $this->redirectToRoute('app_profile');
         }
 
-        $em->remove($trick);
-        $em->flush();
+        $this->em->remove($trick);
+        $this->em->flush();
 
+        // INVALIDATE CACHE AFTER DELETE
+        $this->trickCacheService->clearHomepageCache();
+        
         $this->addFlash('success', '🗑️ Trick supprimé avec succès.');
 
         // Redirect to previous page
@@ -176,7 +184,6 @@ final class TrickController extends AbstractController
     public function show(
         Trick $trick,
         Request $request,
-        EntityManagerInterface $em,
         CommentRepository $commentRepository
     ): Response {
 
@@ -203,8 +210,8 @@ final class TrickController extends AbstractController
                 $comment->setTrick($trick);
                 $comment->setCreatedAt(new \DateTimeImmutable());
 
-                $em->persist($comment);
-                $em->flush();
+                $this->em->persist($comment);
+                $this->em->flush();
 
                 $this->addFlash('success', '💬 Commentaire ajouté !');
 
