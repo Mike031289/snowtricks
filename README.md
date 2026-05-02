@@ -19,6 +19,8 @@
     3. php bin/console doctrine:database:create
     4. php bin/console doctrine:migrations:migrate
     5. php bin/console doctrine:fixtures:load
+    6. php bin/console asset-map:compile //#Avec AssetMapper, les assets sont servis dynamiquement en dev mais doivent être compilés en production
+    7. php binphp bin/console cache:clear --env=prod
 
 ## NB: Les images de démonstration sont incluses dans : 
     public/
