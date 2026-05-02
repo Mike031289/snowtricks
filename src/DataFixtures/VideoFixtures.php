@@ -24,7 +24,7 @@ class VideoFixtures extends Fixture implements DependentFixtureInterface
          */
         $videoUrls = [
             'https://www.youtube.com/watch?v=v6xqATm7JQc',
-            'https://www.youtube.com/watch?v=7VBalG0IhhI&t=5s',
+            'https://www.youtube.com/watch?v=7VBalG0IhhI',
             'https://www.dailymotion.com/video/x6zxwl',
         ];
 
@@ -32,13 +32,24 @@ class VideoFixtures extends Fixture implements DependentFixtureInterface
             'Indy Grab',
             'Melon Grab',
             'Mute Grab',
+
             'Backflip',
             'Frontflip',
+
             '360',
             '540',
             '720',
+
             'Boardslide',
-            'Noseslide'
+            'Noseslide',
+
+            'Tail Grab',
+            'Stalefish',
+
+            '900',
+
+            'Lip Slide',
+            'Cork 720',
         ];
 
         foreach ($tricks as $name) {

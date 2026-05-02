@@ -21,11 +21,16 @@ class GroupFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $groups = [
+       $groups = [
             'Grabs',
             'Flips',
             'Rotations',
-            'Slides'
+            'Slides',
+            'Jumps',
+            'Freestyle Basics',
+            'Freeride Tricks',
+            'Switch Tricks',
+            'Big Air',
         ];
 
         foreach ($groups as $groupName) {
@@ -39,7 +44,7 @@ class GroupFixtures extends Fixture
 
             $manager->persist($group);
 
-            // Référence utilisable dans les autres fixtures
+            // Reference
             $this->addReference($groupName, $group);
         }
 

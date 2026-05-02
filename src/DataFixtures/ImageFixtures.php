@@ -26,17 +26,29 @@ class ImageFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
+        
         $tricks = [
             'Indy Grab',
             'Melon Grab',
             'Mute Grab',
+
             'Backflip',
             'Frontflip',
+
             '360',
             '540',
             '720',
+
             'Boardslide',
-            'Noseslide'
+            'Noseslide',
+
+            'Tail Grab',
+            'Stalefish',
+
+            '900',
+
+            'Lip Slide',
+            'Cork 720',
         ];
 
         foreach ($tricks as $name) {
