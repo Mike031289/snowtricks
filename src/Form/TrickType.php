@@ -25,7 +25,7 @@ class TrickType extends AbstractType
             ->add('name', null, [
                 'label' => 'Nom de la figure',
                 'required' => true,
-                'empty_data' => '', 
+                'empty_data' => '',
                 'constraints' => [
                     new Assert\NotBlank([
                         'message' => 'Le nom de la figure est obligatoire.',
