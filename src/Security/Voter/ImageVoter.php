@@ -53,7 +53,7 @@ final class ImageVoter extends Voter
         }
 
         // ownership
-        if ($trick->getAuthor() !== $user) {
+        if ($trick->getAuthor()?->getId() === $user->getId()) {
             return false;
         }
 
