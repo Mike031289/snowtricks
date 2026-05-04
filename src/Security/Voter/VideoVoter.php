@@ -51,7 +51,7 @@ final class VideoVoter extends Voter
         }
 
         // ownership
-        if ($trick->getAuthor() !== $user) {
+        if ($trick->getAuthor()?->getId() === $user->getId()) {
             return false;
         }
 
