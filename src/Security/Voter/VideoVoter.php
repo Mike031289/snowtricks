@@ -17,7 +17,7 @@ final class VideoVoter extends Voter
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, [self::DELETE])
+        return in_array($attribute, [self::DELETE], true)
             && $subject instanceof Video;
     }
 

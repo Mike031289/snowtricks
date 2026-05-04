@@ -19,7 +19,7 @@ final class TrickVoter extends Voter
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, [self::ADD, self::EDIT, self::DELETE])
+        return in_array($attribute, [self::ADD, self::EDIT, self::DELETE], true)
             && $subject instanceof Trick;
     }
 

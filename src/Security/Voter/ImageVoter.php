@@ -17,7 +17,7 @@ final class ImageVoter extends Voter
     {
         // Return true if the attribute is one we support && if the subject on witch we vote is an instance of the object we wants to access
         // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, [self::DELETE])
+        return in_array($attribute, [self::DELETE], true)
             && $subject instanceof Image;
 
     }
