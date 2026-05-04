@@ -5,8 +5,6 @@
 /*
  * This file is to handle security-related actions, specifically user login and logout. It uses Symfony's built-in security features to manage authentication. The login action checks if the user is already authenticated and redirects them if so, while also handling any authentication errors and passing the last username back to the login form for user convenience. The logout action is a placeholder that Symfony intercepts to handle the logout process automatically.
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
  *
  * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com> Dev-Application PHP Symfony
  *
