@@ -36,9 +36,11 @@ final class TrickVoter extends Voter
             case self::ADD:
                 // logic to determine if the user can ADD
                 return $this->canAdd($subject, $user);
+
             case self::EDIT:
                 // logic to determine if the user can EDIT
                 return $this->canEdit($subject, $user);
+
             case self::DELETE:
                 // logic to determine if the user can DELETE
                 return $this->canDelete($subject, $user);

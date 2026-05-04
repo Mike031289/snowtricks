@@ -35,26 +35,25 @@ final class CommentVoter extends Voter
         switch ($attribute) {
             case self::EDIT:
                 // logic to determine if the user can EDIT
-                return $this->canEdit($subject, $user);
                 // return true or false
-                break;
+                return $this->canEdit($subject, $user);
+
             case self::DELETE:
                 // logic to determine if the user can DELETE
-                return $this->canDelete($subject, $user);
                 // return true or false
-                break;
+                return $this->canDelete($subject, $user);
         }
 
         return false;
     }
 
-    private function canEdit(Comment $trick, User $user): bool
+    private function canEdit(Comment $comment, User $user): bool
     {
-        return $trick->getAuthor() === $user;
+        return $comment->getAuthor()?->getId() === $user->getId();
     }
 
-    private function canDelete(Comment $trick, User $user): bool
+    private function canDelete(Comment $comment, User $user): bool
     {
-        return $trick->getAuthor() === $user;
+        return $comment->getAuthor()?->getId() === $user->getId();
     }
 }
