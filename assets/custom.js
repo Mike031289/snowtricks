@@ -44,6 +44,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ===== COMMENTS TEXT EREA LIMITE (Count caracters max 900) =====
+    const textarea = document.querySelector('textarea');
+    const counter = document.getElementById('charCount');
+    if (textarea && counter) {
+        counter.textContent = textarea.value.length;
+        textarea.addEventListener('input', () => {
+            const length = textarea.value.length;
+            counter.textContent = length;
+            counter.classList.toggle('text-danger', length > 900);
+        });
+    }
+
     // ===== SCROLL BUTTONS =====
     const topBtn = document.getElementById("scrollTopBtn");
     const bottomBtn = document.getElementById("scrollBottomBtn");

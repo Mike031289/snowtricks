@@ -39,15 +39,7 @@ final class CommentController extends AbstractController
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-
-            if (!$form->isValid()) {
-                $this->addFlash('danger', '❌ Le commentaire est invalide.');
-
-                return $this->redirectToRoute('app_comment_edit', [
-                    'id' => $comment->getId(),
-                ]);
-            }
+        if ($form->isSubmitted() && $form->isValid()){
 
             $comment->setUpdatedAt(new \DateTimeImmutable());
 
