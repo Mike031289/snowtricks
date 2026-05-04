@@ -12,6 +12,13 @@
             {{ importmap('app') }}
             {# link to load faster main image #}
             <link rel="preload" as="image" href="{{ asset('images/snow-banner.jpg') }}">
+            {# links for generated favicons for diffrent devicies system (android app and Ios screen shot-cut), and site webmanifest for SEO && code quality #}
+            <link rel="icon" type="image/png" href="{{ asset('favicon-96x96.png') }}" sizes="96x96" />
+            <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}" />
+            <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
+            <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}" />
+            <meta name="apple-mobile-web-app-title" content="SnowTricks" />
+            <link rel="manifest" href="{{ asset('site.webmanifest') }}" />
         {% endblock %}
     </head>
     <body>
