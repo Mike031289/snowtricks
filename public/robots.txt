@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Bloquer certaines pages sensibles
+Disallow: /admin
+Disallow: /profile
+Disallow: /login
+
+# Sitemap (optionnel mais conseillé)
+Sitemap: https://dmdprod.com/snowtricks/sitemap.xml
