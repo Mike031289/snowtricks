@@ -51,16 +51,16 @@ final class TrickVoter extends Voter
 
     private function canAdd(Trick $trick, User $user): bool
     {
-        return $trick->getAuthor() === $user;
+        return $trick->getAuthor()?->getId() === $user->getId();
     }
 
     private function canEdit(Trick $trick, User $user): bool
     {
-        return $trick->getAuthor() === $user;
+        return $trick->getAuthor()?->getId() === $user->getId();
     }
 
     private function canDelete(Trick $trick, User $user): bool
     {
-        return $trick->getAuthor() === $user;
+        return $trick->getAuthor()?->getId() === $user->getId();
     }
 }
