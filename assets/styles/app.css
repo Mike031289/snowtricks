@@ -13,7 +13,7 @@ body {
         background-color: #355f73 !important;
         color: #ffffff !important;
     }
-    
+
     .btn-primary:hover {
         background-color: #2a4e5e !important;
         border-color: #2a4e5e !important;
@@ -203,12 +203,12 @@ body {
     }
 
     .navbar .nav-link i {
-        color: #7baabc; 
+        color: #7baabc;
         transition: color 0.2s ease;
     }
 
     .navbar .nav-link:hover i {
-        color: #00d4ff; 
+        color: #00d4ff;
     }
 
     /* ========= HOME PAGE ========= */
@@ -229,7 +229,7 @@ body {
     }
 
     /* overlay darck */
-    
+
     .hero-banner {
         position: relative;
         height: 65vh;
@@ -242,7 +242,7 @@ body {
         inset: 0;
         background: rgba(0,0,0,0.45);
     }
-    
+
     .hero-overlay {
         position: absolute;
         inset: 0;
@@ -320,7 +320,7 @@ body {
     }
 
     /* ============ TRICK FORM ========= */
-    
+
     label.required::after {
         content: " *";
         color: red;
@@ -416,6 +416,11 @@ body {
 
     .scroll-bottom {
         bottom: 20px;
+    }
+
+    .comments-block{
+        margin: 30px 0;
+        max-width: 750px;
     }
 
 }

@@ -196,36 +196,31 @@ final class TrickController extends AbstractController
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
 
-            if (!$form->isValid()) {
-                $this->addFlash('danger', '❌ Commentaire invalide.');
-            } else {
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-                $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+            $comment->setAuthor($this->getUser());
+            $comment->setTrick($trick);
+            $comment->setCreatedAt(new \DateTimeImmutable());
 
-                $comment->setAuthor($this->getUser());
-                $comment->setTrick($trick);
-                $comment->setCreatedAt(new \DateTimeImmutable());
+            $this->em->persist($comment);
+            $this->em->flush();
 
-                $this->em->persist($comment);
-                $this->em->flush();
+            $this->addFlash('success', '💬 Commentaire ajouté !');
 
-                $this->addFlash('success', '💬 Commentaire ajouté !');
-
-                // Redirect to previous page
-                $referer = $request->headers->get('referer');
-                if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
-                    return $this->redirect($referer);
-                }
-
-                // Fallback redirect
-                return $this->redirectToRoute('app_trick_show', [
-                    'page' => $page,
-                    'id' => $trick->getId(),
-                    'slug' => $trick->getSlug(),
-                ]);
+            // Redirect to previous page
+            $referer = $request->headers->get('referer');
+            if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
+                return $this->redirect($referer);
             }
+
+            // Fallback redirect
+            return $this->redirectToRoute('app_trick_show', [
+                'page' => $page,
+                'id' => $trick->getId(),
+                'slug' => $trick->getSlug(),
+            ]);
         }
 
         return $this->render('trick/show.html.twig', [

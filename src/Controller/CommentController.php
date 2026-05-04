@@ -55,7 +55,7 @@ final class CommentController extends AbstractController
         }
 
         return $this->render('comment/edit.html.twig', [
-            'form'    => $form->createView(),
+            'commentForm'    => $form->createView(),
             'comment' => $comment,
         ]);
     }
