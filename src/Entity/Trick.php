@@ -1,13 +1,14 @@
 <?php
+
 // src/Entity/Trick.php
 
 namespace App\Entity;
 
+use App\Repository\TrickRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\TrickRepository;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: TrickRepository::class)]
@@ -107,6 +108,7 @@ class Trick
     public function setName(string $name): static
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -118,6 +120,7 @@ class Trick
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
+
         return $this;
     }
 
@@ -129,6 +132,7 @@ class Trick
     public function setDescription(string $description): static
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -140,6 +144,7 @@ class Trick
     public function setMainImage(string $mainImage): static
     {
         $this->mainImage = $mainImage;
+
         return $this;
     }
 
@@ -151,6 +156,7 @@ class Trick
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
         return $this;
     }
 
@@ -162,6 +168,7 @@ class Trick
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
         return $this;
     }
 
@@ -173,6 +180,7 @@ class Trick
     public function setAuthor(?User $author): static
     {
         $this->author = $author;
+
         return $this;
     }
 
@@ -184,6 +192,7 @@ class Trick
     public function setGroups(?Group $groups): static
     {
         $this->groups = $groups;
+
         return $this;
     }
 
@@ -200,6 +209,7 @@ class Trick
             $this->images->add($image);
             $image->setTrick($this);
         }
+
         return $this;
     }
 
@@ -210,6 +220,7 @@ class Trick
                 $image->setTrick(null);
             }
         }
+
         return $this;
     }
 
@@ -224,6 +235,7 @@ class Trick
             $this->videos->add($video);
             $video->setTrick($this);
         }
+
         return $this;
     }
 
@@ -234,6 +246,7 @@ class Trick
                 $video->setTrick(null);
             }
         }
+
         return $this;
     }
 
@@ -248,6 +261,7 @@ class Trick
             $this->comments->add($comment);
             $comment->setTrick($this);
         }
+
         return $this;
     }
 
@@ -258,6 +272,7 @@ class Trick
                 $comment->setTrick(null);
             }
         }
+
         return $this;
     }
 }

@@ -1,22 +1,23 @@
 <?php
+
 // src/Controller/ImageController.php
 
 /*
  * This file is part of SnowTricks.
  *
  * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com> Dev-Application PHP Symfony
- * 
+ *
  */
 
 namespace App\Controller;
 
 use App\Entity\Image;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class ImageController extends AbstractController
 {
@@ -28,11 +29,11 @@ final class ImageController extends AbstractController
     public function delete(
         EntityManagerInterface $em,
         Request $request,
-        Image $image
+        Image $image,
     ): Response {
 
         // CSRF protection
-        if (!$this->isCsrfTokenValid('delete_image_' . $image->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete_image_'.$image->getId(), $request->request->get('_token'))) {
 
             $this->addFlash('danger', '❌ Action invalide.');
 
@@ -51,7 +52,7 @@ final class ImageController extends AbstractController
         $trick = $image->getTrick();
 
         // Delete physical file
-        $filePath = $this->getParameter('images_directory') . '/' . $image->getUrl();
+        $filePath = $this->getParameter('images_directory').'/'.$image->getUrl();
 
         if (file_exists($filePath)) {
             unlink($filePath);

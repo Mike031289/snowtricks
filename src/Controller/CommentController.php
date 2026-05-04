@@ -1,11 +1,12 @@
 <?php
+
 // src/Controller/CommentController.php
 
 /*
  * This file is part of SnowTricks.
  *
  * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com> Dev-Application PHP Symfony
- * 
+ *
  */
 
 namespace App\Controller;
@@ -13,11 +14,11 @@ namespace App\Controller;
 use App\Entity\Comment;
 use App\Form\CommentType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class CommentController extends AbstractController
 {
@@ -26,7 +27,7 @@ final class CommentController extends AbstractController
     public function edit(
         EntityManagerInterface $em,
         Request $request,
-        Comment $comment
+        Comment $comment,
     ): Response {
 
         // Extra security (defensive check)
@@ -42,8 +43,9 @@ final class CommentController extends AbstractController
 
             if (!$form->isValid()) {
                 $this->addFlash('danger', '❌ Le commentaire est invalide.');
+
                 return $this->redirectToRoute('app_comment_edit', [
-                    'id' => $comment->getId()
+                    'id' => $comment->getId(),
                 ]);
             }
 
@@ -71,11 +73,11 @@ final class CommentController extends AbstractController
     public function delete(
         EntityManagerInterface $em,
         Request $request,
-        Comment $comment
+        Comment $comment,
     ): Response {
 
         // CSRF protection
-        if (!$this->isCsrfTokenValid('delete_comment_' . $comment->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete_comment_'.$comment->getId(), $request->request->get('_token'))) {
 
             $this->addFlash('danger', '❌ Action invalide.');
 
@@ -105,7 +107,7 @@ final class CommentController extends AbstractController
         if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
             return $this->redirect($referer);
         }
-        
+
         // Fallback redirect
         return $this->redirectToRoute('app_trick_show', [
             'slug' => $slug,

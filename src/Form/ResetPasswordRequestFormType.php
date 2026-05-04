@@ -1,13 +1,14 @@
 <?php
+
 // src/Form/ResetPasswordRequestFormType.php
 
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ResetPasswordRequestFormType extends AbstractType
 {
@@ -17,7 +18,7 @@ class ResetPasswordRequestFormType extends AbstractType
             ->add('username', TextType::class, [
                 'attr' => [
                     'autocomplete' => 'username',
-                    'placeholder' => 'Entrez votre nom d’utilisateur'
+                    'placeholder' => 'Entrez votre nom d’utilisateur',
                 ],
                 'label' => 'Nom d’utilisateur',
                 'constraints' => [

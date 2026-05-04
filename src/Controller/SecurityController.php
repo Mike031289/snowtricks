@@ -1,4 +1,5 @@
 <?php
+
 // src/Controller/SecurityController.php
 
 /*
@@ -6,9 +7,9 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * 
+ *
  * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com> Dev-Application PHP Symfony
- * 
+ *
 */
 
 namespace App\Controller;
@@ -26,6 +27,7 @@ class SecurityController extends AbstractController
         // redirect to home if already logged in
         if ($this->getUser()) {
             $this->addFlash('info', '👋 Vous êtes déjà connecté.');
+
             return $this->redirectToRoute('app_home');
         }
 

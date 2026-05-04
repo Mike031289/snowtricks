@@ -1,13 +1,14 @@
 <?php
+
 // src/DataFixtures/VideoFixtures.php
 
 namespace App\DataFixtures;
 
-use App\Entity\Video;
 use App\Entity\Trick;
-use Doctrine\Persistence\ObjectManager;
+use App\Entity\Video;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
 
 class VideoFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -57,12 +58,12 @@ class VideoFixtures extends Fixture implements DependentFixtureInterface
             $trick = $this->getReference($name, Trick::class);
 
             // 3 videos per trick (stable & deterministic)
-            for ($i = 0; $i < 3; $i++) {
+            for ($i = 0; $i < 3; ++$i) {
 
                 $video = new Video();
 
                 $video->setEmbedUrl($videoUrls[$i]);
-                $video->setIsMain($i === 0);
+                $video->setIsMain(0 === $i);
                 $video->setCreatedAt(new \DateTimeImmutable());
                 $video->setTrick($trick);
 

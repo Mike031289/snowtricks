@@ -2,11 +2,11 @@
 // src/Controller/TrickController.php
 
 /*
- * This file is to handle trick-related requests. It includes actions for creating, editing, deleting, and displaying tricks, as well as adding comments. It also ensures that only authorized users can perform certain actions and provides feedback through flash messages. The controller interacts with the database using Doctrine's EntityManager and handles media uploads through a dedicated MediaService. It also implements pagination for comments and uses Symfony's security features to protect routes and actions. 
+ * This file is to handle trick-related requests. It includes actions for creating, editing, deleting, and displaying tricks, as well as adding comments. It also ensures that only authorized users can perform certain actions and provides feedback through flash messages. The controller interacts with the database using Doctrine's EntityManager and handles media uploads through a dedicated MediaService. It also implements pagination for comments and uses Symfony's security features to protect routes and actions.
  *
  * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com> Dev-Application PHP Symfony
- * 
- */ 
+ *
+ */
 
 namespace App\Controller;
 
@@ -16,7 +16,7 @@ use App\Entity\Comment;
 use App\Form\TrickType;
 use App\Form\CommentType;
 use App\Service\MediaService;
-use App\Service\TrickCacheService;
+use App\Repository\TrickRepository;
 use App\Repository\CommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +29,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 final class TrickController extends AbstractController
 {
     public function __construct(
-        private TrickCacheService $trickCacheService,
+        private TrickRepository $trickRepository,
         private  SluggerInterface $slugger,
         private MediaService $mediaService,
         private EntityManagerInterface $em
@@ -80,9 +80,6 @@ final class TrickController extends AbstractController
 
             $this->em->persist($trick);
             $this->em->flush();
-            
-            // INVALIDATE CACHE AFTER CREATE
-            $this->trickCacheService->clearHomepageCache();
 
             $this->addFlash('success', '✅ Trick créé avec succès !');
 
@@ -91,7 +88,10 @@ final class TrickController extends AbstractController
 
         return $this->render('trick/new.html.twig', [
             'form' => $form->createView(),
-        ]);
+        ], new Response(
+            null,
+            $form->isSubmitted() && !$form->isValid() ? 422 : 200
+        ));
     }
 
     #[Route('/profile/trick/{id}/edit', name: 'app_trick_edit', methods: ['GET', 'POST'])]
@@ -108,6 +108,7 @@ final class TrickController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $trick->setUpdatedAt(new \DateTimeImmutable());
 
             $trick->setSlug(
@@ -120,9 +121,6 @@ final class TrickController extends AbstractController
 
             $this->em->flush();
 
-             // INVALIDATE CACHE AFTER UPDATE
-            $this->trickCacheService->clearHomepageCache();
-            
             $this->addFlash('success', '✏️ Trick modifié avec succès.');
 
             // Redirect to previous page
@@ -131,22 +129,25 @@ final class TrickController extends AbstractController
             if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
                 return $this->redirect($referer);
             }
-    
+
             // Fallback redirect
             return $this->redirectToRoute('app_trick_show', [
                 'id' => $trick->getId(),
                 'slug' => $trick->getSlug(),
             ]);
-                
+
         }
 
         return $this->render('trick/edit.html.twig', [
-            'trick' => $trick,
             'form' => $form->createView(),
+            'trick' => $trick,
             'images' => $trick->getImages(),
             'videos' => $trick->getVideos(),
             'mainImage' => $trick->getMainImage(),
-        ]);
+        ], new Response(
+            null,
+            $form->isSubmitted() && !$form->isValid() ? 422 : 200
+        ));
     }
 
     #[Route('/profile/trick/{id}/delete', name: 'app_trick_delete', methods: ['POST'])]
@@ -164,9 +165,6 @@ final class TrickController extends AbstractController
         $this->em->remove($trick);
         $this->em->flush();
 
-        // INVALIDATE CACHE AFTER DELETE
-        $this->trickCacheService->clearHomepageCache();
-        
         $this->addFlash('success', '🗑️ Trick supprimé avec succès.');
 
         // Redirect to previous page
@@ -175,7 +173,7 @@ final class TrickController extends AbstractController
         if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
             return $this->redirect($referer);
         }
-        
+
         // Fallback redirect
         return $this->redirectToRoute('app_profile');
     }

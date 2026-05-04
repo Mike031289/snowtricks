@@ -1,4 +1,5 @@
 <?php
+
 // src/Controller/ProfileController.php
 
 /*
@@ -12,12 +13,12 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Service\AvatarService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class ProfileController extends AbstractController
 {
@@ -39,7 +40,7 @@ final class ProfileController extends AbstractController
     public function updateAvatar(
         Request $request,
         EntityManagerInterface $em,
-        AvatarService $avatarService
+        AvatarService $avatarService,
     ): Response {
 
         /** @var User $user */

@@ -1,12 +1,13 @@
 <?php
+
 // src/Security/Voter/ImageVoter.php
 
 namespace App\Security\Voter;
 
-use App\Entity\User;
 use App\Entity\Image;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 final class ImageVoter extends Voter
 {
@@ -21,12 +22,11 @@ final class ImageVoter extends Voter
 
     }
 
-
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         /** @var User $user */
         $user = $token->getUser();
-        
+
         // if the user is anonymous, do not grant acces : he must be logged in
         if (!$user instanceof User) {
             return false;
@@ -39,7 +39,7 @@ final class ImageVoter extends Voter
         // ... (check conditions and return true to grant permission) ...
         return match ($attribute) {
             self::DELETE => $this->canDelete($subject, $user),
-            default => false
+            default => false,
         };
 
     }
@@ -58,7 +58,7 @@ final class ImageVoter extends Voter
         }
 
         // At lest one image in trick so not delete if only one image in the trick
-        if ($trick->getImages()->count() <= 0 || ($trick->getImages() === ($trick->getMainImage()))){
+        if ($trick->getImages()->count() <= 0 || ($trick->getImages() === $trick->getMainImage())) {
 
             return false;
         }

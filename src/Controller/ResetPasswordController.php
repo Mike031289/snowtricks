@@ -1,33 +1,30 @@
 <?php
+
 // src/Controller/ResetPasswordController.php
 
 /*
  * This file for handling password reset functionality. It includes actions for requesting a password reset, confirming the request, and resetting the password using a token. The controller uses Symfony's ResetPasswordBundle to manage the reset process, including token generation and validation. It also sends an email to the user with instructions to reset their password.
  *
  * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com> Dev-Application PHP Symfony
- * 
+ *
  */
 
 namespace App\Controller;
 
 use App\Entity\User;
-use Symfony\Component\Mime\Address;
-use App\Service\ResetPasswordService;
 use App\Form\ChangePasswordFormType;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Form\ResetPasswordRequestFormType;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use App\Service\ResetPasswordService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
+use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
 #[Route('/reset-password')]
 class ResetPasswordController extends AbstractController
@@ -36,8 +33,9 @@ class ResetPasswordController extends AbstractController
 
     public function __construct(
         private ResetPasswordHelperInterface $resetPasswordHelper,
-        private EntityManagerInterface $entityManager
-    ) {}
+        private EntityManagerInterface $entityManager,
+    ) {
+    }
 
     /**
      * Display & process form to request a password reset.
@@ -45,7 +43,7 @@ class ResetPasswordController extends AbstractController
     #[Route('', name: 'app_forgot_password_request')]
     public function request(
         Request $request,
-        ResetPasswordService $resetPasswordService
+        ResetPasswordService $resetPasswordService,
     ): Response {
 
         // Create the reset password request form
@@ -63,7 +61,7 @@ class ResetPasswordController extends AbstractController
 
             // SECURITY: Always show the same message
             // This prevents user enumeration attacks
-            $this->addFlash('info', 'Si un compte existe, un email de réinitialisation a été envoyé. Veuillez vérifier votre boîte mail.');
+            $this->addFlash('info', 'Votre demande a été prise en compte, un email de réinitialisation vous a été envoyé. Veuillez vérifier votre boîte mail.');
 
             return $this->redirectToRoute('app_check_email');
         }
@@ -97,7 +95,7 @@ class ResetPasswordController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
         TranslatorInterface $translator,
-        ?string $token = null
+        ?string $token = null,
     ): Response {
 
         if ($token) {
@@ -162,5 +160,4 @@ class ResetPasswordController extends AbstractController
             'resetForm' => $form,
         ]);
     }
-
 }

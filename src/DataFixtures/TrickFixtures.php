@@ -1,21 +1,22 @@
 <?php
+
 // src/DataFixtures/TrickFixtures.php
 
 namespace App\DataFixtures;
 
-use App\Entity\User;
-use App\Entity\Trick;
 use App\Entity\Group;
-use App\DataFixtures\UserFixtures;
-use App\DataFixtures\GroupFixtures;
-use Doctrine\Persistence\ObjectManager;
+use App\Entity\Trick;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class TrickFixtures extends Fixture implements DependentFixtureInterface
 {
-    public function __construct(private SluggerInterface $slugger) {}
+    public function __construct(private SluggerInterface $slugger)
+    {
+    }
 
     public function getDependencies(): array
     {
@@ -35,7 +36,7 @@ class TrickFixtures extends Fixture implements DependentFixtureInterface
 
 
         $tricksData = [
-            
+
             ['name' => 'Indy Grab', 'description' => 'Saisie backside entre les pieds.', 'group' => 'Grabs'],
             ['name' => 'Melon Grab', 'description' => 'Saisie frontside.', 'group' => 'Grabs'],
             ['name' => 'Mute Grab', 'description' => 'Grab frontside entre les pieds.', 'group' => 'Grabs'],
@@ -82,11 +83,11 @@ class TrickFixtures extends Fixture implements DependentFixtureInterface
             $trick->setCreatedAt(new \DateTimeImmutable());
             $trick->setUpdatedAt(new \DateTimeImmutable());
 
-            $trick->setMainImage('fixtures/' . $slug . '_1.jpg');
+            $trick->setMainImage('fixtures/'.$slug.'_1.jpg');
 
             $manager->persist($trick);
 
-            //Reference
+            // Reference
             $this->addReference($data['name'], $trick);
         }
 

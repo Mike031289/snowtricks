@@ -12,7 +12,7 @@
     {% endfor %}
     <div class="container mt-4">
         <p>
-            Si un compte est rataché à cet identifiant, un e-mail vous a été envoyé contenant un lien qui vous permettra de réinitialiser votre mot de passe.
+            Si un compte est rattaché à cet identifiant, vous recevrez par mail un lien qui vous permettra de réinitialiser votre mot de passe. Pensez à vérifier votre boîte d'emails indésirables.
             Ce lien expirera dans
             {{ resetToken.expirationMessageKey |trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}
             .

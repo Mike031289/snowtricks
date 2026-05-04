@@ -1,16 +1,17 @@
 <?php
+
 // src/Security/Voter/VideoVoter.php
 
 namespace App\Security\Voter;
 
 use App\Entity\User;
 use App\Entity\Video;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 final class VideoVoter extends Voter
 {
-public const DELETE = 'VIDEO_DELETE';
+    public const DELETE = 'VIDEO_DELETE';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -36,11 +37,11 @@ public const DELETE = 'VIDEO_DELETE';
         // ... (check conditions and return true to grant permission) ...
         return match ($attribute) {
             self::DELETE => $this->canDelete($subject, $user),
-            default => false
+            default => false,
         };
 
     }
-    
+
     private function canDelete(Video $video, User $user): bool
     {
         $trick = $video->getTrick();

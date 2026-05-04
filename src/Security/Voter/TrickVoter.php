@@ -1,19 +1,20 @@
 <?php
+
 // src/Security/Voter/TrickVoter.php
 
 namespace App\Security\Voter;
 
-use App\Entity\User;
 use App\Entity\Trick;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 final class TrickVoter extends Voter
 {
     public const ADD = 'TRICK_ADD';
     public const EDIT = 'TRICK_EDIT';
     public const DELETE = 'TRICK_DELETE';
-    
+
     protected function supports(string $attribute, mixed $subject): bool
     {
         // replace with your own logic
@@ -45,12 +46,12 @@ final class TrickVoter extends Voter
 
         return false;
     }
-    
+
     private function canAdd(Trick $trick, User $user): bool
     {
         return $trick->getAuthor() === $user;
     }
-    
+
     private function canEdit(Trick $trick, User $user): bool
     {
         return $trick->getAuthor() === $user;
