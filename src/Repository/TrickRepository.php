@@ -1,11 +1,12 @@
 <?php
+
 // src/Repository/TrickRepository.php
 
 namespace App\Repository;
 
 use App\Entity\Trick;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Trick>
@@ -16,11 +17,12 @@ class TrickRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Trick::class);
     }
-    
+
     /**
-     * @return Trick[] Returns an array of Trick objects
-     * @param int $page The current page number (starting from 1)
+     * @param int $page  The current page number (starting from 1)
      * @param int $limit The number of items to display per page
+     *
+     * @return Trick[] Returns an array of Trick objects
      */
     public function findPaginated(int $page, int $limit): array
     {
@@ -35,7 +37,7 @@ class TrickRepository extends ServiceEntityRepository
     /**
      * Counts the total number of Trick entities in the database.
      *
-     * @return int The total count of Trick entities.
+     * @return int the total count of Trick entities
      */
     public function countAll(): int
     {
@@ -44,28 +46,4 @@ class TrickRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
-//    /**
-//     * @return Trick[] Returns an array of Trick objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Trick
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

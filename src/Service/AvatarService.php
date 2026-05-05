@@ -1,4 +1,5 @@
 <?php
+
 // src/Service/AvatarService.php
 
 /*
@@ -10,18 +11,18 @@
 namespace App\Service;
 
 use App\Entity\User;
-use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class AvatarService
 {
     public function __construct(
         #[Autowire('%avatars_directory%')]
         private string $uploadDirectory,
-
-        private SluggerInterface $slugger
-    ) {}
+        private SluggerInterface $slugger,
+    ) {
+    }
 
     public function upload(User $user, UploadedFile $file): string
     {
@@ -31,8 +32,8 @@ class AvatarService
         // extension safe
         $extension = $file->guessExtension() ?: 'jpg';
 
-        //UPLOAD AVATAR
-        $filename = 'avatar_' . $slug . '.' . $extension;
+        // UPLOAD AVATAR
+        $filename = 'avatar_'.$slug.'.'.$extension;
 
         $file->move($this->uploadDirectory, $filename);
 

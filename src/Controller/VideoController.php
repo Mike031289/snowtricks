@@ -1,22 +1,23 @@
 <?php
+
 // src/Controller/VideoController.php
 
 /*
  * This file is part of SnowTricks.
  *
  * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com> Dev-Application PHP Symfony
- * 
+ *
  */
 
 namespace App\Controller;
 
 use App\Entity\Video;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class VideoController extends AbstractController
 {
@@ -25,11 +26,11 @@ final class VideoController extends AbstractController
     public function delete(
         Video $video,
         Request $request,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
     ): Response {
 
         // CSRF check
-        if (!$this->isCsrfTokenValid('delete_video_' . $video->getId(), $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('delete_video_'.$video->getId(), $request->request->get('_token'))) {
 
             $this->addFlash('danger', '❌ Action invalide.');
 
@@ -61,6 +62,6 @@ final class VideoController extends AbstractController
         return $this->redirectToRoute('app_trick_edit', [
             'id' => $video->getTrick()->getId(),
         ]);
-        
+
     }
 }

@@ -1,11 +1,12 @@
 <?php
+
 // src/DataFixtures/UserFixtures.php
 
 namespace App\DataFixtures;
 
 use App\Entity\User;
-use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixtures extends Fixture
@@ -14,7 +15,9 @@ class UserFixtures extends Fixture
     public const USER_2 = 'user_2';
     public const USER_3 = 'user_3';
 
-    public function __construct(private UserPasswordHasherInterface $hasher) {}
+    public function __construct(private UserPasswordHasherInterface $hasher)
+    {
+    }
 
     public function load(ObjectManager $manager): void
     {

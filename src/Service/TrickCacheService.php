@@ -1,4 +1,5 @@
 <?php
+
 // src/Service/TrickCacheService.php
 
 /*
@@ -10,8 +11,8 @@
 namespace App\Service;
 
 use App\Repository\TrickRepository;
-use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * Service responsible for caching Trick-related data.
@@ -28,23 +29,23 @@ class TrickCacheService
 {
     public function __construct(
         private CacheInterface $cache,
-        private TrickRepository $trickRepository
-    ) {}
-    
+        private TrickRepository $trickRepository,
+    ) {
+    }
 
     /**
      * Get paginated tricks for homepage with caching.
      *
      * Each page is cached separately to support pagination.
      *
-     * @param int $page Current page number
+     * @param int $page  Current page number
      * @param int $limit Number of items per page
      *
      * @return array Cached or fresh list of tricks
      */
     public function getHomepageTricks(int $page, int $limit): array
     {
-        $cacheKey = 'homepage_tricks_page_' . $page;
+        $cacheKey = 'homepage_tricks_page_'.$page;
 
         return $this->cache->get($cacheKey, function (ItemInterface $item) use ($page, $limit) {
 
@@ -66,8 +67,8 @@ class TrickCacheService
         // Assuming a reasonable max pagination depth
         $maxPages = 20;
 
-        for ($page = 1; $page <= $maxPages; $page++) {
-            $this->cache->delete('homepage_tricks_page_' . $page);
+        for ($page = 1; $page <= $maxPages; ++$page) {
+            $this->cache->delete('homepage_tricks_page_'.$page);
         }
     }
 }

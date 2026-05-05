@@ -1,35 +1,37 @@
 <?php
+
 // src/Controller/RegistrationController.php
 
 /*
  * This file is to handle user registration logic.
  *
  * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com> Dev-Application PHP Symfony
- * 
+ *
 */
- 
+
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Security\EmailVerifier;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
-use Symfony\Component\Mime\Address;
+use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 class RegistrationController extends AbstractController
 {
     public function __construct(
-        private EmailVerifier $emailVerifier
-    ) {}
+        private EmailVerifier $emailVerifier,
+    ) {
+    }
 
     /**
      * @Route("/inscription", name="app_register")
@@ -38,12 +40,13 @@ class RegistrationController extends AbstractController
     public function register(
         UserPasswordHasherInterface $userPasswordHasher,
         EntityManagerInterface $entityManager,
-        Request $request
+        Request $request,
     ): Response {
 
         // Prevent logged user from accessing register page
         if ($this->getUser()) {
             $this->addFlash('info', 'Vous êtes déjà connecté.');
+
             return $this->redirectToRoute('app_home');
         }
 
@@ -109,13 +112,14 @@ class RegistrationController extends AbstractController
     public function verifyUserEmail(
         Request $request,
         TranslatorInterface $translator,
-        UserRepository $userRepository
+        UserRepository $userRepository,
     ): Response {
 
         $id = $request->query->get('id');
 
         if (!$id) {
             $this->addFlash('danger', 'Lien de vérification invalide.');
+
             return $this->redirectToRoute('app_register');
         }
 
@@ -123,6 +127,7 @@ class RegistrationController extends AbstractController
 
         if (!$user) {
             $this->addFlash('danger', 'Utilisateur introuvable.');
+
             return $this->redirectToRoute('app_register');
         }
 

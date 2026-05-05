@@ -1,14 +1,15 @@
 <?php
+
 // src/Service/ResetPasswordService.php
 
 namespace App\Service;
 
 use App\Repository\UserRepository;
-use Symfony\Component\Mime\Address;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
-use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
+use Symfony\Component\Mime\Address;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
+use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
 /**
  * Service responsible for password reset process (sending email).
@@ -21,8 +22,9 @@ class ResetPasswordService
     public function __construct(
         private UserRepository $userRepository,
         private ResetPasswordHelperInterface $resetPasswordHelper,
-        private MailerInterface $mailer
-    ) {}
+        private MailerInterface $mailer,
+    ) {
+    }
 
     /**
      * Handle sending reset password email

@@ -1,84 +1,99 @@
-# SnowTricks :
-    Projet Symfony
+# ❄ SnowTricks - Plateforme communautaire de snowboard
+## 📌 Description
+SnowTricks est une application web développée avec Symfony 6.4 permettant aux passionnés de snowboard de partager et documenter des figures (tricks).
 
-## Description :
-    Cette Application sous Symfony 6.4 est une plate forme communautaire de Snowbord où les utilisateurs inscrits peuvent Ajouter et gérer des figures de snowboard avec un espace de discution (commentaires modérés).
+Les utilisateurs peuvent :
+- Créer un compte
+- Ajouter / modifier / supprimer des tricks
+- Ajouter des images et vidéos
+- Commenter les tricks (modération via sécurité Symfony)
+- Gérer leur profil (avatar, compte)
+- Consulter une base de figures communautaire
 
-## Stack technique :
-    - PHP 8.2
-    - Symfony 6.4 LTS
-    - Doctrine ORM
-    - MySQL
-    - Bootstrap 5
-    - Importmap
-    - PHPUnit
+## 🚀 Stack technique
+- PHP 8.2
+- Symfony 6.4 LTS
+- Doctrine ORM
+- MySQL
+- Bootstrap 5
+- AssetMapper (Importmap)
+- Twig
+- PHPUnit
 
-## Installation :
-    1. git clone ...
-    2. composer install
-    3. php bin/console doctrine:database:create
-    4. php bin/console doctrine:migrations:migrate
-    5. php bin/console doctrine:fixtures:load
-    6. php bin/console asset-map:compile //#Avec AssetMapper, les assets sont servis dynamiquement en dev mais doivent être compilés en production
-    7. php binphp bin/console cache:clear --env=prod
+## ⚙ Installation du projet
+### 1. Cloner le projet
+<!-- bash -->
+git clone <repo-url>
+cd snowtricks
+2. Installer les dépendances
+composer install
+3. Configurer l’environnement
+cp .env .env.local
 
-## NB: Les images de démonstration sont incluses dans : 
-    public/
-        uploads/
-            tricks/
-                fixtures/
-                    indy-grab_1.jpg
-                    indy-grab_2.jpg
-                    backflip_1.jpg
+### Configurer la base de données :
+DATABASE_URL="mysql://root:@127.0.0.1:3306/snowtricks_db"
+4. Créer la base de données
+php bin/console doctrine:database:create
+5. Migrer la base
+php bin/console doctrine:migrations:migrate
+6. Charger les fixtures
+php bin/console doctrine:fixtures:load
+7. Compiler les assets
+php bin/console asset-map:compile
+8. Lancer le serveur
+symfony server:start
 
-## Comptes et Connexion :
-    Les détails de connexion aux comptes de test sont disponibles dans "src/DataFixtures/UserFixtures.php"
+### 🧪Tests
+php bin/phpunit
 
-## Lancer les tests :
-    php bin/phpunit
+### 👤 Comptes de test
+Les utilisateurs de test sont disponibles dans :
+src/DataFixtures/UserFixtures.php
 
-## Architecture :
-    - Controller
-    - Service Layer
-    - Repository Pattern
-    - Security/Voters (Auth && Security)
-    - Form Types
+### 🏗 Architecture
+MVC Symfony
+Service Layer
+Repository Pattern
+Security Voters (ACL)
+Form Types
+Event Subscribers (timestamps, login tracking)
 
-## Schéma de l'arboressence de mon projet :
+### 📁 Structure du projet
+SNOWTRICKS/
+├── assets/
+│   ├── styles/
+│   ├── app.js
+│
+├── public/
+│   ├── images/
+│   ├── uploads/
+│   │   ├── avatars/
+│   │   ├── tricks/
+│   │   │   └── fixtures/ (images de test)
+│
+├── src/
+│   ├── Controller/
+│   ├── DataFixtures/
+│   ├── Entity/
+│   ├── EventSubscriber/
+│   ├── Form/
+│   ├── Repository/
+│   ├── Security/
+│   ├── Service/
+│   └── Templates/
+│
+└── tests/
 
-    SNOWTRICKS/
-    |
-    ├─ assets/
-    ├── styles/app.css
-    ├── app.js # SnowTricks App JS + importmap bootstrap + custom css (app.css + mobile)
-    |
-    ├── bootstrap.js
-    ├── tricks/ # ❌ images des tricks uploadés. Dynamique donc ignoré (upload user)
-    └── avatars/ # ❌ user avatar ignoré upload user
-    |
-    public/
-    ├── images/ image principal de la banière de la homepage SnowTrick
-    ├── uploads/
-    │ ├── avatars/# ❌ user avatar ignoré upload user
-    │ └──tricks/ # ❌ images des tricks uploadés. Dynamique donc ignoré (upload user)
-    │    ├──fixtures/ # ✅ images de test versionnés
-    |
-    src/
-    ├── Controller/
-    ├── DataFixtures/ # Les fixtures de test
-    ├── Entity/
-    ├── EventSubscriber/
-    ├── Form/ # FormType
-    ├── Repository/
-    ├── Security/ # Système d'Auth
-    |
-    ├── Service/
-    │ ├── MediaService.php
-    │ └── AvatarService.php
-    |
-    ├── Templates/ # Tous les templates Twig
-    ├── tests
-    └── Readme
+### 🧭 Fonctionnalités principales
+Authentification utilisateur
+CRUD tricks
+Upload images & vidéos
+Commentaires avec permissions
+Profil utilisateur
+Sitemap SEO
+Gestion des droits (Voters Symfony)
 
-## Roadmap :
-    - v1.0.0 : MVP complet
+### 📈 Roadmap
+v1.0.0 : MVP complet ✔
+v1.1.0 : Amélioration UX/UI
+v1.2.0 : Notifications + AJAX comments

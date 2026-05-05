@@ -1,17 +1,18 @@
 <?php
+
 // src/Form/TrickType.php
 
 namespace App\Form;
 
 use App\Entity\Group;
 use App\Entity\Trick;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class TrickType extends AbstractType
 {
@@ -25,7 +26,7 @@ class TrickType extends AbstractType
             ->add('name', null, [
                 'label' => 'Nom de la figure',
                 'required' => true,
-                'empty_data' => '', 
+                'empty_data' => '',
                 'constraints' => [
                     new Assert\NotBlank([
                         'message' => 'Le nom de la figure est obligatoire.',
@@ -68,7 +69,7 @@ class TrickType extends AbstractType
                     ...(!$isEdit ? [
                         new Assert\NotBlank([
                             'message' => 'Une image principale est obligatoire.',
-                        ])
+                        ]),
                     ] : []),
                 ],
             ])

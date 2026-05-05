@@ -1,24 +1,25 @@
 <?php
+
 // src/Security/Voter/TrickVoter.php
 
 namespace App\Security\Voter;
 
-use App\Entity\User;
 use App\Entity\Trick;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 final class TrickVoter extends Voter
 {
     public const ADD = 'TRICK_ADD';
     public const EDIT = 'TRICK_EDIT';
     public const DELETE = 'TRICK_DELETE';
-    
+
     protected function supports(string $attribute, mixed $subject): bool
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, [self::ADD, self::EDIT, self::DELETE])
+        return in_array($attribute, [self::ADD, self::EDIT, self::DELETE], true)
             && $subject instanceof Trick;
     }
 
@@ -35,9 +36,11 @@ final class TrickVoter extends Voter
             case self::ADD:
                 // logic to determine if the user can ADD
                 return $this->canAdd($subject, $user);
+
             case self::EDIT:
                 // logic to determine if the user can EDIT
                 return $this->canEdit($subject, $user);
+
             case self::DELETE:
                 // logic to determine if the user can DELETE
                 return $this->canDelete($subject, $user);
@@ -45,19 +48,19 @@ final class TrickVoter extends Voter
 
         return false;
     }
-    
+
     private function canAdd(Trick $trick, User $user): bool
     {
-        return $trick->getAuthor() === $user;
+        return $trick->getAuthor()?->getId() === $user->getId();
     }
-    
+
     private function canEdit(Trick $trick, User $user): bool
     {
-        return $trick->getAuthor() === $user;
+        return $trick->getAuthor()?->getId() === $user->getId();
     }
 
     private function canDelete(Trick $trick, User $user): bool
     {
-        return $trick->getAuthor() === $user;
+        return $trick->getAuthor()?->getId() === $user->getId();
     }
 }

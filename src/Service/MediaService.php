@@ -1,14 +1,15 @@
 <?php
+
 // src/Service/MediaService.php
 
 namespace App\Service;
 
 use App\Entity\Image;
-use App\Entity\Video;
 use App\Entity\Trick;
+use App\Entity\Video;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * Service responsible for handling media (images & videos) for a Trick entity.
@@ -19,15 +20,14 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  * - Convert video URLs into embed URLs
  * - Persist Image and Video entities
  */
-
 class MediaService
 {
     public function __construct(
         #[Autowire('%images_directory%')]
         private string $imagesDirectory,
-
-        private EntityManagerInterface $em
-    ) {}
+        private EntityManagerInterface $em,
+    ) {
+    }
 
     // =========================
     // MAIN IMAGE
@@ -69,7 +69,7 @@ class MediaService
             $file->move($this->imagesDirectory, $filename);
 
             $image = new Image();
-            $image->setUrl($filename); 
+            $image->setUrl($filename);
             $image->setAlt($trick->getName());
             $image->setCreatedAt(new \DateTimeImmutable());
             $image->setIsMain(false);
@@ -103,7 +103,7 @@ class MediaService
 
             $embedUrl = $this->convertToEmbedUrl($url);
 
-            if ($embedUrl === null) {
+            if (null === $embedUrl) {
                 continue;
             }
 
@@ -132,18 +132,18 @@ class MediaService
         $url = trim($url);
 
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            $url = 'https://' . $url;
+            $url = 'https://'.$url;
         }
 
         // YOUTUBE
         if (preg_match('/youtube\.com\/watch\?v=([^&]+)/', $url, $m)
             || preg_match('/youtu\.be\/([^?&]+)/', $url, $m)) {
-            return 'https://www.youtube.com/embed/' . $m[1];
+            return 'https://www.youtube.com/embed/'.$m[1];
         }
 
         // DAILYMOTION
         if (preg_match('/dailymotion\.com\/video\/([^_?&]+)/', $url, $m)) {
-            return 'https://www.dailymotion.com/embed/video/' . $m[1];
+            return 'https://www.dailymotion.com/embed/video/'.$m[1];
         }
 
         return null; // Unsupported URL
@@ -154,6 +154,6 @@ class MediaService
     // =========================
     private function generateFilename(string $slug, ?string $extension): string
     {
-        return $slug . '_' . uniqid() . '.' . ($extension ?? 'jpg');
+        return $slug.'_'.uniqid().'.'.($extension ?? 'jpg');
     }
 }

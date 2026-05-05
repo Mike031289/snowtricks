@@ -1,13 +1,14 @@
 <?php
+
 // src/Security/Voter/CommentVoter.php
 
 namespace App\Security\Voter;
 
-use App\Entity\User;
 use App\Entity\Comment;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 final class CommentVoter extends Voter
 {
@@ -18,7 +19,7 @@ final class CommentVoter extends Voter
     {
         // replace with your own logic
         // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, [self::EDIT, self::DELETE])
+        return in_array($attribute, [self::EDIT, self::DELETE], true)
             && $subject instanceof Comment;
     }
 
@@ -34,26 +35,25 @@ final class CommentVoter extends Voter
         switch ($attribute) {
             case self::EDIT:
                 // logic to determine if the user can EDIT
-                return $this->canEdit($subject, $user);
                 // return true or false
-                break;
+                return $this->canEdit($subject, $user);
+
             case self::DELETE:
                 // logic to determine if the user can DELETE
-                return $this->canDelete($subject, $user);
                 // return true or false
-                break;
+                return $this->canDelete($subject, $user);
         }
 
         return false;
     }
 
-    private function canEdit(Comment $trick, User $user): bool
+    private function canEdit(Comment $comment, User $user): bool
     {
-        return $trick->getAuthor() === $user;
+        return $comment->getAuthor()?->getId() === $user->getId();
     }
 
-    private function canDelete(Comment $trick, User $user): bool
+    private function canDelete(Comment $comment, User $user): bool
     {
-        return $trick->getAuthor() === $user;
+        return $comment->getAuthor()?->getId() === $user->getId();
     }
 }

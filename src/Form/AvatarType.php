@@ -1,13 +1,14 @@
 <?php
+
 // src/Form/AvatarType.php
 
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\FileType;      
+use Symfony\Component\Validator\Constraints\File;
 
 class AvatarType extends AbstractType
 {
@@ -26,7 +27,7 @@ class AvatarType extends AbstractType
                             'image/png',
                         ],
                         'mimeTypesMessage' => 'Veuillez envoyer une image valide (JPG, PNG, WEBP).',
-                    ])
+                    ]),
                 ],
             ]);
     }
