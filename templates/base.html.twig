@@ -2,16 +2,171 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        <title>
+            {% block title %}
+                Snowtricks
+            {% endblock %}
+        </title>
         {% block stylesheets %}
-        {% endblock %}
-
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+            {{ importmap('app') }}
+            {# link to load faster main image #}
+            <link rel="preload" as="image" href="{{ asset('images/snow-banner.jpg') }}">
+            {# links for generated favicons for diffrent devicies system (android app and Ios screen shot-cut), and site webmanifest for SEO && code quality #}
+            <link rel="icon" type="image/png" href="{{ asset('favicon-96x96.png') }}" sizes="96x96" />
+            <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}" />
+            <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
+            <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}" />
+            <meta name="apple-mobile-web-app-title" content="SnowTricks" />
+            <link rel="manifest" href="{{ asset('site.webmanifest') }}" />
         {% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        {# NAVBAR #}
+        <nav class="navbar navbar-expand-lg navbar-dark navbar-snow sticky-navbar">
+            <div class="container">
+                {# LOGO #}
+                <a class="navbar-brand fw-bold" href="{{ path('app_home') }}">
+                    ❄ SnowTricks
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    {# LEFT NAV #}
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_home') }}">
+                                Accueil
+                            </a>
+                        </li>
+                        {% if app.user %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_trick_new') }}">
+                                    <i class="bi bi-plus-circle"></i>
+                                    Ajouter une figure
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    {# RIGHT USER AREA #}
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        {% if app.user %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                                    {% if app.user.avatar is defined and app.user.avatar %}
+                                        <img
+                                    src="{{ asset('uploads/avatars/' ~ app.user.avatar) }}" class="avatar me-2" alt="avatar">
+                                        {% else %}
+                                        <div class="avatar-default me-2">
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                    {% endif %}
+                                    <span class="text-light">
+                                        {{ app.user.username }}
+                                    </span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        {% if app.user %}
+                                            <a class="dropdown-item" href="{{ path('app_profile') }}">
+                                                <i class="bi bi-person"></i>
+                                                Profil
+                                            </a>
+                                        {% endif %}
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="{{ path('app_logout') }}">
+                                            <i class="bi bi-box-arrow-right"></i>
+                                            Déconnexion
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_login') }}">
+                                    <i class="bi bi-box-arrow-in-right"></i>
+                                    Connexion
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-primary btn-sm ms-2" href="{{ path('app_register') }}">
+                                    Inscription
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        {# FLASH MESSAGES #}
+        <div class="container mt-3">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label }} alert-dismissible fade show mt-3" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        {# CONTENU #}
+        <main class="container mt-4">
+            {% block body %}{% endblock %}
+            {# ================= SCROLL BUTTONS ================= #}
+            <button id="scrollTopBtn" class="scroll-btn scroll-top" title="Remonter">
+                <i class="bi bi-arrow-up"></i>
+            </button>
+            <button id="scrollBottomBtn" class="scroll-btn scroll-bottom" title="Descendre">
+                <i class="bi bi-arrow-down"></i>
+            </button>
+        </main>
+        {# ================= FOOTER AJOUTÉ ================= #}
+        <footer id="siteFooter" class="bg-light border-top mt-5">
+            <div class="container py-4">
+                <div class="row text-center text-md-start align-items-center">
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <h6 class="fw-bold mb-0">
+                            <a class="navbar-brand fw-bold" href="{{ path('app_home') }}">
+                                ❄ SnowTricks
+                            </a>
+                        </h6>
+                        <small class="text-muted">
+                            Plateforme snowboard
+                        </small>
+                    </div>
+                    <div class="col-md-4 mb-3 mb-md-0 text-center">
+                        <small class="text-muted">
+                            ©
+                            {{ "now"|date("Y") }}
+                            SnowTricks
+                        </small>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <small class="text-muted d-block mb-1">
+                            © Adjoukou AGBELOU | Full Stack Dev PHP/Symfony
+                        </small>
+                        {# <small class="text-muted d-block mb-1">
+                            <i class="bi bi-globe"></i>
+                            <a href="https://www.dmdprod.com/" target="_blank" class="text-decoration-none text-muted">
+                            https://dmdprod.com
+                            </a>
+                        </small> #}
+                        <div class="d-flex justify-content-center justify-content-md-end gap-3">
+                            <a href="https://www.linkedin.com/in/mike-adjoukou-agbelou-23640098/" target="_blank" class="text-decoration-none text-primary">
+                                <i class="bi bi-linkedin"></i>
+                            </a>
+                            <a href="https://github.com/Mike031289" target="_blank" class="text-decoration-none text-dark">
+                                <i class="bi bi-github"></i>
+                            </a>
+                            <a href="mailto:mike.agbelou@gmail.com" class="text-decoration-none text-danger">
+                                <i class="bi bi-envelope-fill"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </body>
 </html>

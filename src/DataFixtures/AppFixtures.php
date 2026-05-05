@@ -1,5 +1,7 @@
 <?php
 
+// src/DataFixtures/AppFixtures.php
+
 namespace App\DataFixtures;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;

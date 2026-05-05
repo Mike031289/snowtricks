@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    Connexion
+{% endblock %}
+{% block body %}
+    <div class="container" style="max-width: 500px;">
+        <h1 class="h2 mb-4 text-center">
+            <i class="bi bi-box-arrow-in-right me-2"></i>
+            Connexion
+        </h1>
+        <form method="post" novalidate>
+            {# ERROR MESSAGE (SAFE) #}
+            {% if error is defined and error %}
+                <div class="alert alert-danger">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+            {# USERNAME #}
+            <div class="mb-3">
+                <label for="inputUsername" class="form-label">
+                    Nom d'utilisateur
+                </label>
+                <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control {{ (error is defined and error) ? 'is-invalid' : '' }}" autocomplete="username" autofocus></div>
+                {# PASSWORD #}
+                <div class="mb-3">
+                    <label for="inputPassword" class="form-label">
+                        Mot de passe
+                    </label>
+                    <input type="password" name="password" id="inputPassword" class="form-control {{ (error is defined and error) ? 'is-invalid' : '' }}" autocomplete="current-password"></div>
+                    {# CSRF TOKEN #}
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                        {# REMEMBER ME #}
+                        <div class="form-check mb-3">
+                            <input type="checkbox" name="_remember_me" id="remember_me" class="form-check-input">
+                                <label for="remember_me" class="form-check-label">
+                                    Se souvenir de moi
+                                </label>
+                            </div>
+                            {# FORGOT PASSWORD #}
+                            <p class="mb-3">
+                                <a href="{{ path('app_forgot_password_request') }}" class="text-muted">
+                                    Mot de passe oublié ?
+                                </a>
+                            </p>
+                            {# SUBMIT #}
+                            <button class="btn btn-primary w-100" type="submit">
+                                <i class="bi bi-check-lg me-2"></i>
+                                Se connecter
+                            </button>
+                        </form>
+                        {# REGISTER #}
+                        <p class="mt-3 text-center">
+                            Vous êtes nouveau ?
+                            <a href="{{ path('app_register') }}" class="text-primary fw-semibold text-decoration-none">
+                                Inscrivez-vous
+                            </a>
+                        </p>
+                    </div>
+                {% endblock %}
+                

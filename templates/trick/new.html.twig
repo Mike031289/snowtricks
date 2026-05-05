@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    Créer un Trick
+{% endblock %}
+{% block body %}
+    <div class="container my-5" style="max-width: 700px;">
+        <h1 class="mb-4 text-center">
+            <i class="bi bi-collection-play me-2"></i>
+            Ajouter une figure
+        </h1>
+        {# Form #}
+        {{ include('trick/_form.html.twig') }}
+    </div>
+{% endblock %}

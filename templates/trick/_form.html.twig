@@ -1,0 +1,104 @@
+<div class="container p-0">
+    {{ form_start(form, {
+        'attr': {
+            'novalidate': 'novalidate',
+            'enctype': 'multipart/form-data'
+        }
+    }) }}
+    {# ===== GLOBAL ERRORS ===== #}
+    {% if form.vars.errors|length > 0 %}
+        <div class="alert alert-danger">
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
+    {# ===== NAME ===== #}
+    <div class="mb-3">
+        {{ form_label(form.name) }}
+        {{ form_widget(form.name, {
+            'attr': {
+                'class': 'form-control ' ~ (form.name.vars.errors|length ? 'is-invalid' : '')
+            }
+        }) }}
+        <div class="invalid-feedback d-block">
+            {{ form_errors(form.name) }}
+        </div>
+    </div>
+    {# ===== DESCRIPTION ===== #}
+    <div class="mb-3">
+        {{ form_label(form.description) }}
+        {{ form_widget(form.description, {
+            'attr': {
+                'class': 'form-control ' ~ (form.description.vars.errors|length ? 'is-invalid' : ''),
+                'rows': 5
+            }
+        }) }}
+        <div class="invalid-feedback d-block">
+            {{ form_errors(form.description) }}
+        </div>
+    </div>
+    {# ===== MAIN IMAGE ===== #}
+    <div class="mb-3">
+        {{ form_label(form.mainImage) }}
+        {{ form_widget(form.mainImage, {
+            'attr': {
+                'class': 'form-control ' ~ (form.mainImage.vars.errors|length ? 'is-invalid' : '')
+            }
+        }) }}
+        <div class="invalid-feedback d-block">
+            {{ form_errors(form.mainImage) }}
+        </div>
+    </div>
+    {# ===== IMAGES ===== #}
+    <div class="mb-3">
+        {{ form_label(form.images) }}
+        {{ form_widget(form.images, {
+            'attr': {
+                'class': 'form-control'
+            }
+        }) }}
+        <div class="invalid-feedback d-block">
+            {{ form_errors(form.images) }}
+        </div>
+    </div>
+    {# ===== VIDEOS ===== #}
+    <div class="mb-3">
+        {{ form_label(form.videos) }}
+        {{ form_widget(form.videos, {
+            'attr': {
+                'class': 'form-control ' ~ (form.videos.vars.errors|length ? 'is-invalid' : ''),
+                'rows': 3,
+                'placeholder': 'https://youtube.com/watch?v=xxx\nhttps://youtu.be/xxx'
+            }
+        }) }}
+        <div class="invalid-feedback d-block">
+            {{ form_errors(form.videos) }}
+        </div>
+    </div>
+    {# ===== GROUPS ===== #}
+    <div class="mb-3">
+        {{ form_label(form.groups) }}
+        {{ form_widget(form.groups, {
+            'attr': {
+                'class': 'form-select ' ~ (form.groups.vars.errors|length ? 'is-invalid' : '')
+            }
+        }) }}
+        <div class="invalid-feedback d-block">
+            {{ form_errors(form.groups) }}
+        </div>
+    </div>
+    {# ===== REST (CSRF AUTO) ===== #}
+    {{ form_rest(form) }}
+    <div class="text-center my-5">
+        {# ===== SUBMIT ===== #}
+        <button class="btn btn-success w-100 mb-3">
+            <i class="bi bi-check-lg me-2"></i>
+            {{ button_label|default('Enregistrer') }}
+        </button>
+        {# Back button #}
+        <a href="{{ path('app_home') }}" class="btn btn-outline-secondary w-100 mb-3">
+            <i class="bi bi-arrow-left me-2"></i>
+            Annuler
+        </a>
+    </div>
+    {{ form_end(form) }}
+</div>

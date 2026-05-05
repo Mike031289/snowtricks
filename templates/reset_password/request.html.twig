@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    Réinitialiser votre mot de passe
+{% endblock %}
+{% block body %}
+    <div class="container" style="max-width: 500px;">
+        {# Flash errors #}
+        {% for flash_error in app.flashes('reset_password_error') %}
+            <div class="alert alert-danger" role="alert">
+                {{ flash_error }}
+            </div>
+        {% endfor %}
+        <h1 class="mb-4 text-center">
+            🔐 Réinitialiser votre mot de passe
+        </h1>
+        <p class="text-muted text-center mb-4">
+            Entrez votre identifiant et nous vous enverrons un lien pour réinitialiser votre mot de passe.
+        </p>
+        {{ form_start(requestForm, {
+            'attr': {
+                'novalidate': 'novalidate'
+            }
+        }) }}
+        {# username field #}
+        <div class="mb-3">
+            {{ form_label(requestForm.username) }}
+            {{ form_widget(requestForm.username, {
+                'attr': {
+                    'class': 'form-control ' ~ (requestForm.username.vars.errors|length ? 'is-invalid' : '')
+                }
+            }) }}
+            <div class="invalid-feedback d-block">
+                {{ form_errors(requestForm.username) }}
+            </div>
+        </div>
+        {# Global form errors #}
+        {{ form_errors(requestForm) }}
+        {# Submit #}
+        <button class="btn btn-primary w-100 mt-3">
+            <i class="bi bi-envelope-paper"></i>
+            Envoyer le lien de réinitialisation
+        </button>
+        {{ form_end(requestForm) }}
+        {# Back to login #}
+        <p class="mt-4 text-center">
+         {# Back button #}
+        {% set referer = app.request.headers.get('referer') %}
+        <a href="{{ referer and referer starts with app.request.schemeAndHttpHost
+        ? referer
+        : path('app_home') }}" class="btn btn-outline-secondary flex-fill w-100 mb-3">
+            <i class="bi bi-arrow-left me-2"></i>
+            Retour
+        </a>
+        </p>
+    </div>
+{% endblock %}

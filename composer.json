@@ -41,10 +41,15 @@
         "symfony/validator": "6.4.*",
         "symfony/web-link": "6.4.*",
         "symfony/yaml": "6.4.*",
+        "symfonycasts/reset-password-bundle": "^1.25",
+        "symfonycasts/verify-email-bundle": "^1.18",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0"
     },
     "config": {
+        "platform": {
+            "php": "8.1"
+        },
         "allow-plugins": {
             "php-http/discovery": true,
             "symfony/flex": true,
@@ -82,7 +87,9 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
-        ]
+        ],
+        "cs-fix": "php-cs-fixer fix",
+        "cs-check": "php-cs-fixer fix --dry-run --diff"
     },
     "conflict": {
         "symfony/symfony": "*"
@@ -95,6 +102,7 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^4.3",
+        "friendsofphp/php-cs-fixer": "^3.95",
         "phpunit/phpunit": "^12.5",
         "symfony/browser-kit": "6.4.*",
         "symfony/css-selector": "6.4.*",

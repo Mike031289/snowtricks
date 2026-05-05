@@ -1,0 +1,135 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    Accueil - SnowTricks
+{% endblock %}
+{% block body %}
+    {# ================= HERO BANNER ================= #}
+    <section class="hero-banner text-center text-white">
+        <img src="{{ asset('images/snow-banner.jpg') }}" alt="Snowboard" class="hero-img" loading="eager" fetchpriority="high">
+            <div class="hero-overlay d-flex align-items-center justify-content-center">
+                <div class="hero-content">
+                    <h1 class="display-4 fw-bold">
+                        ❄ SnowTricks
+                    </h1>
+                    <p class="lead">
+                        Explore, partage et maîtrise les tricks de snowboard
+                    </p>
+                    {% if is_granted('ROLE_USER') %}
+                        <a href="{{ path('app_trick_new') }}" class="btn btn-light mt-3">
+                            <i class="bi bi-plus-circle"></i>
+                            Ajouter un trick
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+        {# ================= TRICKS LIST ================= #}
+        <div class="container mt-5">
+            <h2 class="text-center mb-5 fw-bold">
+                Derniers Tricks
+            </h2>
+            <div class="row g-4">
+                {% for trick in tricks %}
+                    <div class="col-md-4">
+                        <div class="card trick-card h-100 shadow-sm">
+                            <div class="trick-image">
+                                {# VIEW #}
+                                <a href="{{ path('app_trick_show', {id: trick.id, slug: trick.slug}) }}" class="text-primary">
+                                    <img src="{{ asset('uploads/tricks/' ~ trick.mainImage) }}" alt="{{ trick.name }}"></a>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        {# VIEW #}
+                                        <a href="{{ path('app_trick_show', {id: trick.id, slug: trick.slug}) }}" class="text-primary">
+                                                <h5 class="card-title mb-0">
+                                                    {{ trick.name }}
+                                                </h5>
+                                        </a>
+                                        <div class="d-flex gap-2 align-items-center">
+                                            {# EDIT #}
+                                            {% if is_granted('TRICK_EDIT', trick) %}
+                                                <a href="{{ path('app_trick_edit', {id: trick.id}) }}" class="text-warning">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                            {% endif %}
+                                            {# DELETE BUTTON - FIXED #}
+                                            {% if is_granted('TRICK_DELETE', trick) %}
+                                                <button type="button" class="btn btn-link text-danger p-0" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ trick.id }}">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {# ================= MODAL PAR TRICK ================= #}
+                        {% if is_granted('TRICK_DELETE', trick) %}
+                            <div class="modal fade" id="deleteModal-{{ trick.id }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">
+                                                Confirmation de suppression
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>
+                                                ⚠️ Supprimer
+                                                <strong>
+                                                    {{ trick.name }}
+                                                </strong>
+                                                ?
+                                                <br>
+                                                    Cette action est irréversible.
+                                                </p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Annuler
+                                                </button>
+                                                <form method="post" action="{{ path('app_trick_delete', {id: trick.id}) }}">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ trick.id) }}">
+                                                        <button class="btn btn-danger">
+                                                            Supprimer
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <p class="text-center">
+                                    Aucun trick disponible.
+                                </p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {# ================= PAGINATION ================= #}
+                    {% if totalPages > 1 %}
+                        <nav class="mt-5">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item {{ currentPage == 1 ? 'disabled' }}">
+                                    <a class="page-link" href="{{ path('app_home', {page: currentPage - 1}) }}">
+                                        ←
+                                    </a>
+                                </li>
+                                {% for i in max(1, currentPage - 2)..min(totalPages, currentPage + 2) %}
+                                    <li class="page-item {{ currentPage == i ? 'active' }}">
+                                        <a class="page-link" href="{{ path('app_home', {page: i}) }}">
+                                            {{ i }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                                <li class="page-item {{ currentPage == totalPages ? 'disabled' }}">
+                                    <a class="page-link" href="{{ path('app_home', {page: currentPage + 1}) }}">
+                                        →
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    {% endif %}
+                {% endblock %}
+                

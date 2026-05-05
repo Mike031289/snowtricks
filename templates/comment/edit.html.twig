@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    Modifier le commentaire - SnowTricks
+{% endblock %}
+{% block body %}
+    <div class="comments-block m-auto">
+        <h1 class="mb-4 text-center">
+            <i class="bi bi-collection-play me-2"></i>
+            Modifier votre commentaire
+        </h1>
+        {# Form #}
+        {{ include('comment/_form.html.twig') }}
+    </div>
+{% endblock %}
