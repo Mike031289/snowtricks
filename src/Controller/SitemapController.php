@@ -1,4 +1,5 @@
 <?php
+
 // src/Controller/SitemapController
 
 /*
@@ -12,9 +13,9 @@ namespace App\Controller;
 
 use App\Repository\TrickRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\Request;
 
 class SitemapController extends AbstractController
 {
@@ -29,14 +30,14 @@ class SitemapController extends AbstractController
 
         // HOME
         $urls[] = [
-            'loc' => $baseUrl . '/',
+            'loc' => $baseUrl.'/',
             'priority' => '1.0',
         ];
 
         // TRICKS
         foreach ($tricks as $trick) {
             $urls[] = [
-                'loc' => $baseUrl . '/' . $trick->getId() . '/' . $trick->getSlug(),
+                'loc' => $baseUrl.'/'.$trick->getId().'/'.$trick->getSlug(),
                 'priority' => '0.8',
                 'lastmod' => $trick->getUpdatedAt()?->format('Y-m-d'),
             ];

@@ -1,4 +1,5 @@
 <?php
+
 // src/Controller/TrickController.php
 
 /*
@@ -10,30 +11,31 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Entity\Trick;
 use App\Entity\Comment;
-use App\Form\TrickType;
+use App\Entity\Trick;
+use App\Entity\User;
 use App\Form\CommentType;
-use App\Service\MediaService;
-use App\Repository\TrickRepository;
+use App\Form\TrickType;
 use App\Repository\CommentRepository;
+use App\Repository\TrickRepository;
+use App\Service\MediaService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 final class TrickController extends AbstractController
 {
     public function __construct(
         private TrickRepository $trickRepository,
-        private  SluggerInterface $slugger,
+        private SluggerInterface $slugger,
         private MediaService $mediaService,
-        private EntityManagerInterface $em
-    ) {}
+        private EntityManagerInterface $em,
+    ) {
+    }
 
     #[Route('profile/tricks', name: 'app_profile_tricks', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
@@ -51,7 +53,7 @@ final class TrickController extends AbstractController
     #[Route('/profile/trick/new', name: 'app_trick_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
     public function new(
-       Request $request,
+        Request $request,
     ): Response {
 
         $trick = new Trick();
@@ -154,10 +156,10 @@ final class TrickController extends AbstractController
     #[IsGranted('TRICK_DELETE', subject: 'trick')]
     public function delete(
         Request $request,
-        Trick $trick
+        Trick $trick,
     ): Response {
 
-        //Retrive id and token submitted.
+        // Retrive id and token submitted.
         $tokenId = sprintf('delete%d', $trick->getId());
         $submittedToken = $request->get('_token');
 
@@ -189,7 +191,7 @@ final class TrickController extends AbstractController
     public function show(
         Trick $trick,
         Request $request,
-        CommentRepository $commentRepository
+        CommentRepository $commentRepository,
     ): Response {
 
         $page = max(1, $request->query->getInt('page', 1));

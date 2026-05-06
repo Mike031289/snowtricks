@@ -32,7 +32,7 @@ final class ImageController extends AbstractController
         Image $image,
     ): Response {
 
-        //Retrive id and token submitted.
+        // Retrive id and token submitted.
         $tokenId = sprintf('delete_image_%d', $image->getId());
         $submittedToken = $request->get('_token');
 

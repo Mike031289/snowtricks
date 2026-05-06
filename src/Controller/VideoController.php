@@ -29,7 +29,7 @@ final class VideoController extends AbstractController
         EntityManagerInterface $em,
     ): Response {
 
-        //Retrive id and token submitted.
+        // Retrive id and token submitted.
         $tokenId = sprintf('delete_video_%d', $video->getId());
         $submittedToken = $request->get('_token');
 

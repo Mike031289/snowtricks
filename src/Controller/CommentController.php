@@ -39,7 +39,7 @@ final class CommentController extends AbstractController
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $comment->setUpdatedAt(new \DateTimeImmutable());
 
@@ -68,13 +68,13 @@ final class CommentController extends AbstractController
         Comment $comment,
     ): Response {
 
-        //Retrive id and token submitted.
+        // Retrive id and token submitted.
         $tokenId = sprintf('delete_comment_%d', $comment->getId());
         $submittedToken = $request->get('_token');
 
         // SECURITY CSRF, check if token is valid
         if (!$this->isCsrfTokenValid($tokenId, $submittedToken)) {
-      
+
             $this->addFlash('danger', '❌ Action invalide.');
 
             return $this->redirectToRoute('app_trick_show', [
