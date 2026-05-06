@@ -1,0 +1,83 @@
+{# ========= COMMENT FORM ======= #}
+{% if is_granted('ROLE_USER') %}
+    <h4 class="mt-5">
+        Laisser un commentaire
+    </h4>
+    {{ include('comment/_form.html.twig') }}
+{% else %}
+    <div class="alert alert-secondary">
+        Veuillez vous
+        <a href="{{ path('app_login') }}" class="alert-link text-primary">
+            connecter
+        </a>
+    </div>
+{% endif %}
+{# ======== COMMENTS ======== #}
+<h4 class="mt-5 mb-4">
+    💬
+    {{ comments|length }}
+    commentaire(s)
+</h4>
+{% for comment in comments %}
+    <div class="card mb-3 shadow-sm border-0">
+        <div class="card-body d-flex gap-3">
+            {# AVATAR #}
+            <div>
+                {% if comment.author.avatar %}
+                    <img
+                    src="{{ asset('uploads/avatars/' ~ comment.author.avatar) }}" class="rounded-circle" style="width:50px;height:50px;object-fit:cover;">
+                        {% else %}
+                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width:50px;height:50px;">
+                            <i class="bi bi-person"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                {# CONTENT #}
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>
+                                {{ comment.author.username }}
+                            </strong>
+                            <br>
+                                <small class="text-muted">
+                                    {% if comment.updatedAt and comment.updatedAt != comment.createdAt %}
+                                        Modifié le
+                                        {{ comment.updatedAt|date('d/m/Y H:i') }}
+                                    {% else %}
+                                        Publié le
+                                        {{ comment.createdAt|date('d/m/Y H:i') }}
+                                    {% endif %}
+                                </small>
+                            </div>
+                            <div class="d-flex gap-2">
+                                {% if is_granted('COMMENT_EDIT', comment) %}
+                                    <a href="{{ path('app_comment_edit', {id: comment.id}) }}" class="text-warning">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                {% endif %}
+                                {% if is_granted('COMMENT_DELETE', comment) %}
+                                    <form method="post" action="{{ path('app_comment_delete', {id: comment.id}) }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_comment_' ~ comment.id) }}">
+                                            <button class="btn btn-link text-danger p-0">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <p class="mt-2 mb-0">
+                                {{ comment.content }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="text-center text-muted py-4">
+                    <i class="bi bi-chat-dots fs-2"></i>
+                    <p>
+                        Aucun commentaire
+                    </p>
+                </div>
+            {% endfor %}
+            
