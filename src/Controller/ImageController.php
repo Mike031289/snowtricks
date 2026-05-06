@@ -32,8 +32,12 @@ final class ImageController extends AbstractController
         Image $image,
     ): Response {
 
-        // CSRF protection
-        if (!$this->isCsrfTokenValid('delete_image_'.$image->getId(), $request->request->get('_token'))) {
+        //Retrive id and token submitted.
+        $tokenId = sprintf('delete_image_%d', $image->getId());
+        $submittedToken = $request->get('_token');
+
+        // SECURITY CSRF, check if token is valid
+        if (!$this->isCsrfTokenValid($tokenId, $submittedToken)) {
 
             $this->addFlash('danger', '❌ Action invalide.');
 

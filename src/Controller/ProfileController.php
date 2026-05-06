@@ -46,7 +46,11 @@ final class ProfileController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
+        // SECURITY CSRF, check if token is valid
         if (!$this->isCsrfTokenValid('avatar_upload', $request->request->get('_token'))) {
+
+            $this->addFlash('danger', '❌ Action invalide.');
+
             return $this->redirectToRoute('app_profile');
         }
 

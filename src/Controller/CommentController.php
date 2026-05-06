@@ -68,9 +68,13 @@ final class CommentController extends AbstractController
         Comment $comment,
     ): Response {
 
-        // CSRF protection
-        if (!$this->isCsrfTokenValid('delete_comment_'.$comment->getId(), $request->request->get('_token'))) {
+        //Retrive id and token submitted.
+        $tokenId = sprintf('delete_comment_%d', $comment->getId());
+        $submittedToken = $request->get('_token');
 
+        // SECURITY CSRF, check if token is valid
+        if (!$this->isCsrfTokenValid($tokenId, $submittedToken)) {
+      
             $this->addFlash('danger', '❌ Action invalide.');
 
             return $this->redirectToRoute('app_trick_show', [

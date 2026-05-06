@@ -157,8 +157,15 @@ final class TrickController extends AbstractController
         Trick $trick
     ): Response {
 
-        if (!$this->isCsrfTokenValid('delete'.$trick->getId(), $request->get('_token'))) {
+        //Retrive id and token submitted.
+        $tokenId = sprintf('delete%d', $trick->getId());
+        $submittedToken = $request->get('_token');
+
+        // SECURITY CSRF, check if token is valid
+        if (!$this->isCsrfTokenValid($tokenId, $submittedToken)) {
+
             $this->addFlash('danger', '❌ Action invalide.');
+
             return $this->redirectToRoute('app_profile');
         }
 

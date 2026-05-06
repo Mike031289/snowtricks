@@ -29,8 +29,12 @@ final class VideoController extends AbstractController
         EntityManagerInterface $em,
     ): Response {
 
-        // CSRF check
-        if (!$this->isCsrfTokenValid('delete_video_'.$video->getId(), $request->request->get('_token'))) {
+        //Retrive id and token submitted.
+        $tokenId = sprintf('delete_video_%d', $video->getId());
+        $submittedToken = $request->get('_token');
+
+        // SECURITY CSRF, check if token is valid
+        if (!$this->isCsrfTokenValid($tokenId, $submittedToken)) {
 
             $this->addFlash('danger', '❌ Action invalide.');
 
