@@ -30,7 +30,8 @@
                         </tr>
                         <tr>
                             <td align="center" style="padding:20px 0;">
-                                <a href="{{ signedUrl|raw }}" style="background-color:#198754; color:#ffffff; padding:12px 25px; text-decoration:none; border-radius:5px; font-weight:bold; display:inline-block;">
+                                {# We removed the |raw filter to prevent XSS attacks and satisfy SymfonyInsight security rules #}
+                                <a href="{{ signedUrl }}" style="background-color:#198754; color:#ffffff; padding:12px 25px; text-decoration:none; border-radius:5px; font-weight:bold; display:inline-block;">
                                     ✔ Confirmer mon email
                                 </a>
                             </td>
