@@ -1,7 +1,5 @@
 <?php
 
-// src/Service/MediaService.php
-
 namespace App\Service;
 
 use App\Entity\Image;
@@ -10,15 +8,10 @@ use App\Entity\Video;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Service responsible for handling media (images & videos) for a Trick entity.
- *
- * Responsibilities:
- * - Upload and store images on filesystem
- * - Generate safe and unique filenames
- * - Convert video URLs into embed URLs
- * - Persist Image and Video entities
  */
 class MediaService
 {
@@ -34,13 +27,14 @@ class MediaService
     // =========================
     public function handleMainImage(FormInterface $form, Trick $trick): void
     {
+        /** @var UploadedFile|null $file */
         $file = $form->get('mainImage')->getData();
 
-        if (!$file) {
+        if (!$file instanceof UploadedFile) {
             return;
         }
 
-        $filename = $this->generateFilename($trick->getSlug(), $file->guessExtension());
+        $filename = $this->generateFilename((string) $trick->getSlug(), $file->guessExtension());
 
         $file->move($this->imagesDirectory, $filename);
 
@@ -54,23 +48,22 @@ class MediaService
     {
         $files = $form->get('images')->getData();
 
-        if (!$files) {
+        if (!is_iterable($files)) {
             return;
         }
 
         foreach ($files as $file) {
-
-            if (!$file) {
+            if (!$file instanceof UploadedFile) {
                 continue;
             }
 
-            $filename = $this->generateFilename($trick->getSlug(), $file->guessExtension());
+            $filename = $this->generateFilename((string) $trick->getSlug(), $file->guessExtension());
 
             $file->move($this->imagesDirectory, $filename);
 
             $image = new Image();
             $image->setUrl($filename);
-            $image->setAlt($trick->getName());
+            $image->setAlt($trick->getName() ?? 'Trick image');
             $image->setCreatedAt(new \DateTimeImmutable());
             $image->setIsMain(false);
             $image->setTrick($trick);
@@ -80,23 +73,21 @@ class MediaService
     }
 
     // =========================
-    // VIDEOS
+    // VIDEOS (Form submission)
     // =========================
     public function handleVideos(FormInterface $form, Trick $trick): void
     {
+        /** @var string|null $videosString */
         $videosString = $form->get('videos')->getData();
 
-        if (!$videosString) {
+        if (empty($videosString)) {
             return;
         }
 
-        // split : commas + line breaks
         $urls = preg_split('/[\r\n,]+/', $videosString);
 
         foreach ($urls as $url) {
-
             $url = trim($url);
-
             if (empty($url)) {
                 continue;
             }
@@ -110,7 +101,7 @@ class MediaService
             // Avoid duplicates
             foreach ($trick->getVideos() as $existingVideo) {
                 if ($existingVideo->getEmbedUrl() === $embedUrl) {
-                    continue 2; // skip this vidéo
+                    continue 2;
                 }
             }
 
@@ -125,28 +116,28 @@ class MediaService
     }
 
     // =========================
-    // CONVERSION URL → EMBED
+    // CONVERSION URL → EMBED (Public for Fixtures)
     // =========================
-    private function convertToEmbedUrl(string $url): ?string
+    public function convertToEmbedUrl(string $url): ?string
     {
         $url = trim($url);
 
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            $url = 'https://'.$url;
+            $url = 'https://' . $url;
         }
 
-        // YOUTUBE
-        if (preg_match('/youtube\.com\/watch\?v=([^&]+)/', $url, $m)
-            || preg_match('/youtu\.be\/([^?&]+)/', $url, $m)) {
-            return 'https://www.youtube.com/embed/'.$m[1];
+        // YOUTUBE (Better regex for fixtures and share links)
+        // Matches: youtube.com/watch?v=ID, youtu.be/ID, youtube.com/embed/ID
+        if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $url, $match)) {
+            return 'https://www.youtube.com/embed/' . $match[1];
         }
 
         // DAILYMOTION
-        if (preg_match('/dailymotion\.com\/video\/([^_?&]+)/', $url, $m)) {
-            return 'https://www.dailymotion.com/embed/video/'.$m[1];
+        if (preg_match('/dailymotion\.com\/video\/([^_?&]+)/i', $url, $match)) {
+            return 'https://www.dailymotion.com/embed/video/' . $match[1];
         }
 
-        return null; // Unsupported URL
+        return null;
     }
 
     // =========================
@@ -154,6 +145,6 @@ class MediaService
     // =========================
     private function generateFilename(string $slug, ?string $extension): string
     {
-        return $slug.'_'.uniqid().'.'.($extension ?? 'jpg');
+        return $slug . '_' . uniqid() . '.' . ($extension ?? 'jpg');
     }
 }
