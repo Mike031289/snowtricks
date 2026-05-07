@@ -39,6 +39,16 @@ final class ImageController extends AbstractController
             return $this->redirectToRoute('app_home');
         }
 
+        // SECURITY : New Protection for mainImage
+        // We check whether the image URL is the one set as the main image
+        if ($image->getUrl() === $trick->getMainImage()) {
+            $this->addFlash('danger', '❌ Impossible de supprimer l\'image principale. Veuillez d\'abord la modifier dans l\'édition du Trick.');
+
+            return $this->redirectToRoute('app_trick_edit', [
+                'id' => $trick->getId(),
+            ]);
+        }
+
         // We store Trick data now because $image will be removed later
         $trickId = $trick->getId();
         $trickSlug = $trick->getSlug();

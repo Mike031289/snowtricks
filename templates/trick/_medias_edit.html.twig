@@ -9,28 +9,42 @@
             </h3>
             <div id="carouselImagesEdit" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
-                    {# LOGIQUE : if no additionnal image display  mainImage #}
+                    {# CASE 1: If no additional images exist, display the mandatory mainImage #}
                     {% if images|length == 0 %}
                         <div class="carousel-item active position-relative">
-                            <img src="{{ asset('uploads/tricks/' ~ mainImage) }}" class="d-block w-100 rounded" style="height:300px; object-fit:cover;" alt="Main Image"></div>
-                        {# LOGIQUE : If additionnal images exist, display them only #}
+                            <img src="{{ asset('uploads/tricks/' ~ mainImage) }}" class="d-block w-100 rounded" style="height:300px; object-fit:cover;" alt="Main default image"></div>
+
+                        {# CASE 2: Additional images exist, loop through them #}
                             {% else %}
                             {% for image in images %}
                                 <div class="carousel-item {{ loop.first ? 'active' : '' }} position-relative">
-                                    <img src="{{ asset('uploads/tricks/' ~ image.url) }}" class="d-block w-100 rounded" style="height:300px; object-fit:cover;" alt="Trick Image">
-                                        {# SECURITY : Voter && Token CSRF on delete btn #}
-                                        {% if is_granted('IMAGE_DELETE', image) %}
-                                            <form method="post" action="{{ path('app_image_delete', {id: image.id}) }}" class="position-absolute top-0 end-0 m-2" style="z-index:10;" onsubmit="return confirm('Supprimer cette image ?');">
+                                    <img src="{{ asset('uploads/tricks/' ~ image.url) }}" class="d-block w-100 rounded" style="height:300px; object-fit:cover;" alt="Trick gallery image">
+
+                                        {#
+                                            SECURITY & LOGIC:
+                                            1. Check if the user has permission to delete (Voter)
+                                            2. CRITICAL: Prevent deletion if this specific image is set as the mainImage
+                                        #}
+                                        {% if is_granted('IMAGE_DELETE', image) and image.url != mainImage %}
+                                            <form method="post" action="{{ path('app_image_delete', {id: image.id}) }}" class="position-absolute top-0 end-0 m-2" style="z-index:10;" onsubmit="return confirm('Are you sure you want to delete this image?');">
+
                                                 <input type="hidden" name="_token" value="{{ csrf_token('delete_image_' ~ image.id) }}">
-                                                    <button class="btn btn-danger btn-sm rounded-circle">
+
+                                                    <button type="submit" class="btn btn-danger btn-sm rounded-circle shadow">
                                                         <i class="bi bi-x-lg"></i>
                                                     </button>
                                                 </form>
+                                            {% elseif image.url == mainImage %}
+                                                {# Visual indicator that this image is protected #}
+                                                <span class="badge bg-black position-absolute top-0 end-0 m-2 shadow" style="z-index:10;">
+                                                    Main Image
+                                                </span>
                                             {% endif %}
                                         </div>
                                     {% endfor %}
                                 {% endif %}
                             </div>
+
                             {# NAVIGATION : dispplay only if many additionnal images #}
                             {% if images|length > 1 %}
                                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselImagesEdit" data-bs-slide="prev">
@@ -123,3 +137,4 @@
                                 </div>
                             </div>
                         </div>
+                        
