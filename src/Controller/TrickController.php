@@ -17,7 +17,6 @@ use App\Entity\User;
 use App\Form\CommentType;
 use App\Form\TrickType;
 use App\Repository\CommentRepository;
-use App\Repository\TrickRepository;
 use App\Service\MediaService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,7 +29,6 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 final class TrickController extends AbstractController
 {
     public function __construct(
-        private TrickRepository $trickRepository,
         private SluggerInterface $slugger,
         private MediaService $mediaService,
         private EntityManagerInterface $em,
@@ -52,23 +50,20 @@ final class TrickController extends AbstractController
 
     #[Route('/profile/trick/new', name: 'app_trick_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
-    public function new(
-        Request $request,
-    ): Response {
-
+    public function new(Request $request): Response
+    {
         $trick = new Trick();
-
-        $form = $this->createForm(TrickType::class, $trick, [
-            'is_edit' => false,
-        ]);
-
+        $form = $this->createForm(TrickType::class, $trick, ['is_edit' => false]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Safety: Ensure user is an instance of our User entity
+            $user = $this->getUser();
+            if (!$user instanceof User) {
+                throw $this->createAccessDeniedException('You must be logged in.');
+            }
 
-            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-            $trick->setAuthor($this->getUser());
+            $trick->setAuthor($user);
             $trick->setCreatedAt(new \DateTimeImmutable());
             $trick->setUpdatedAt(new \DateTimeImmutable());
 
@@ -84,60 +79,41 @@ final class TrickController extends AbstractController
             $this->em->flush();
 
             $this->addFlash('success', '✅ Trick créé avec succès !');
-
             return $this->redirectToRoute('app_home');
         }
 
         return $this->render('trick/new.html.twig', [
             'form' => $form->createView(),
-        ], new Response(
-            null,
-            $form->isSubmitted() && !$form->isValid() ? 422 : 200
-        ));
+        ], new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200));
     }
 
     #[Route('/profile/trick/{id}/edit', name: 'app_trick_edit', methods: ['GET', 'POST'])]
     #[IsGranted('TRICK_EDIT', subject: 'trick')]
-    public function edit(
-        Trick $trick,
-        Request $request,
-    ): Response {
-
-        $form = $this->createForm(TrickType::class, $trick, [
-            'is_edit' => true,
-        ]);
-
+    public function edit(Trick $trick, Request $request): Response
+    {
+        $form = $this->createForm(TrickType::class, $trick, ['is_edit' => true]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $trick->setUpdatedAt(new \DateTimeImmutable());
-
-            $trick->setSlug(
-                $this->slugger->slug($trick->getName())->lower()
-            );
+            $trick->setSlug($this->slugger->slug($trick->getName())->lower());
 
             $this->mediaService->handleMainImage($form, $trick);
             $this->mediaService->handleImages($form, $trick);
             $this->mediaService->handleVideos($form, $trick);
 
             $this->em->flush();
-
             $this->addFlash('success', '✏️ Trick modifié avec succès.');
 
-            // Redirect to previous page
-            $referer = $request->headers->get('referer');
-
+            $referer = (string)$request->headers->get('referer');
             if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
                 return $this->redirect($referer);
             }
 
-            // Fallback redirect
             return $this->redirectToRoute('app_trick_show', [
                 'id' => $trick->getId(),
                 'slug' => $trick->getSlug(),
             ]);
-
         }
 
         return $this->render('trick/edit.html.twig', [
@@ -146,28 +122,19 @@ final class TrickController extends AbstractController
             'images' => $trick->getImages(),
             'videos' => $trick->getVideos(),
             'mainImage' => $trick->getMainImage(),
-        ], new Response(
-            null,
-            $form->isSubmitted() && !$form->isValid() ? 422 : 200
-        ));
+        ], new Response(null, $form->isSubmitted() && !$form->isValid() ? 422 : 200));
     }
 
     #[Route('/profile/trick/{id}/delete', name: 'app_trick_delete', methods: ['POST'])]
     #[IsGranted('TRICK_DELETE', subject: 'trick')]
-    public function delete(
-        Request $request,
-        Trick $trick,
-    ): Response {
-
-        // Retrive id and token submitted.
+    public function delete(Request $request, Trick $trick): Response
+    {
         $tokenId = sprintf('delete%d', $trick->getId());
-        $submittedToken = $request->get('_token');
+        // Explicit cast to string for SymfonyInsight
+        $submittedToken = (string)$request->request->get('_token');
 
-        // SECURITY CSRF, check if token is valid
         if (!$this->isCsrfTokenValid($tokenId, $submittedToken)) {
-
             $this->addFlash('danger', '❌ Action invalide.');
-
             return $this->redirectToRoute('app_profile');
         }
 
@@ -176,40 +143,35 @@ final class TrickController extends AbstractController
 
         $this->addFlash('success', '🗑️ Trick supprimé avec succès.');
 
-        // Redirect to previous page
-        $referer = $request->headers->get('referer');
-
+        $referer = (string)$request->headers->get('referer');
         if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
             return $this->redirect($referer);
         }
 
-        // Fallback redirect
         return $this->redirectToRoute('app_profile');
     }
 
     #[Route('/{id}/{slug}', name: 'app_trick_show', methods: ['GET', 'POST'])]
-    public function show(
-        Trick $trick,
-        Request $request,
-        CommentRepository $commentRepository,
-    ): Response {
-
+    public function show(Trick $trick, Request $request, CommentRepository $commentRepository): Response
+    {
         $page = max(1, $request->query->getInt('page', 1));
         $limit = 10;
 
         $comments = $commentRepository->findPaginatedByTrick($trick, $page, $limit);
         $total = $commentRepository->countByTrick($trick);
-        $totalPages = ceil($total / $limit);
+        $totalPages = (int)ceil($total / $limit);
 
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $user = $this->getUser();
+            if (!$user instanceof User) {
+                throw $this->createAccessDeniedException('You must be logged in to comment.');
+            }
 
-            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-            $comment->setAuthor($this->getUser());
+            $comment->setAuthor($user);
             $comment->setTrick($trick);
             $comment->setCreatedAt(new \DateTimeImmutable());
 
@@ -218,15 +180,12 @@ final class TrickController extends AbstractController
 
             $this->addFlash('success', '💬 Commentaire ajouté !');
 
-            // Redirect to previous page
-            $referer = $request->headers->get('referer');
+            $referer = (string)$request->headers->get('referer');
             if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
                 return $this->redirect($referer);
             }
 
-            // Fallback redirect
             return $this->redirectToRoute('app_trick_show', [
-                'page' => $page,
                 'id' => $trick->getId(),
                 'slug' => $trick->getSlug(),
             ]);
