@@ -40,7 +40,7 @@ class ResetPasswordController extends AbstractController
     /**
      * Display & process form to request a password reset.
      */
-    #[Route('', name: 'app_forgot_password_request')]
+    #[Route('', name: 'app_forgot_password_request', methods: ['GET', 'POST'])]
     public function request(
         Request $request,
         ResetPasswordService $resetPasswordService,
@@ -75,7 +75,7 @@ class ResetPasswordController extends AbstractController
     /**
      * Confirmation page after requesting reset
      */
-    #[Route('/check-email', name: 'app_check_email')]
+    #[Route('/check-email', name: 'app_check_email', methods: ['GET'])]
     public function checkEmail(): Response
     {
         if (null === ($resetToken = $this->getTokenObjectFromSession())) {
@@ -90,7 +90,7 @@ class ResetPasswordController extends AbstractController
     /**
      * Reset password with token
      */
-    #[Route('/reset/{token}', name: 'app_reset_password')]
+    #[Route('/reset/{token}', name: 'app_reset_password', methods: ['GET', 'POST'])]
     public function reset(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,

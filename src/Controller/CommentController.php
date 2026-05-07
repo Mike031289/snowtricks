@@ -23,7 +23,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class CommentController extends AbstractController
 {
-    #[Route('/comment/{id}/edit', name: 'app_comment_edit')]
+    #[Route('/comment/{id}/edit', name: 'app_comment_edit', methods: ['GET', 'POST'])]
     #[IsGranted('COMMENT_EDIT', subject: 'comment', message: 'Vous devrez disposer de droits requis', statusCode: 404)]
     public function edit(
         EntityManagerInterface $em,

@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class SitemapController extends AbstractController
 {
-    #[Route('/sitemap.xml', name: 'sitemap')]
+    #[Route('/sitemap.xml', name: 'sitemap', methods: ['GET'])]
     public function sitemap(TrickRepository $trickRepository, Request $request): Response
     {
         $tricks = $trickRepository->findAll();
