@@ -26,15 +26,19 @@ class AvatarService
 
     public function upload(User $user, UploadedFile $file): string
     {
-        // User slug for filename
-        $slug = $this->slugger->slug($user->getUsername())->lower();
+        // 1. Get username and ensure it's a string (fallback to User ID or 'user' if null)
+        $username = $user->getUsername() ?? 'user-' . $user->getId();
 
-        // extension safe
+        // 2. Generate slug safely
+        $slug = $this->slugger->slug((string) $username)->lower();
+
+        // 3. Secure the extension
         $extension = $file->guessExtension() ?: 'jpg';
 
-        // UPLOAD AVATAR
-        $filename = 'avatar_'.$slug.'.'.$extension;
+        // 4. Create final filename
+        $filename = 'avatar_' . $slug . '_' . uniqid() . '.' . $extension;
 
+        // 5. Move the file
         $file->move($this->uploadDirectory, $filename);
 
         return $filename;
