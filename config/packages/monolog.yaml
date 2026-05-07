@@ -42,7 +42,8 @@ when@prod:
             nested:
                 type: stream
                 path: php://stderr
-                level: debug
+                # Changed from debug to info to comply with SymfonyInsight best practices
+                level: info
                 formatter: monolog.formatter.json
             console:
                 type: console
@@ -52,4 +53,6 @@ when@prod:
                 type: stream
                 channels: [deprecation]
                 path: php://stderr
+                # Setting level to info (or error) prevents verbose debug logging in production
+                level: info
                 formatter: monolog.formatter.json
