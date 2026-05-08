@@ -20,6 +20,9 @@ class CommentRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param Trick $trick
+     * @param int $page
+     * @param int $limit
      * @return Comment[] Returns an array of Comment objects
      */
     public function findPaginatedByTrick(Trick $trick, int $page, int $limit): array
@@ -30,6 +33,7 @@ class CommentRepository extends ServiceEntityRepository
             ->orderBy('c.createdAt', 'DESC')
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit)
+            // This is the missing part: we create the query and get the results
             ->getQuery()
             ->getResult();
     }

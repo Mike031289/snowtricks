@@ -86,6 +86,12 @@ class MediaService
 
         $urls = preg_split('/[\r\n,]+/', $videosString);
 
+        // We check if preg_split failed (returns false) or is empty
+        if (false === $urls || empty($urls)) {
+            return;
+        }
+
+        // Now $urls is guaranteed to be an iterable (array)
         foreach ($urls as $url) {
             $url = trim($url);
             if (empty($url)) {

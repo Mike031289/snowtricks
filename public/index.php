@@ -24,6 +24,16 @@ return function (array $context) {
     /*
      * The $context array contains variables defined in your .env file
      * like APP_ENV and APP_DEBUG.
+     * // 1. We force the environment to be a string and provide a default value 'dev'
      */
-    return new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
+    $env = (string) ($context['APP_ENV'] ?? 'dev');
+
+    // 2. We ensure debug is a boolean
+    $debug = (bool) ($context['APP_DEBUG'] ?? ('prod' !== $env));
+
+    /**
+     * The Kernel is now instantiated with guaranteed types:
+     * $env is strictly a string, $debug is strictly a bool.
+     */
+    return new Kernel($env, $debug);
 };
