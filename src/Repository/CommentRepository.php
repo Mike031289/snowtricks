@@ -23,8 +23,8 @@ class CommentRepository extends ServiceEntityRepository
      * Finds a paginated list of comments for a specific trick.
      *
      * @param Trick $trick The trick entity associated with the comments
-     * @param int $page The current page number
-     * @param int $limit The maximum number of comments to return
+     * @param int   $page  The current page number
+     * @param int   $limit The maximum number of comments to return
      *
      * @return array<Comment> Returns a list of Comment objects
      */

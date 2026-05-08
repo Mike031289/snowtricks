@@ -18,7 +18,7 @@ class TrickRepository extends ServiceEntityRepository
         parent::__construct($registry, Trick::class);
     }
 
-/**
+    /**
      * Finds a list of tricks with pagination.
      *
      * @param int $page  The current page number

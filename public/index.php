@@ -31,7 +31,7 @@ return function (array $context) {
     // 2. We ensure debug is a boolean
     $debug = (bool) ($context['APP_DEBUG'] ?? ('prod' !== $env));
 
-    /**
+    /*
      * The Kernel is now instantiated with guaranteed types:
      * $env is strictly a string, $debug is strictly a bool.
      */
