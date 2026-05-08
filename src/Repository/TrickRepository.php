@@ -28,12 +28,15 @@ class TrickRepository extends ServiceEntityRepository
      */
     public function findPaginated(int $page, int $limit): array
     {
-        return $this->createQueryBuilder('t')
+        $qb = $this->createQueryBuilder('t')
             ->orderBy('t.createdAt', 'DESC')
             ->setFirstResult(($page - 1) * $limit)
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults($limit);
+
+        /** @var array<Trick> $results */
+        $results = $qb->getQuery()->getResult();
+
+        return $results;
     }
 
     /**
