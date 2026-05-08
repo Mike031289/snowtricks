@@ -198,6 +198,9 @@ class Trick
 
     // ===================== RELATIONS =====================
 
+    /**
+     * @return Collection<int, Image>
+     */
     public function getImages(): Collection
     {
         return $this->images;
@@ -224,6 +227,9 @@ class Trick
         return $this;
     }
 
+    /**
+     * @return Collection<int, Video>
+     */
     public function getVideos(): Collection
     {
         return $this->videos;
@@ -250,6 +256,9 @@ class Trick
         return $this;
     }
 
+    /**
+     * @return Collection<int, Comment>
+     */
     public function getComments(): Collection
     {
         return $this->comments;
