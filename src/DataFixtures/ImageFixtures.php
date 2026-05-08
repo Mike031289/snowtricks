@@ -22,7 +22,7 @@ class ImageFixtures extends Fixture implements DependentFixtureInterface
     // We add Filesystem to handle file copying
     public function __construct(
         private SluggerInterface $slugger,
-        private string $projectDir // We will need the project path
+        private string $projectDir, // We will need the project path
     ) {
     }
 
@@ -36,8 +36,8 @@ class ImageFixtures extends Fixture implements DependentFixtureInterface
         $filesystem = new Filesystem();
 
         // Define paths
-        $sourceDir = $this->projectDir . '/assets/fixtures/tricks';
-        $targetDir = $this->projectDir . '/public/uploads/tricks';
+        $sourceDir = $this->projectDir.'/assets/fixtures/tricks';
+        $targetDir = $this->projectDir.'/public/uploads/tricks';
 
         // Create target directory if it doesn't exist
         if (!$filesystem->exists($targetDir)) {
@@ -73,9 +73,9 @@ class ImageFixtures extends Fixture implements DependentFixtureInterface
             $slug = $this->slugger->slug($name)->lower();
 
             for ($i = 1; $i <= 3; ++$i) {
-                $filename = $slug . '_' . $i . '.jpg';
-                $sourcePath = $sourceDir . '/' . $filename;
-                $targetPath = $targetDir . '/' . $filename;
+                $filename = $slug.'_'.$i.'.jpg';
+                $sourcePath = $sourceDir.'/'.$filename;
+                $targetPath = $targetDir.'/'.$filename;
 
                 // Only copy and persist if the source image exists in /assets
                 if ($filesystem->exists($sourcePath)) {

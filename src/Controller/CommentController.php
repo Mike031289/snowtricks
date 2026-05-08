@@ -82,13 +82,14 @@ final class CommentController extends AbstractController
         // Fallback if trick is missing
         if (!$trick) {
             $this->addFlash('danger', '❌ Le trick associé est introuvable.');
+
             return $this->redirectToRoute('app_home');
         }
 
         // Retrieve id and token submitted.
         $tokenId = sprintf('delete_comment_%d', $comment->getId());
         // Cast to string to ensure type safety for isCsrfTokenValid
-        $submittedToken = (string)$request->request->get('_token');
+        $submittedToken = (string) $request->request->get('_token');
 
         // SECURITY CSRF check
         if (!$this->isCsrfTokenValid($tokenId, $submittedToken)) {

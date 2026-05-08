@@ -68,7 +68,7 @@ final class TrickController extends AbstractController
             $trick->setUpdatedAt(new \DateTimeImmutable());
 
             $trick->setSlug(
-                $this->slugger->slug($trick->getName())->lower()
+                $this->slugger->slug((string) $trick->getName())->lower()
             );
 
             $this->mediaService->handleMainImage($form, $trick);
@@ -79,6 +79,7 @@ final class TrickController extends AbstractController
             $this->em->flush();
 
             $this->addFlash('success', '✅ Trick créé avec succès !');
+
             return $this->redirectToRoute('app_home');
         }
 
@@ -96,7 +97,9 @@ final class TrickController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $trick->setUpdatedAt(new \DateTimeImmutable());
-            $trick->setSlug($this->slugger->slug($trick->getName())->lower());
+            $trick->setSlug(
+                $this->slugger->slug((string) $trick->getName())->lower()
+            );
 
             $this->mediaService->handleMainImage($form, $trick);
             $this->mediaService->handleImages($form, $trick);
@@ -105,7 +108,7 @@ final class TrickController extends AbstractController
             $this->em->flush();
             $this->addFlash('success', '✏️ Trick modifié avec succès.');
 
-            $referer = (string)$request->headers->get('referer');
+            $referer = (string) $request->headers->get('referer');
             if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
                 return $this->redirect($referer);
             }
@@ -131,10 +134,11 @@ final class TrickController extends AbstractController
     {
         $tokenId = sprintf('delete%d', $trick->getId());
         // Explicit cast to string for SymfonyInsight
-        $submittedToken = (string)$request->request->get('_token');
+        $submittedToken = (string) $request->request->get('_token');
 
         if (!$this->isCsrfTokenValid($tokenId, $submittedToken)) {
             $this->addFlash('danger', '❌ Action invalide.');
+
             return $this->redirectToRoute('app_profile');
         }
 
@@ -143,7 +147,7 @@ final class TrickController extends AbstractController
 
         $this->addFlash('success', '🗑️ Trick supprimé avec succès.');
 
-        $referer = (string)$request->headers->get('referer');
+        $referer = (string) $request->headers->get('referer');
         if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
             return $this->redirect($referer);
         }
@@ -159,7 +163,7 @@ final class TrickController extends AbstractController
 
         $comments = $commentRepository->findPaginatedByTrick($trick, $page, $limit);
         $total = $commentRepository->countByTrick($trick);
-        $totalPages = (int)ceil($total / $limit);
+        $totalPages = (int) ceil($total / $limit);
 
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
@@ -180,7 +184,7 @@ final class TrickController extends AbstractController
 
             $this->addFlash('success', '💬 Commentaire ajouté !');
 
-            $referer = (string)$request->headers->get('referer');
+            $referer = (string) $request->headers->get('referer');
             if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
                 return $this->redirect($referer);
             }

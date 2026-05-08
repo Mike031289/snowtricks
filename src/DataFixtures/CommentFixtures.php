@@ -38,6 +38,7 @@ class CommentFixtures extends Fixture implements DependentFixtureInterface
 
         /**
          * Define comments associated by Trick reference name.
+         *
          * @var array<string, array<int, string>> $commentsByTrick
          */
         $commentsByTrick = [
@@ -298,7 +299,7 @@ class CommentFixtures extends Fixture implements DependentFixtureInterface
             ],
         ];
 
-       foreach ($commentsByTrick as $trickName => $comments) {
+        foreach ($commentsByTrick as $trickName => $comments) {
 
             /**
              * We explicitly cast $trickName to (string) to satisfy strict typing

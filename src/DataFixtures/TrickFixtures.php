@@ -75,7 +75,7 @@ class TrickFixtures extends Fixture implements DependentFixtureInterface
 
             // Define the Main Image filename (matches the file copied in ImageFixtures)
             // Example: "indy-grab_1.jpg"
-            $trick->setMainImage($slug . '_1.jpg');
+            $trick->setMainImage($slug.'_1.jpg');
 
             $manager->persist($trick);
 

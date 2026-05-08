@@ -15,7 +15,7 @@ class VideoFixtures extends Fixture implements DependentFixtureInterface
 {
     // We inject the MediaService to use its conversion logic
     public function __construct(
-        private MediaService $mediaService
+        private MediaService $mediaService,
     ) {
     }
 

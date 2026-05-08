@@ -100,6 +100,7 @@ class MediaService
 
             // Avoid duplicates
             foreach ($trick->getVideos() as $existingVideo) {
+                /** @var Video $existingVideo */ // On aide l'analyseur à savoir que c'est une entité Video
                 if ($existingVideo->getEmbedUrl() === $embedUrl) {
                     continue 2;
                 }
@@ -123,18 +124,18 @@ class MediaService
         $url = trim($url);
 
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            $url = 'https://' . $url;
+            $url = 'https://'.$url;
         }
 
         // YOUTUBE (Better regex for fixtures and share links)
         // Matches: youtube.com/watch?v=ID, youtu.be/ID, youtube.com/embed/ID
         if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $url, $match)) {
-            return 'https://www.youtube.com/embed/' . $match[1];
+            return 'https://www.youtube.com/embed/'.$match[1];
         }
 
         // DAILYMOTION
         if (preg_match('/dailymotion\.com\/video\/([^_?&]+)/i', $url, $match)) {
-            return 'https://www.dailymotion.com/embed/video/' . $match[1];
+            return 'https://www.dailymotion.com/embed/video/'.$match[1];
         }
 
         return null;
@@ -145,6 +146,6 @@ class MediaService
     // =========================
     private function generateFilename(string $slug, ?string $extension): string
     {
-        return $slug . '_' . uniqid() . '.' . ($extension ?? 'jpg');
+        return $slug.'_'.uniqid().'.'.($extension ?? 'jpg');
     }
 }

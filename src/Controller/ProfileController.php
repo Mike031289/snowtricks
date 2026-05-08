@@ -47,7 +47,7 @@ final class ProfileController extends AbstractController
         $user = $this->getUser();
 
         // SECURITY CSRF: Explicitly cast the token to string to satisfy type requirements
-        $submittedToken = (string)$request->request->get('_token');
+        $submittedToken = (string) $request->request->get('_token');
 
         if (!$this->isCsrfTokenValid('avatar_upload', $submittedToken)) {
 

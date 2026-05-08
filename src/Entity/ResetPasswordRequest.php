@@ -34,13 +34,13 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
         return $this->id;
     }
 
-/**
-     * @return User
-     */
-    public function getUser(): object
+    public function getUser(): User
     {
         // We force the return value to ensure it is never null,
         // in accordance with the ResetPasswordRequestInterface
-        return $this->user;
+        /** @var User $user */
+        $user = $this->user;
+
+        return $user;
     }
 }

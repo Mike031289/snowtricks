@@ -36,6 +36,7 @@ final class ImageController extends AbstractController
 
         if (!$trick) {
             $this->addFlash('danger', '❌ Cette image n\'est liée à aucun Trick.');
+
             return $this->redirectToRoute('app_home');
         }
 
@@ -55,7 +56,7 @@ final class ImageController extends AbstractController
 
         // Retrieve token and cast to string for SymfonyInsight compliance
         $tokenId = sprintf('delete_image_%d', $image->getId());
-        $submittedToken = (string)$request->request->get('_token');
+        $submittedToken = (string) $request->request->get('_token');
 
         // SECURITY CSRF: check if token is valid
         if (!$this->isCsrfTokenValid($tokenId, $submittedToken)) {
@@ -71,7 +72,7 @@ final class ImageController extends AbstractController
         $imagesDirectory = $this->getParameter('images_directory');
         // Ensure parameter is treated as string
         if (is_string($imagesDirectory)) {
-            $filePath = $imagesDirectory . '/' . $image->getUrl();
+            $filePath = $imagesDirectory.'/'.$image->getUrl();
             if (file_exists($filePath)) {
                 unlink($filePath);
             }
@@ -86,7 +87,7 @@ final class ImageController extends AbstractController
         // Handle redirection logic
         $referer = $request->headers->get('referer');
 
-        if ($referer && str_contains((string)$referer, $request->getSchemeAndHttpHost())) {
+        if ($referer && str_contains((string) $referer, $request->getSchemeAndHttpHost())) {
             return $this->redirect($referer);
         }
 

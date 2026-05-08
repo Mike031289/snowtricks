@@ -36,12 +36,13 @@ final class VideoController extends AbstractController
         // Safety check: ensure the video is actually linked to a trick
         if (!$trick) {
             $this->addFlash('danger', '❌ This video is not linked to any trick.');
+
             return $this->redirectToRoute('app_home');
         }
 
         // Retrieve and cast the CSRF token to string (fixes the "mixed" type error)
         $tokenId = sprintf('delete_video_%d', $video->getId());
-        $submittedToken = (string)$request->request->get('_token');
+        $submittedToken = (string) $request->request->get('_token');
 
         // SECURITY: Validate CSRF token
         if (!$this->isCsrfTokenValid($tokenId, $submittedToken)) {
@@ -60,10 +61,10 @@ final class VideoController extends AbstractController
         $this->addFlash('success', '🗑️ Video successfully deleted.');
 
         // Handling redirection
-        $referer = (string)$request->headers->get('referer');
+        $referer = (string) $request->headers->get('referer');
 
         // Redirect to previous page if it belongs to our domain
-        if ($referer !== '' && str_contains($referer, $request->getSchemeAndHttpHost())) {
+        if ('' !== $referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
             return $this->redirect($referer);
         }
 
