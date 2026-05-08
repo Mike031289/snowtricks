@@ -36,6 +36,11 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
 
     public function getUser(): User
     {
-        return $this->user;
+        // We force the return value to ensure it is never null,
+        // in accordance with the ResetPasswordRequestInterface
+        /** @var User $user */
+        $user = $this->user;
+
+        return $user;
     }
 }

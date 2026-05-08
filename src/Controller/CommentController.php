@@ -12,6 +12,7 @@
 namespace App\Controller;
 
 use App\Entity\Comment;
+use App\Entity\User;
 use App\Form\CommentType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,16 +23,18 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class CommentController extends AbstractController
 {
-    #[Route('/comment/{id}/edit', name: 'app_comment_edit')]
+    #[Route('/comment/{id}/edit', name: 'app_comment_edit', methods: ['GET', 'POST'])]
     #[IsGranted('COMMENT_EDIT', subject: 'comment', message: 'Vous devrez disposer de droits requis', statusCode: 404)]
     public function edit(
         EntityManagerInterface $em,
         Request $request,
         Comment $comment,
     ): Response {
+        /** @var User|null $user */
+        $user = $this->getUser();
 
-        // Extra security (defensive check)
-        if ($comment->getAuthor() !== $this->getUser()) {
+        // Extra security (defensive check) to ensure author consistency
+        if ($comment->getAuthor() !== $user) {
             $this->addFlash('danger', '❌ Accès refusé.');
             throw $this->createAccessDeniedException();
         }
@@ -39,8 +42,7 @@ final class CommentController extends AbstractController
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()){
-
+        if ($form->isSubmitted() && $form->isValid()) {
             $comment->setUpdatedAt(new \DateTimeImmutable());
 
             $em->persist($comment);
@@ -48,15 +50,21 @@ final class CommentController extends AbstractController
 
             $this->addFlash('success', '✏️ Commentaire modifié avec succès.');
 
+            // Retrieve associated trick and check for null to prevent Insight errors
+            $trick = $comment->getTrick();
+            if (!$trick) {
+                return $this->redirectToRoute('app_home');
+            }
+
             return $this->redirectToRoute('app_trick_show', [
-                'slug' => $comment->getTrick()->getSlug(),
-                'id'   => $comment->getTrick()->getId(),
+                'slug' => $trick->getSlug(),
+                'id'   => $trick->getId(),
             ]);
         }
 
         return $this->render('comment/edit.html.twig', [
-            'commentForm'    => $form->createView(),
-            'comment' => $comment,
+            'commentForm' => $form->createView(),
+            'comment'     => $comment,
         ]);
     }
 
@@ -67,35 +75,49 @@ final class CommentController extends AbstractController
         Request $request,
         Comment $comment,
     ): Response {
+        /** @var User|null $user */
+        $user = $this->getUser();
 
-        // CSRF protection
-        if (!$this->isCsrfTokenValid('delete_comment_'.$comment->getId(), $request->request->get('_token'))) {
+        $trick = $comment->getTrick();
+        // Fallback if trick is missing
+        if (!$trick) {
+            $this->addFlash('danger', '❌ Le trick associé est introuvable.');
 
+            return $this->redirectToRoute('app_home');
+        }
+
+        // Retrieve id and token submitted.
+        $tokenId = sprintf('delete_comment_%d', $comment->getId());
+        // Cast to string to ensure type safety for isCsrfTokenValid
+        $submittedToken = (string) $request->request->get('_token');
+
+        // SECURITY CSRF check
+        if (!$this->isCsrfTokenValid($tokenId, $submittedToken)) {
             $this->addFlash('danger', '❌ Action invalide.');
 
             return $this->redirectToRoute('app_trick_show', [
-                'slug' => $comment->getTrick()->getSlug(),
-                'id'   => $comment->getTrick()->getId(),
+                'slug' => $trick->getSlug(),
+                'id'   => $trick->getId(),
             ]);
         }
 
-        // Extra security
-        if ($comment->getAuthor() !== $this->getUser()) {
+        // Extra security check for author
+        if ($comment->getAuthor() !== $user) {
             $this->addFlash('danger', '❌ Accès refusé.');
             throw $this->createAccessDeniedException();
         }
 
-        $slug = $comment->getTrick()->getSlug();
-        $id   = $comment->getTrick()->getId();
+        // Store data before deletion for the final redirect
+        $slug = $trick->getSlug();
+        $id   = $trick->getId();
 
         $em->remove($comment);
         $em->flush();
 
         $this->addFlash('success', '🗑️ Commentaire supprimé avec succès.');
 
-        // Redirect to previous page (best UX)
+        // Redirect to previous page if it belongs to the same host
         $referer = $request->headers->get('referer');
-
         if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
             return $this->redirect($referer);
         }

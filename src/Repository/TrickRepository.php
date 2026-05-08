@@ -19,19 +19,24 @@ class TrickRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param int $page  The current page number (starting from 1)
-     * @param int $limit The number of items to display per page
+     * Finds a list of tricks with pagination.
      *
-     * @return Trick[] Returns an array of Trick objects
+     * @param int $page  The current page number
+     * @param int $limit The number of tricks to display per page
+     *
+     * @return array<Trick> Returns an array of Trick objects
      */
     public function findPaginated(int $page, int $limit): array
     {
-        return $this->createQueryBuilder('t')
+        $qb = $this->createQueryBuilder('t')
             ->orderBy('t.createdAt', 'DESC')
             ->setFirstResult(($page - 1) * $limit)
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults($limit);
+
+        /** @var array<Trick> $results */
+        $results = $qb->getQuery()->getResult();
+
+        return $results;
     }
 
     /**

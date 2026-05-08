@@ -36,7 +36,7 @@ class RegistrationController extends AbstractController
     /**
      * @Route("/inscription", name="app_register")
      */
-    #[Route('/inscription', name: 'app_register')]
+    #[Route('/inscription', name: 'app_register', methods: ['GET', 'POST'])]
     public function register(
         UserPasswordHasherInterface $userPasswordHasher,
         EntityManagerInterface $entityManager,
@@ -108,7 +108,7 @@ class RegistrationController extends AbstractController
     /**
      * Verify email address
      */
-    #[Route('/verify/email', name: 'app_verify_email')]
+    #[Route('/verify/email', name: 'app_verify_email', methods: ['GET'])]
     public function verifyUserEmail(
         Request $request,
         TranslatorInterface $translator,

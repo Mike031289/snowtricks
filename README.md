@@ -61,15 +61,17 @@ Event Subscribers (timestamps, login tracking)
 ### 📁 Structure du projet
 SNOWTRICKS/
 ├── assets/
+│   ├── fixtures/
+│   │   └── tricks/ (Images de test .jpg versionnées ✅)
 │   ├── styles/
 │   ├── app.js
+│   ├── custom.js
 │
 ├── public/
 │   ├── images/
-│   ├── uploads/
-│   │   ├── avatars/
-│   │   ├── tricks/
-│   │   │   └── fixtures/ (images de test)
+│   ├── uploads/ (Ignoré par Git donc non versionnées ❌)
+│       ├── avatars/
+│       └── tricks/
 │
 ├── src/
 │   ├── Controller/
