@@ -31,49 +31,69 @@ final class ImageController extends AbstractController
         Request $request,
         Image $image,
     ): Response {
+        // First safety check: retrieve and validate the associated Trick
+        $trick = $image->getTrick();
 
-        // CSRF protection
-        if (!$this->isCsrfTokenValid('delete_image_'.$image->getId(), $request->request->get('_token'))) {
+        if (!$trick) {
+            $this->addFlash('danger', '❌ Cette image n\'est liée à aucun Trick.');
 
-            $this->addFlash('danger', '❌ Action invalide.');
+            return $this->redirectToRoute('app_home');
+        }
 
-            return $this->redirectToRoute('app_trick_show', [
-                'id'   => $image->getTrick()->getId(),
-                'slug' => $image->getTrick()->getSlug(),
+        // SECURITY : New Protection for mainImage
+        // We check whether the image URL is the one set as the main image
+        if ($image->getUrl() === $trick->getMainImage()) {
+            $this->addFlash('danger', '❌ Impossible de supprimer l\'image principale. Veuillez d\'abord la modifier dans l\'édition du Trick.');
+
+            return $this->redirectToRoute('app_trick_edit', [
+                'id' => $trick->getId(),
             ]);
         }
 
-        // Extra safety (defensive)
-        if (!$this->isGranted('IMAGE_DELETE', $image)) {
-            $this->addFlash('danger', '❌ Accès refusé.');
-            throw $this->createAccessDeniedException();
+        // We store Trick data now because $image will be removed later
+        $trickId = $trick->getId();
+        $trickSlug = $trick->getSlug();
+
+        // Retrieve token and cast to string for SymfonyInsight compliance
+        $tokenId = sprintf('delete_image_%d', $image->getId());
+        $submittedToken = (string) $request->request->get('_token');
+
+        // SECURITY CSRF: check if token is valid
+        if (!$this->isCsrfTokenValid($tokenId, $submittedToken)) {
+            $this->addFlash('danger', '❌ Action invalide.');
+
+            return $this->redirectToRoute('app_trick_show', [
+                'id'   => $trickId,
+                'slug' => $trickSlug,
+            ]);
         }
 
-        $trick = $image->getTrick();
-
-        // Delete physical file
-        $filePath = $this->getParameter('images_directory').'/'.$image->getUrl();
-
-        if (file_exists($filePath)) {
-            unlink($filePath);
+        // Physical file deletion
+        $imagesDirectory = $this->getParameter('images_directory');
+        // Ensure parameter is treated as string
+        if (is_string($imagesDirectory)) {
+            $filePath = $imagesDirectory.'/'.$image->getUrl();
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
         }
 
-        // Remove from database
+        // Database removal
         $em->remove($image);
         $em->flush();
 
         $this->addFlash('success', '🗑️ Image supprimée avec succès.');
 
-        // Redirect to previous page
+        // Handle redirection logic
         $referer = $request->headers->get('referer');
 
-        if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
+        if ($referer && str_contains((string) $referer, $request->getSchemeAndHttpHost())) {
             return $this->redirect($referer);
         }
 
-        // Fallback redirect
+        // Fallback redirect to the edit page of the trick
         return $this->redirectToRoute('app_trick_edit', [
-            'id' => $trick->getId(),
+            'id' => $trickId,
         ]);
     }
 }

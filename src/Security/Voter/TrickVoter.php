@@ -17,33 +17,36 @@ final class TrickVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        // replace with your own logic
-        // https://symfony.com/doc/current/security/voters.html
+        // Supports ADD, EDIT, DELETE only if the subject is an instance of Trick
         return in_array($attribute, [self::ADD, self::EDIT, self::DELETE], true)
             && $subject instanceof Trick;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
+        /** @var User|null $user */
         $user = $token->getUser();
-        // if the user is anonymous, do not grant access
+
+        // If the user is anonymous, deny access
         if (!$user instanceof User) {
             return false;
         }
 
-        // ... (check conditions and return true to grant permission) ...
+        /** @var Trick $trick */
+        $trick = $subject; // Explicitly casting $subject to Trick for type safety
+
         switch ($attribute) {
             case self::ADD:
-                // logic to determine if the user can ADD
-                return $this->canAdd($subject, $user);
+                // Call specific logic for adding
+                return $this->canAdd($trick, $user);
 
             case self::EDIT:
-                // logic to determine if the user can EDIT
-                return $this->canEdit($subject, $user);
+                // Call specific logic for editing
+                return $this->canEdit($trick, $user);
 
             case self::DELETE:
-                // logic to determine if the user can DELETE
-                return $this->canDelete($subject, $user);
+                // Call specific logic for deleting
+                return $this->canDelete($trick, $user);
         }
 
         return false;

@@ -8,7 +8,6 @@ use App\Entity\Comment;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 final class CommentVoter extends Voter
 {
@@ -17,31 +16,30 @@ final class CommentVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        // replace with your own logic
-        // https://symfony.com/doc/current/security/voters.html
+        // Check if the attribute is supported and if the subject is a Comment entity
         return in_array($attribute, [self::EDIT, self::DELETE], true)
             && $subject instanceof Comment;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
+        /** @var User|null $user */
         $user = $token->getUser();
-        // if the user is anonymous, do not grant access
-        if (!$user instanceof UserInterface) {
+
+        // If the user is not logged in or is not our User entity, deny access
+        if (!$user instanceof User) {
             return false;
         }
 
-        // ... (check conditions and return true to grant permission) ...
+        /** @var Comment $comment */
+        $comment = $subject; // Explicitly tell PHP that $subject is a Comment
+
         switch ($attribute) {
             case self::EDIT:
-                // logic to determine if the user can EDIT
-                // return true or false
-                return $this->canEdit($subject, $user);
+                return $this->canEdit($comment, $user);
 
             case self::DELETE:
-                // logic to determine if the user can DELETE
-                // return true or false
-                return $this->canDelete($subject, $user);
+                return $this->canDelete($comment, $user);
         }
 
         return false;

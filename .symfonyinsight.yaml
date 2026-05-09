@@ -1,0 +1,6 @@
+# .symfonyinsight.yaml
+project:
+    # Define PHP version used to analyse
+    php_version: 8.2
+    # framwork tag
+    framework: symfony6

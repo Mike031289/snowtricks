@@ -14,12 +14,16 @@ use App\Entity\Trick;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ImageFixtures extends Fixture implements DependentFixtureInterface
 {
-    public function __construct(private SluggerInterface $slugger)
-    {
+    // We add Filesystem to handle file copying
+    public function __construct(
+        private SluggerInterface $slugger,
+        private string $projectDir, // We will need the project path
+    ) {
     }
 
     public function getDependencies(): array
@@ -29,6 +33,16 @@ class ImageFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
+        $filesystem = new Filesystem();
+
+        // Define paths
+        $sourceDir = $this->projectDir.'/assets/fixtures/tricks';
+        $targetDir = $this->projectDir.'/public/uploads/tricks';
+
+        // Create target directory if it doesn't exist
+        if (!$filesystem->exists($targetDir)) {
+            $filesystem->mkdir($targetDir);
+        }
 
         $tricks = [
             'Indy Grab',
@@ -55,27 +69,28 @@ class ImageFixtures extends Fixture implements DependentFixtureInterface
         ];
 
         foreach ($tricks as $name) {
-
             $trick = $this->getReference($name, Trick::class);
-
             $slug = $this->slugger->slug($name)->lower();
 
             for ($i = 1; $i <= 3; ++$i) {
+                $filename = $slug.'_'.$i.'.jpg';
+                $sourcePath = $sourceDir.'/'.$filename;
+                $targetPath = $targetDir.'/'.$filename;
 
-                $image = new Image();
+                // Only copy and persist if the source image exists in /assets
+                if ($filesystem->exists($sourcePath)) {
+                    // COPY the file (this is the key to solve your problem)
+                    $filesystem->copy($sourcePath, $targetPath, true);
 
-                /*
-                 * FIXTURES STORAGE PATH just for development and testing purposes.
-                 * In production, images should be uploaded by users and stored in a proper directory like upload/images/.
-                 */
-                $image->setUrl('fixtures/'.$slug.'_'.$i.'.jpg');
+                    $image = new Image();
+                    $image->setUrl($filename); // Store only the filename
+                    $image->setAlt(sprintf('%s image %d', $name, $i));
+                    $image->setIsMain(1 === $i);
+                    $image->setCreatedAt(new \DateTimeImmutable());
+                    $image->setTrick($trick);
 
-                $image->setAlt(sprintf('%s image %d', $name, $i));
-                $image->setIsMain(1 === $i);
-                $image->setCreatedAt(new \DateTimeImmutable());
-                $image->setTrick($trick);
-
-                $manager->persist($image);
+                    $manager->persist($image);
+                }
             }
         }
 

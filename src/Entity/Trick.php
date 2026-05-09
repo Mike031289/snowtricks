@@ -69,19 +69,19 @@ class Trick
     private ?Group $groups = null;
 
     /**
-     * @var Collection<int, Image>
+     * @return Collection<int, Image>
      */
     #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'trick')]
     private Collection $images;
 
     /**
-     * @var Collection<int, Video>
+     * @return Collection<int, Video>
      */
     #[ORM\OneToMany(targetEntity: Video::class, mappedBy: 'trick')]
     private Collection $videos;
 
     /**
-     * @var Collection<int, Comment>
+     * @return Collection<int, Comment>
      */
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'trick')]
     private Collection $comments;
@@ -198,6 +198,9 @@ class Trick
 
     // ===================== RELATIONS =====================
 
+    /**
+     * @return Collection<int, Image>
+     */
     public function getImages(): Collection
     {
         return $this->images;
@@ -224,6 +227,9 @@ class Trick
         return $this;
     }
 
+    /**
+     * @return Collection<int, Video>
+     */
     public function getVideos(): Collection
     {
         return $this->videos;
@@ -250,6 +256,9 @@ class Trick
         return $this;
     }
 
+    /**
+     * @return Collection<int, Comment>
+     */
     public function getComments(): Collection
     {
         return $this->comments;
