@@ -1,6 +1,7 @@
 <?php
 
 // src/Form/CommentType.php
+
 namespace App\Form;
 
 use App\Entity\Comment;
@@ -20,7 +21,7 @@ class CommentType extends AbstractType
         'batard', 'bâtard', 'ordure', 'salopard', 'salope', 'salop',
 
         // Mild insults
-        'con', 'conne','idiot', 'idiote', 'imbécile',
+        'con', 'conne', 'idiot', 'idiote', 'imbécile',
         'abruti', 'abrutie', 'crétin', 'crétine', 'débile',
         'nul', 'nulle', 'bouffon', 'bouffonne',
 
@@ -41,7 +42,7 @@ class CommentType extends AbstractType
     {
         // Build forbidden words regex pattern with word boundaries
         $forbiddenPattern = implode('|', array_map(
-            fn($word) => preg_quote($word, '/'),
+            fn ($word) => preg_quote($word, '/'),
             self::FORBIDDEN_WORDS
         ));
 
@@ -68,7 +69,7 @@ class CommentType extends AbstractType
                     ]),
                     // Block forbidden words (case-insensitive, unicode-aware, whole words only)
                     new Assert\Regex([
-                        'pattern' => '/\b(' . $forbiddenPattern . ')\b/iu',
+                        'pattern' => '/\b('.$forbiddenPattern.')\b/iu',
                         'match' => false,
                         'message' => 'Votre commentaire contient des termes inappropriés.',
                     ]),

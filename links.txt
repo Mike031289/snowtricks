@@ -1,0 +1,7 @@
+
+- gitHub URL:
+    Lien gitHub vers le projet Snowtricks: https://github.com/Mike031289/snowtricks
+
+- Symfony Insight badge URL:
+    Lien Symfony Insight vers le badge Platinum certifiant la qualité du code :
+    https://insight.symfony.com/projects/1f3b6a91-0773-4aea-a20e-c8a736bb9075/analyses/36

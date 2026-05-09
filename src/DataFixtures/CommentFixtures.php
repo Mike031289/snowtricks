@@ -6,7 +6,6 @@
  * This file is part of the SnowTricks project.
  *
  * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com> Dev-Application PHP Symfony
- *
  */
 
 namespace App\DataFixtures;
@@ -30,12 +29,18 @@ class CommentFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
+        /** @var array<int, User> $users */
         $users = [
             $this->getReference(UserFixtures::USER_1, User::class),
             $this->getReference(UserFixtures::USER_2, User::class),
             $this->getReference(UserFixtures::USER_3, User::class),
         ];
 
+        /**
+         * Define comments associated by Trick reference name.
+         *
+         * @var array<string, array<int, string>> $commentsByTrick
+         */
         $commentsByTrick = [
             'Indy Grab' => [
                 'Super clean, idéal pour progresser en grabs !',
@@ -296,15 +301,22 @@ class CommentFixtures extends Fixture implements DependentFixtureInterface
 
         foreach ($commentsByTrick as $trickName => $comments) {
 
-            $trick = $this->getReference($trickName, Trick::class);
+            /**
+             * We explicitly cast $trickName to (string) to satisfy strict typing
+             * and retrieve the Trick reference.
+             */
+            $trick = $this->getReference((string) $trickName, Trick::class);
 
             foreach ($comments as $content) {
-
                 $comment = new Comment();
 
-                $comment->setContent($content);
+                $comment->setContent((string) $content);
                 $comment->setCreatedAt(new \DateTimeImmutable());
-                $comment->setAuthor($users[array_rand($users)]);
+
+                /** @var User $randomAuthor */
+                $randomAuthor = $users[array_rand($users)];
+                $comment->setAuthor($randomAuthor);
+
                 $comment->setTrick($trick);
 
                 $manager->persist($comment);

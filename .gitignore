@@ -1,97 +1,57 @@
 ######################################
 # Symfony Environment Files
 ######################################
-
 # Ignore local environment overrides (never commit secrets)
 .env.local
 .env.*.local
 .env.local.php
-
-# Keep .env committed (contains default safe values)
-# DO NOT ignore .env
-
+# Keep .env committed as it contains default safe values
 
 ######################################
-# Symfony Cache & Logs
+# Symfony Cache, Logs & Tools
 ######################################
-
-# Cache, logs and temporary files
+# Ignore temporary runtime files
 /var/
-
+/.phpunit.cache/
+/phpunit.xml.local
+/.php-cs-fixer.cache
 
 ######################################
 # Dependencies
 ######################################
-
-# Composer dependencies (will be installed with composer install)
+# Dependencies are managed by Composer and NPM/Yarn
 /vendor/
-
-# Node dependencies (if using npm/yarn)
 /node_modules/
-
 
 ######################################
 # Public Build & Assets
 ######################################
-
-# Compiled assets (AssetMapper or Webpack)
+# Ignore compiled assets, they will be regenerated on each machine
 /public/assets/
 /assets/vendor/
 /public/build/
-
-# Symfony generated bundles
 /public/bundles/
 
-
 ######################################
-# Uploaded Files
+# Uploaded Files (Data)
 ######################################
-
-# Ignore everything in uploads
+# Ignore all user-uploaded files in production/dev
 /public/uploads/*
 
-# Allow tricks directory (keep folder structure)
-!/public/uploads/tricks/
-
-# Ignore everything inside tricks
-/public/uploads/tricks/*
-
-# Allow only fixtures (versioned test images)
-!/public/uploads/tricks/fixtures/
-!/public/uploads/tricks/fixtures/*
-
-# Allow avatars folder but ignore its content (user uploads)
-!/public/uploads/avatars/
-/public/uploads/avatars/*
+# Optional: To keep empty directories in the repository,
+# add a .gitkeep file inside them and uncomment these lines:
+# !/public/uploads/avatars/.gitkeep
+# !/public/uploads/tricks/.gitkeep
 
 ######################################
-# PHPUnit & Testing
+# Fixtures Sources (Development)
 ######################################
-
-/.phpunit.cache/
-/phpunit.xml.local
-
-
-######################################
-# IDE & OS Files
-######################################
-
-# IDE
-/.idea/
-/.vscode/
-
-# OS
-.DS_Store
-Thumbs.db
-
+# Force Git to track these test images even if other rules exclude them
+!/assets/fixtures/
+!/assets/fixtures/**
 
 ######################################
-# Symfony Secrets (Production)
+# Symfony Secrets
 ######################################
-
+# Never commit the private decryption key for production
 /config/secrets/prod/prod.decrypt.private.php
-
-###> friendsofphp/php-cs-fixer ###
-/.php-cs-fixer.php
-/.php-cs-fixer.cache
-###< friendsofphp/php-cs-fixer ###

@@ -46,20 +46,28 @@ final class ProfileController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$this->isCsrfTokenValid('avatar_upload', $request->request->get('_token'))) {
+        // SECURITY CSRF: Explicitly cast the token to string to satisfy type requirements
+        $submittedToken = (string) $request->request->get('_token');
+
+        if (!$this->isCsrfTokenValid('avatar_upload', $submittedToken)) {
+
+            $this->addFlash('danger', '❌ Action invalide.');
+
             return $this->redirectToRoute('app_profile');
         }
 
         /** @var UploadedFile|null $file */
         $file = $request->files->get('avatar');
 
-        if ($file) {
+        if ($file instanceof UploadedFile) {
             // UPLOAD AVATAR
             $filename = $avatarService->upload($user, $file);
 
             $user->setAvatar($filename);
 
             $em->flush();
+
+            $this->addFlash('success', '✅ Avatar mis à jour avec succès.');
         }
 
         return $this->redirectToRoute('app_profile');

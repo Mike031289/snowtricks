@@ -1,0 +1,112 @@
+{# ========= MEDIAS CAROUSELS ======= #}
+<div class="row mb-4">
+    {# --- IMAGES SECTION --- #}
+    <div class="col-md-6">
+        <h3>
+            {# Display total count: secondary images OR 1 if only main image exists #}
+            {{ trick.images|length > 0 ? trick.images|length : 1 }}
+            Images
+        </h3>
+        <div class="mb-3 text-muted">
+            Click sur l'image pour l'agrandir
+        </div>
+
+        <div id="carouselImages" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {# CASE 1: No secondary images, display the mainImage as default #}
+                {# CASE 1: No secondary images, display the trick.mainImage as default #}
+                    {% if trick.images|length == 0 %}
+                        <div class="carousel-item active position-relative"> {# Correction de la variable et du chemin #}
+                        {% if trick.mainImage %}
+                            <img
+                            src="{{ asset('uploads/tricks/' ~ trick.mainImage) }}" class="d-block w-100 rounded" style="height:300px; object-fit:cover;" alt="Image principale de {{ trick.name }}">
+                                {% else %}
+                                {# Image de secours si même la mainImage est vide #}
+                                <img src="{{ asset('images/default-trick.jpg') }}" class="d-block w-100 rounded" style="height:300px; object-fit:cover;" alt="Image par défaut">
+                                {% endif %}
+                            </div>
+
+                        {# CASE 2: Secondary images exist, loop through them only #}
+                            {% else %}
+                            {% for image in trick.images %}
+                                <div class="carousel-item {{ loop.first ? 'active' : '' }}">
+                                    <img src="{{ asset('uploads/tricks/' ~ image.url) }}" class="d-block w-100 rounded" style="height:300px; object-fit:cover; cursor:pointer;" alt="Image secondaire pour {{ trick.name }}" onclick="openImage(this.src)" data-bs-toggle="modal" data-bs-target="#modalImage"></div>
+                                {% endfor %}
+                            {% endif %}
+
+                        </div>
+
+                        {# CONTROLS: Display only if there is more than 1 secondary image #}
+                        {% if trick.images|length > 1 %}
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselImages" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">
+                                    Précédant
+                                </span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselImages" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">
+                                    Suivant
+                                </span>
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {# --- VIDEOS SECTION --- #}
+                <div class="col-md-6">
+                    <h3>
+                        {{ trick.videos|length }}
+                        Videos
+                    </h3>
+                    <div class="mb-3 text-muted">
+                        Click sur la video pour regarder et partager
+                    </div>
+
+                    <div id="carouselVideos" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            {# CASE 1: Loop through videos if available #}
+                            {% if trick.videos|length > 0 %}
+                                {% for video in trick.videos %}
+                                    <div class="carousel-item {{ loop.first ? 'active' : '' }}">
+                                        <div class="position-relative">
+                                            <div class="ratio ratio-16x9">
+                                                <iframe src="{{ video.embedUrl }}" style="pointer-events:none;" allowfullscreen class="w-100 h-100 rounded" tabindex="-1"></iframe>
+                                            </div>
+                                            {# Play Overlay Button #}
+                                            <div class="position-absolute top-50 start-50 translate-middle" onclick="openVideo('{{ video.embedUrl }}')" data-bs-toggle="modal" data-bs-target="#modalVideo" style="cursor:pointer; z-index:5;">
+                                                <i class="bi bi-play-circle-fill text-white" style="font-size:3rem; opacity:0.8;"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                            {# CASE 2: No videos available #}
+                                {% else %}
+                                <div class="carousel-item active text-center bg-light rounded" style="height:300px; display:flex; align-items:center; justify-content:center;">
+                                    <p class="text-muted">
+                                        Aucune vidéo ajoutée. Vous pouvez en rajouter !
+                                    </p>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {# CONTROLS: Display only if there is more than 1 video #}
+                        {% if trick.videos|length > 1 %}
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselVideos" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">
+                                    Précédant
+                                </span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselVideos" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">
+                                    Suivant
+                                </span>
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>

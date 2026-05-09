@@ -6,7 +6,6 @@
  * This file is part of SnowTricks.
  *
  * (c) Adjoukou AGBELOU <mike.agbelou@gmail.com> Dev-Application PHP Symfony
- *
  */
 
 namespace App\Controller;
@@ -21,47 +20,57 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class VideoController extends AbstractController
 {
+    /**
+     * Deletes a video associated with a trick.
+     */
     #[Route('/video/{id}/delete', name: 'app_video_delete', methods: ['POST'])]
-    #[IsGranted('VIDEO_DELETE', subject: 'video', message: 'Vous devrez disposer de droits requis', statusCode: 404)]
+    #[IsGranted('VIDEO_DELETE', subject: 'video', message: 'You do not have the required permissions.', statusCode: 403)]
     public function delete(
         Video $video,
         Request $request,
         EntityManagerInterface $em,
     ): Response {
+        // Get the associated Trick early to ensure null safety
+        $trick = $video->getTrick();
 
-        // CSRF check
-        if (!$this->isCsrfTokenValid('delete_video_'.$video->getId(), $request->request->get('_token'))) {
+        // Safety check: ensure the video is actually linked to a trick
+        if (!$trick) {
+            $this->addFlash('danger', '❌ This video is not linked to any trick.');
 
-            $this->addFlash('danger', '❌ Action invalide.');
+            return $this->redirectToRoute('app_home');
+        }
+
+        // Retrieve and cast the CSRF token to string (fixes the "mixed" type error)
+        $tokenId = sprintf('delete_video_%d', $video->getId());
+        $submittedToken = (string) $request->request->get('_token');
+
+        // SECURITY: Validate CSRF token
+        if (!$this->isCsrfTokenValid($tokenId, $submittedToken)) {
+            $this->addFlash('danger', '❌ Invalid security token.');
 
             return $this->redirectToRoute('app_trick_show', [
-                'id'   => $video->getTrick()->getId(),
-                'slug' => $video->getTrick()->getSlug(),
+                'id'   => $trick->getId(),
+                'slug' => $trick->getSlug(),
             ]);
         }
 
-        // Extra safety (defensive check)
-        if (!$this->isGranted('VIDEO_DELETE', $video)) {
-            $this->addFlash('danger', '❌ Accès refusé.');
-            throw $this->createAccessDeniedException();
-        }
-
+        // Perform the deletion
         $em->remove($video);
         $em->flush();
 
-        $this->addFlash('success', '🗑️ Vidéo supprimée avec succès.');
+        $this->addFlash('success', '🗑️ Video successfully deleted.');
 
-        // Redirect back to edit page of trick
-        $referer = $request->headers->get('referer');
+        // Handling redirection
+        $referer = (string) $request->headers->get('referer');
 
-        if ($referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
+        // Redirect to previous page if it belongs to our domain
+        if ('' !== $referer && str_contains($referer, $request->getSchemeAndHttpHost())) {
             return $this->redirect($referer);
         }
 
-        // Fallback redirect
+        // Fallback: redirect to the trick edit page using our safe $trick variable
         return $this->redirectToRoute('app_trick_edit', [
-            'id' => $video->getTrick()->getId(),
+            'id' => $trick->getId(),
         ]);
-
     }
 }

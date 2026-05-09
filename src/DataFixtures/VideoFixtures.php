@@ -6,12 +6,19 @@ namespace App\DataFixtures;
 
 use App\Entity\Trick;
 use App\Entity\Video;
+use App\Service\MediaService;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
 class VideoFixtures extends Fixture implements DependentFixtureInterface
 {
+    // We inject the MediaService to use its conversion logic
+    public function __construct(
+        private MediaService $mediaService,
+    ) {
+    }
+
     public function getDependencies(): array
     {
         return [TrickFixtures::class];
@@ -20,8 +27,7 @@ class VideoFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         /**
-         * 3 REAL VIDEO LINKS (YouTube + Dailymotion)
-         * FORMAT WATCH (important for your converter)
+         * Real video links (YouTube + Dailymotion)
          */
         $videoUrls = [
             'https://www.youtube.com/watch?v=v6xqATm7JQc',
@@ -29,45 +35,35 @@ class VideoFixtures extends Fixture implements DependentFixtureInterface
             'https://www.dailymotion.com/video/x6zxwl',
         ];
 
-        $tricks = [
-            'Indy Grab',
-            'Melon Grab',
-            'Mute Grab',
-
-            'Backflip',
-            'Frontflip',
-
-            '360',
-            '540',
-            '720',
-
-            'Boardslide',
-            'Noseslide',
-
-            'Tail Grab',
-            'Stalefish',
-
-            '900',
-
-            'Lip Slide',
-            'Cork 720',
+        /** @var array<int, string> $tricksNames */
+        $tricksNames = [
+            'Indy Grab', 'Melon Grab', 'Mute Grab',
+            'Backflip', 'Frontflip',
+            '360', '540', '720',
+            'Boardslide', 'Noseslide',
+            'Tail Grab', 'Stalefish',
+            '900', 'Lip Slide', 'Cork 720',
         ];
 
-        foreach ($tricks as $name) {
+        foreach ($tricksNames as $name) {
+            /** @var Trick $trick */
+            $trick = $this->getReference((string) $name, Trick::class);
 
-            $trick = $this->getReference($name, Trick::class);
+            // 3 videos per trick
+            foreach ($videoUrls as $index => $url) {
 
-            // 3 videos per trick (stable & deterministic)
-            for ($i = 0; $i < 3; ++$i) {
+                // We use the MediaService to transform the URL into an Embed URL
+                $embedUrl = $this->mediaService->convertToEmbedUrl($url);
 
-                $video = new Video();
+                if (null !== $embedUrl) {
+                    $video = new Video();
+                    $video->setEmbedUrl($embedUrl);
+                    $video->setIsMain(0 === $index);
+                    $video->setCreatedAt(new \DateTimeImmutable());
+                    $video->setTrick($trick);
 
-                $video->setEmbedUrl($videoUrls[$i]);
-                $video->setIsMain(0 === $i);
-                $video->setCreatedAt(new \DateTimeImmutable());
-                $video->setTrick($trick);
-
-                $manager->persist($video);
+                    $manager->persist($video);
+                }
             }
         }
 
